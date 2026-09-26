@@ -1,0 +1,14 @@
+services:
+  db:
+    build:
+      context: ./docker/postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ex_day_poc
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+volumes:
+  postgres-data:

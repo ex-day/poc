@@ -1,0 +1,1044 @@
+{
+  "_note": "検証用のサンプル。Discoveryの内容・わかってきたことは検証のための例文で、事実の確認はしていないものを含む（特に生麦・バカガイの例）。 正解（judgments）はClaudeが作った仮のもので、人のレビューが必要。",
+  "discoveries": [
+    {
+      "id": "namamugi",
+      "name": "生麦の食文化",
+      "spatial_type": "Area",
+      "note": "#1 の Discovery A",
+      "subjects": [
+        [
+          "青柳",
+          "target"
+        ],
+        [
+          "干して食べる",
+          "viewpoint"
+        ],
+        [
+          "郷土食",
+          "viewpoint"
+        ],
+        [
+          "漁師町",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "生麦では青柳を干して食べる習慣があったという話がある"
+        ],
+        [
+          "theory",
+          "漁師町として貝をよく扱っていた"
+        ]
+      ]
+    },
+    {
+      "id": "bakagai",
+      "name": "別地域の貝料理",
+      "spatial_type": "Area",
+      "note": "#1 の Discovery B。青柳はバカガイのむき身の呼び名（文字が一致しないのに同じものを指す例）",
+      "subjects": [
+        [
+          "バカガイ",
+          "target"
+        ],
+        [
+          "干物",
+          "viewpoint"
+        ],
+        [
+          "郷土料理",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "バカガイを干物にして食べる地域がある"
+        ]
+      ]
+    },
+    {
+      "id": "kozukue",
+      "name": "小机城址",
+      "spatial_type": "Point",
+      "note": "#1 の Discovery C。「地域史」のような広いSubjectが近いだけでは上位に来てほしくない",
+      "subjects": [
+        [
+          "城跡",
+          "target"
+        ],
+        [
+          "中世",
+          "viewpoint"
+        ],
+        [
+          "地域史",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "中世の城の跡で、空堀や土塁が残っている"
+        ]
+      ]
+    },
+    {
+      "id": "walk_route",
+      "name": "桜木町から山下公園への汽車道経由の散歩ルート",
+      "spatial_type": "Route",
+      "note": "#82 の Discovery A",
+      "subjects": [
+        [
+          "散歩道",
+          "target"
+        ],
+        [
+          "散歩",
+          "viewpoint"
+        ],
+        [
+          "ランドマークタワー",
+          "place"
+        ],
+        [
+          "日本丸",
+          "place"
+        ],
+        [
+          "赤レンガ倉庫",
+          "place"
+        ],
+        [
+          "山下公園",
+          "place"
+        ],
+        [
+          "桜木町",
+          "place"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "海沿いの散歩が気持ちいい"
+        ],
+        [
+          "value",
+          "線路跡の高い遊歩道を歩ける"
+        ]
+      ]
+    },
+    {
+      "id": "yamashita_area",
+      "name": "山下公園周辺",
+      "spatial_type": "Area",
+      "note": "#82 の Discovery B",
+      "subjects": [
+        [
+          "山下公園",
+          "place"
+        ],
+        [
+          "マリンタワー",
+          "place"
+        ],
+        [
+          "神奈川県民ホール",
+          "place"
+        ],
+        [
+          "中華街",
+          "place"
+        ],
+        [
+          "元町",
+          "place"
+        ]
+      ],
+      "findings": []
+    },
+    {
+      "id": "motomachi",
+      "name": "元町商店街",
+      "spatial_type": "Area",
+      "note": "#82 の Discovery C",
+      "subjects": [
+        [
+          "商店街",
+          "target"
+        ],
+        [
+          "港の見える丘公園",
+          "place"
+        ],
+        [
+          "日本初のクリーニング店",
+          "target"
+        ],
+        [
+          "外人墓地",
+          "place"
+        ]
+      ],
+      "findings": []
+    },
+    {
+      "id": "sakuragicho_area",
+      "name": "桜木町周辺",
+      "spatial_type": "Area",
+      "note": "#82 の Discovery D",
+      "subjects": [
+        [
+          "桜木町駅",
+          "place"
+        ],
+        [
+          "ランドマークタワー",
+          "place"
+        ],
+        [
+          "よこはまコスモワールド",
+          "place"
+        ],
+        [
+          "野毛",
+          "place"
+        ],
+        [
+          "飲み屋街",
+          "target"
+        ],
+        [
+          "神奈川県立音楽堂",
+          "place"
+        ]
+      ],
+      "findings": []
+    },
+    {
+      "id": "rinkosen",
+      "name": "山下臨港線プロムナード",
+      "spatial_type": "Route",
+      "note": "#61 のシナリオで派生の候補になった話題",
+      "subjects": [
+        [
+          "線路跡",
+          "target"
+        ],
+        [
+          "貨物線",
+          "target"
+        ],
+        [
+          "鉄道遺構",
+          "viewpoint"
+        ],
+        [
+          "横浜博覧会",
+          "event"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "もともと貨物線（山下臨港線）の跡"
+        ],
+        [
+          "theory",
+          "横浜博覧会のときに旅客列車が走った"
+        ]
+      ]
+    },
+    {
+      "id": "hikawamaru",
+      "name": "氷川丸",
+      "spatial_type": "Point",
+      "note": "#61 のシナリオの既存のDiscovery E1",
+      "subjects": [
+        [
+          "氷川丸",
+          "place"
+        ],
+        [
+          "船",
+          "target"
+        ],
+        [
+          "景色",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "夕方のライトアップがきれい"
+        ]
+      ]
+    },
+    {
+      "id": "akaikutsu",
+      "name": "赤い靴はいてた女の子像",
+      "spatial_type": "Point",
+      "note": "#61 のシナリオの既存のDiscovery E2",
+      "subjects": [
+        [
+          "赤い靴はいてた女の子像",
+          "target"
+        ],
+        [
+          "童謡",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "童謡「赤い靴」にちなんだ像"
+        ]
+      ]
+    },
+    {
+      "id": "kishamichi",
+      "name": "汽車道",
+      "spatial_type": "Route",
+      "note": "#61 のシナリオの既存のDiscovery E3",
+      "subjects": [
+        [
+          "汽車道",
+          "place"
+        ],
+        [
+          "線路跡",
+          "target"
+        ],
+        [
+          "散歩",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "臨港線の別の区間の跡を遊歩道にした"
+        ]
+      ]
+    },
+    {
+      "id": "abt_road",
+      "name": "アプトの道",
+      "spatial_type": "Route",
+      "note": "場所は離れているが意味でつながる例（群馬県安中市。旧信越本線の廃線跡の遊歩道）",
+      "subjects": [
+        [
+          "廃線跡",
+          "target"
+        ],
+        [
+          "遊歩道",
+          "target"
+        ],
+        [
+          "鉄道遺構",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "廃線跡を歩いてトンネルやれんが橋を見られる"
+        ]
+      ]
+    },
+    {
+      "id": "sankeien",
+      "name": "三溪園",
+      "spatial_type": "Area",
+      "note": "紛れ込み用（横浜の庭園）",
+      "subjects": [
+        [
+          "日本庭園",
+          "target"
+        ],
+        [
+          "古建築",
+          "target"
+        ],
+        [
+          "三重塔",
+          "target"
+        ],
+        [
+          "季節の花",
+          "viewpoint"
+        ],
+        [
+          "歴史",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "池の向こうに三重塔が見える景色がよい"
+        ],
+        [
+          "theory",
+          "各地から移築された古い建物が点在している"
+        ]
+      ]
+    },
+    {
+      "id": "nogeyama_zoo",
+      "name": "野毛山動物園",
+      "spatial_type": "Area",
+      "note": "紛れ込み用",
+      "subjects": [
+        [
+          "動物園",
+          "target"
+        ],
+        [
+          "無料",
+          "viewpoint"
+        ],
+        [
+          "家族",
+          "viewpoint"
+        ],
+        [
+          "野毛",
+          "place"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "入園無料で気軽に行ける"
+        ]
+      ]
+    },
+    {
+      "id": "osanbashi",
+      "name": "大さん橋",
+      "spatial_type": "Point",
+      "note": "紛れ込み用（港の景色）",
+      "subjects": [
+        [
+          "客船ターミナル",
+          "target"
+        ],
+        [
+          "屋上広場",
+          "target"
+        ],
+        [
+          "夜景",
+          "viewpoint"
+        ],
+        [
+          "景色",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "屋上からみなとみらいの夜景が見える"
+        ]
+      ]
+    },
+    {
+      "id": "zounohana",
+      "name": "象の鼻パーク",
+      "spatial_type": "Area",
+      "note": "紛れ込み用（開港の歴史）",
+      "subjects": [
+        [
+          "開港の地",
+          "target"
+        ],
+        [
+          "波止場",
+          "target"
+        ],
+        [
+          "歴史",
+          "viewpoint"
+        ],
+        [
+          "散歩",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "横浜港の始まりの場所とされる"
+        ]
+      ]
+    },
+    {
+      "id": "chinatown",
+      "name": "横浜中華街",
+      "spatial_type": "Area",
+      "note": "紛れ込み用（食）",
+      "subjects": [
+        [
+          "中華料理",
+          "target"
+        ],
+        [
+          "食べ歩き",
+          "viewpoint"
+        ],
+        [
+          "関帝廟",
+          "place"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "食べ歩きが楽しい"
+        ]
+      ]
+    },
+    {
+      "id": "minatonomieruoka",
+      "name": "港の見える丘公園",
+      "spatial_type": "Area",
+      "note": "紛れ込み用（高台の景色）",
+      "subjects": [
+        [
+          "展望",
+          "viewpoint"
+        ],
+        [
+          "バラ園",
+          "target"
+        ],
+        [
+          "洋館",
+          "target"
+        ],
+        [
+          "港",
+          "place"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "高台から港が見渡せる"
+        ],
+        [
+          "value",
+          "春と秋にバラが見ごろ"
+        ]
+      ]
+    },
+    {
+      "id": "fukagawameshi",
+      "name": "深川めし",
+      "spatial_type": "Area",
+      "note": "場所の離れた貝の郷土料理（東京）",
+      "subjects": [
+        [
+          "アサリ",
+          "target"
+        ],
+        [
+          "炊き込みご飯",
+          "target"
+        ],
+        [
+          "郷土料理",
+          "viewpoint"
+        ],
+        [
+          "漁師町",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "漁師町の食事から生まれたとされる"
+        ]
+      ]
+    },
+    {
+      "id": "odawara_castle",
+      "name": "小田原城",
+      "spatial_type": "Point",
+      "note": "場所の離れた城（小机城址と比べる）",
+      "subjects": [
+        [
+          "城",
+          "target"
+        ],
+        [
+          "天守閣",
+          "target"
+        ],
+        [
+          "戦国時代",
+          "viewpoint"
+        ],
+        [
+          "地域史",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "戦国時代に北条氏の拠点だった"
+        ]
+      ]
+    },
+    {
+      "id": "kamakura_daibutsu",
+      "name": "鎌倉大仏",
+      "spatial_type": "Point",
+      "note": "紛れ込み用（鎌倉の史跡）",
+      "subjects": [
+        [
+          "大仏",
+          "target"
+        ],
+        [
+          "寺",
+          "target"
+        ],
+        [
+          "鎌倉時代",
+          "viewpoint"
+        ],
+        [
+          "観光",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "屋外に座る大きな仏像を間近で見られる"
+        ]
+      ]
+    },
+    {
+      "id": "enoden",
+      "name": "江ノ電",
+      "spatial_type": "Route",
+      "note": "紛れ込み用（鉄道・海沿い）",
+      "subjects": [
+        [
+          "路面電車",
+          "target"
+        ],
+        [
+          "鉄道",
+          "target"
+        ],
+        [
+          "海沿い",
+          "viewpoint"
+        ],
+        [
+          "車窓",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "value",
+          "海沿いを走る車窓の景色がよい"
+        ]
+      ]
+    },
+    {
+      "id": "hodogaya",
+      "name": "旧東海道 保土ケ谷宿",
+      "spatial_type": "Route",
+      "note": "場所の離れた歩ける道（歴史）",
+      "subjects": [
+        [
+          "旧街道",
+          "target"
+        ],
+        [
+          "宿場町",
+          "target"
+        ],
+        [
+          "江戸時代",
+          "viewpoint"
+        ],
+        [
+          "散歩",
+          "viewpoint"
+        ]
+      ],
+      "findings": [
+        [
+          "theory",
+          "東海道の宿場町だった"
+        ]
+      ]
+    }
+  ],
+  "queries": [
+    {
+      "id": "q1_aoyagi",
+      "text": "青柳",
+      "type": "text",
+      "note": "完全一致ではバカガイが出ない。ベクトルで出るか",
+      "judgments": {
+        "namamugi": 3,
+        "bakagai": 2,
+        "kozukue": 0,
+        "fukagawameshi": 1
+      },
+      "category": "別名・言い換え"
+    },
+    {
+      "id": "q2_from_namamugi",
+      "type": "discovery",
+      "source": "namamugi",
+      "note": "生麦の食文化に関連するDiscovery。小机城址が上位に来ないか",
+      "judgments": {
+        "bakagai": 3,
+        "kozukue": 0,
+        "rinkosen": 0,
+        "fukagawameshi": 3
+      },
+      "category": "Discovery起点"
+    },
+    {
+      "id": "q3_p21",
+      "text": "桜木町から山下公園まで歩くなら、どのルートがおすすめですか？",
+      "type": "text",
+      "note": "#61 シナリオの P21（F03：似たDiscoveryの案内）",
+      "judgments": {
+        "walk_route": 3,
+        "kishamichi": 2,
+        "rinkosen": 2,
+        "yamashita_area": 1,
+        "sakuragicho_area": 1,
+        "zounohana": 1
+      },
+      "category": "自由文"
+    },
+    {
+      "id": "q4_freight",
+      "text": "昔の貨物線の跡を歩ける場所ってある？",
+      "type": "text",
+      "note": "地名を含まない自由文。場所を越えた意味のつながり（アプトの道）も出るか",
+      "judgments": {
+        "rinkosen": 3,
+        "kishamichi": 3,
+        "abt_road": 2,
+        "walk_route": 1
+      },
+      "category": "場所を越えた意味"
+    },
+    {
+      "id": "q5_view",
+      "text": "夕方に船がきれいに見える場所",
+      "type": "text",
+      "note": "言い換え（船→氷川丸、夕方→ライトアップ）",
+      "judgments": {
+        "hikawamaru": 3,
+        "yamashita_area": 1,
+        "osanbashi": 2,
+        "minatonomieruoka": 1
+      },
+      "category": "別名・言い換え"
+    },
+    {
+      "id": "q6_akaikutsu",
+      "text": "山下公園って、赤い靴に関連する何かなかったっけ？",
+      "type": "text",
+      "note": "#61 シナリオの P12",
+      "judgments": {
+        "akaikutsu": 3,
+        "yamashita_area": 1
+      },
+      "category": "名前の一部"
+    },
+    {
+      "id": "q7_osanbashi",
+      "category": "名前",
+      "type": "text",
+      "text": "大さん橋",
+      "note": "施設名そのもの",
+      "judgments": {
+        "osanbashi": 3,
+        "yamashita_area": 1
+      }
+    },
+    {
+      "id": "q8_aoyagi_kana",
+      "category": "別名・言い換え",
+      "type": "text",
+      "text": "アオヤギってどこかで食べられる？",
+      "note": "カタカナの別名",
+      "judgments": {
+        "namamugi": 3,
+        "bakagai": 2,
+        "fukagawameshi": 1
+      }
+    },
+    {
+      "id": "q9_asari",
+      "category": "別名・言い換え",
+      "type": "text",
+      "text": "あさりの炊き込みご飯",
+      "note": "料理の言い換え（あさり＝アサリ、炊き込みご飯）",
+      "judgments": {
+        "fukagawameshi": 3,
+        "bakagai": 1,
+        "namamugi": 1
+      }
+    },
+    {
+      "id": "q10_enoden",
+      "category": "自由文",
+      "type": "text",
+      "text": "海沿いを走る電車に乗りたい",
+      "note": "名前を言わずに江ノ電",
+      "judgments": {
+        "enoden": 3
+      }
+    },
+    {
+      "id": "q11_night",
+      "category": "自由文",
+      "type": "text",
+      "text": "夜景がきれいに見えるところ",
+      "note": "夜景",
+      "judgments": {
+        "osanbashi": 3,
+        "minatonomieruoka": 2,
+        "hikawamaru": 1
+      }
+    },
+    {
+      "id": "q12_highland",
+      "category": "自由文",
+      "type": "text",
+      "text": "港を見下ろせる高台",
+      "note": "高台",
+      "judgments": {
+        "minatonomieruoka": 3,
+        "osanbashi": 1
+      }
+    },
+    {
+      "id": "q13_free_family",
+      "category": "自由文",
+      "type": "text",
+      "text": "子どもと一緒に無料で楽しめる場所",
+      "note": "無料・家族",
+      "judgments": {
+        "nogeyama_zoo": 3
+      }
+    },
+    {
+      "id": "q14_chinese",
+      "category": "自由文",
+      "type": "text",
+      "text": "中華料理の食べ歩き",
+      "note": "食べ歩き",
+      "judgments": {
+        "chinatown": 3,
+        "yamashita_area": 1
+      }
+    },
+    {
+      "id": "q15_sengoku",
+      "category": "場所を越えた意味",
+      "type": "text",
+      "text": "戦国時代の城跡を見に行きたい",
+      "note": "戦国時代の城（小田原城と小机城址）",
+      "judgments": {
+        "odawara_castle": 3,
+        "kozukue": 2
+      }
+    },
+    {
+      "id": "q16_shukuba",
+      "category": "場所を越えた意味",
+      "type": "text",
+      "text": "昔の宿場町の面影が残る道を歩きたい",
+      "note": "宿場町の道",
+      "judgments": {
+        "hodogaya": 3
+      }
+    },
+    {
+      "id": "q17_fishing_food",
+      "category": "場所を越えた意味",
+      "type": "text",
+      "text": "漁師町の郷土料理",
+      "note": "漁師町の郷土料理（生麦・深川・バカガイ）",
+      "judgments": {
+        "namamugi": 3,
+        "fukagawameshi": 3,
+        "bakagai": 2
+      }
+    },
+    {
+      "id": "q18_rinkosen",
+      "category": "名前の一部",
+      "type": "text",
+      "text": "臨港線",
+      "note": "臨港線（名前の一部）",
+      "judgments": {
+        "rinkosen": 3,
+        "kishamichi": 2
+      }
+    },
+    {
+      "id": "q19_kaiko",
+      "category": "自由文",
+      "type": "text",
+      "text": "横浜が開港した場所",
+      "note": "開港の場所",
+      "judgments": {
+        "zounohana": 3,
+        "yamashita_area": 1
+      }
+    },
+    {
+      "id": "q20_garden",
+      "category": "自由文",
+      "type": "text",
+      "text": "日本庭園で古い建物を見たい",
+      "note": "日本庭園",
+      "judgments": {
+        "sankeien": 3
+      }
+    },
+    {
+      "id": "q21_rose",
+      "category": "自由文",
+      "type": "text",
+      "text": "バラがきれいな公園",
+      "note": "バラ",
+      "judgments": {
+        "minatonomieruoka": 3,
+        "yamashita_area": 1
+      }
+    },
+    {
+      "id": "q22_from_rinkosen",
+      "category": "Discovery起点",
+      "type": "discovery",
+      "source": "rinkosen",
+      "note": "線路跡・遊歩道のつながり",
+      "judgments": {
+        "kishamichi": 3,
+        "abt_road": 2,
+        "walk_route": 2,
+        "enoden": 1
+      }
+    },
+    {
+      "id": "q23_from_kozukue",
+      "category": "Discovery起点",
+      "type": "discovery",
+      "source": "kozukue",
+      "note": "城跡のつながり",
+      "judgments": {
+        "odawara_castle": 3,
+        "kamakura_daibutsu": 1,
+        "hodogaya": 1
+      }
+    },
+    {
+      "id": "q24_from_fukagawa",
+      "category": "Discovery起点",
+      "type": "discovery",
+      "source": "fukagawameshi",
+      "note": "貝の郷土料理のつながり",
+      "judgments": {
+        "namamugi": 3,
+        "bakagai": 3
+      }
+    },
+    {
+      "id": "q25_from_hikawamaru",
+      "category": "Discovery起点",
+      "type": "discovery",
+      "source": "hikawamaru",
+      "note": "港の景色のつながり",
+      "judgments": {
+        "osanbashi": 2,
+        "yamashita_area": 2,
+        "akaikutsu": 1
+      }
+    },
+    {
+      "id": "q26_daibutsu",
+      "category": "名前",
+      "type": "text",
+      "text": "大仏を見に行きたい",
+      "note": "大仏",
+      "judgments": {
+        "kamakura_daibutsu": 3
+      }
+    },
+    {
+      "id": "q27_akarenga_kanji",
+      "category": "別名・言い換え",
+      "type": "text",
+      "text": "赤煉瓦の倉庫",
+      "note": "表記の違い（赤煉瓦）",
+      "judgments": {
+        "walk_route": 2
+      }
+    },
+    {
+      "id": "q28_railtrail",
+      "category": "場所を越えた意味",
+      "type": "text",
+      "text": "線路の跡が遊歩道になっているところ",
+      "note": "線路跡の遊歩道（横浜と群馬）",
+      "judgments": {
+        "kishamichi": 3,
+        "rinkosen": 3,
+        "abt_road": 3,
+        "walk_route": 1
+      }
+    },
+    {
+      "id": "q29_nomi",
+      "category": "自由文",
+      "type": "text",
+      "text": "ランドマークタワーの近くで飲める店",
+      "note": "ランドマークタワー近くの飲み屋",
+      "judgments": {
+        "sakuragicho_area": 3,
+        "walk_route": 1
+      }
+    },
+    {
+      "id": "q30_from_chinatown",
+      "category": "Discovery起点",
+      "type": "discovery",
+      "source": "chinatown",
+      "note": "隣り合うエリア",
+      "judgments": {
+        "yamashita_area": 2,
+        "motomachi": 2
+      }
+    }
+  ]
+}
