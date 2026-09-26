@@ -43,6 +43,12 @@ def separation(ranked, judgments):
     return min(pos) - max(neg)
 
 
+def expected_topics(q):
+    """expect_topic は1つ（文字列）か、どれでも正解（リスト）"""
+    e = q.get("expect_topic")
+    return [e] if isinstance(e, str) else list(e or [])
+
+
 def evaluate(cur, emb, data):
     rows = {}
     topic_hits = {}  # (問い, variant) -> (1位の話題ID, 期待した話題の順位 or None)
@@ -54,7 +60,8 @@ def evaluate(cur, emb, data):
             if q.get("expect_topic"):
                 for variant, trows in results.get("_topics", {}).items():
                     ids = [t for t, _, _ in trows]
-                    rank = ids.index(q["expect_topic"]) + 1 if q["expect_topic"] in ids else None
+                    ranks = [ids.index(e) + 1 for e in expected_topics(q) if e in ids]
+                    rank = min(ranks) if ranks else None
                     topic_hits[(q["id"], variant)] = (ids[0] if ids else None, rank)
         else:
             results, _ = search_discovery(cur, emb.model_name, q["source"], limit=100)
@@ -107,18 +114,18 @@ def main():
 
     tq = [q for q in data["queries"] if q.get("expect_topic")]
     if tq:
-        print(f"\n■ 話題の当たり（期待した話題が何位か。上位3件に無ければ -）")
+        print(f"\n■ 話題の当たり（期待した話題が何位か。上位3件に無ければ -。期待が複数ならどれか）")
         for variant in ("about", "about_findings"):
             print(f"  [{variant}]")
-            print(f"  {'問い':<24}{'期待':<10}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
+            print(f"  {'問い':<24}{'期待':<24}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
             for q in tq:
                 cells = []
                 for n in models:
                     top, rank = per_topic[n].get((q["id"], variant), (None, None))
                     cells.append(f"{(str(rank) if rank else '-') + '位' + ('' if rank == 1 else f'（1位 {top}）'):>20}")
-                print(f"  {q['id']:<24}{q['expect_topic']:<10}" + "".join(cells))
+                print(f"  {q['id']:<24}{'/'.join(expected_topics(q)):<24}" + "".join(cells))
             hits = [sum(1 for q in tq if per_topic[n].get((q["id"], variant), (None, None))[1] == 1) for n in models]
-            print(f"  {'1位の数':<34}" + "".join(f"{f'{h}/{len(tq)}':>20}" for h in hits))
+            print(f"  {'1位の数':<48}" + "".join(f"{f'{h}/{len(tq)}':>20}" for h in hits))
 
     print(f"\n■ 問いごとの nDCG@{TOP}（disc_full → disc+topic）")
     print(f"{'問い':<20}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
