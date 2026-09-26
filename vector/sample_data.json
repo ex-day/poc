@@ -1039,6 +1039,173 @@
         "yamashita_area": 2,
         "motomachi": 2
       }
+    },
+    {
+      "id": "q31_expo_train",
+      "category": "話題",
+      "type": "text",
+      "text": "横浜博覧会の列車",
+      "note": "散歩ルートの会話の中の博覧会の話題に届くか",
+      "judgments": {
+        "walk_route": 3,
+        "rinkosen": 3
+      },
+      "expect_topic": "walk_T3"
+    },
+    {
+      "id": "q32_freight_history",
+      "category": "話題",
+      "type": "text",
+      "text": "貨物線の跡の歴史",
+      "note": "貨物線の歴史の話題",
+      "judgments": {
+        "rinkosen": 3,
+        "walk_route": 3,
+        "kishamichi": 2
+      },
+      "expect_topic": "walk_T2"
+    },
+    {
+      "id": "q33_view_hikawa",
+      "category": "話題",
+      "type": "text",
+      "text": "山下公園から氷川丸を眺める",
+      "note": "氷川丸の景色の話題（既存のDiscoveryと、会話の中の話題の両方）",
+      "judgments": {
+        "hikawamaru": 3,
+        "walk_route": 2,
+        "yamashita_area": 2
+      },
+      "expect_topic": "walk_T4"
+    },
+    {
+      "id": "q34_akaikutsu_origin",
+      "category": "話題",
+      "type": "text",
+      "text": "赤い靴の像の由来",
+      "note": "赤い靴の像の由来の話題",
+      "judgments": {
+        "akaikutsu": 3,
+        "walk_route": 2
+      },
+      "expect_topic": "walk_T5"
+    },
+    {
+      "id": "q35_walk_feel",
+      "category": "話題",
+      "type": "text",
+      "text": "海沿いを気持ちよく歩ける散歩道",
+      "note": "散歩の歩き心地の話題",
+      "judgments": {
+        "walk_route": 3,
+        "kishamichi": 1,
+        "hodogaya": 1
+      },
+      "expect_topic": "walk_T1"
+    }
+  ],
+  "topics": [
+    {
+      "id": "walk_T1",
+      "discovery_id": "walk_route",
+      "place": "桜木町〜山下公園",
+      "target": "散歩ルート",
+      "viewpoint": "歩き心地",
+      "about": "桜木町〜山下公園の散歩ルートを、歩き心地で話している",
+      "findings": [
+        [
+          "value",
+          "海沿いの散歩が気持ちいい"
+        ],
+        [
+          "theory",
+          "汽車道→赤レンガ→象の鼻→線路跡の高い遊歩道→山下公園の順に歩ける"
+        ],
+        [
+          "value",
+          "線路跡の高い遊歩道を歩ける"
+        ]
+      ]
+    },
+    {
+      "id": "walk_T2",
+      "discovery_id": "walk_route",
+      "place": "山下公園",
+      "target": "貨物線（山下臨港線）の跡",
+      "viewpoint": "歴史",
+      "about": "山下公園の貨物線（山下臨港線）の跡を、歴史で話している",
+      "findings": [
+        [
+          "theory",
+          "線路跡はもともと貨物線だった"
+        ],
+        [
+          "theory",
+          "貨物線は山下埠頭の方まで延びていた"
+        ],
+        [
+          "theory",
+          "山下公園の中を高架で通っていたが撤去された"
+        ],
+        [
+          "theory",
+          "汽車道は臨港線の別の区間の跡"
+        ]
+      ]
+    },
+    {
+      "id": "walk_T3",
+      "discovery_id": "walk_route",
+      "place": "山下公園",
+      "target": "横浜博覧会の臨時列車",
+      "viewpoint": "思い出",
+      "about": "横浜博覧会の臨時列車を、思い出で話している",
+      "findings": [
+        [
+          "theory",
+          "横浜博覧会（1989年）のとき、線路跡に旅客列車が走り、山下公園に臨時の駅があった"
+        ],
+        [
+          "theory",
+          "列車の名前は汐風号・浜風号だったという記憶（うろ覚え）"
+        ]
+      ]
+    },
+    {
+      "id": "walk_T4",
+      "discovery_id": "walk_route",
+      "place": "山下公園",
+      "target": "氷川丸",
+      "viewpoint": "景色",
+      "about": "山下公園から見る氷川丸を、景色で話している",
+      "findings": [
+        [
+          "value",
+          "高架がなくなって氷川丸がよく見える"
+        ],
+        [
+          "value",
+          "夕方のライトアップがきれい"
+        ]
+      ]
+    },
+    {
+      "id": "walk_T5",
+      "discovery_id": "walk_route",
+      "place": "山下公園",
+      "target": "赤い靴はいてた女の子像",
+      "viewpoint": "由来",
+      "about": "山下公園の赤い靴はいてた女の子像を、由来で話している",
+      "findings": [
+        [
+          "theory",
+          "童謡「赤い靴」にちなんだ像"
+        ],
+        [
+          "theory",
+          "海の方を向いている"
+        ]
+      ]
     }
   ]
 }

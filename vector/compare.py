@@ -45,18 +45,24 @@ def separation(ranked, judgments):
 
 def evaluate(cur, emb, data):
     rows = {}
+    topic_hits = {}  # (問い, variant) -> (1位の話題ID, 期待した話題の順位 or None)
     times = []
     for q in data["queries"]:
         t0 = time.time()
         if q["type"] == "text":
             results, _ = search_text(cur, emb, q["text"], limit=100)
+            if q.get("expect_topic"):
+                for variant, trows in results.get("_topics", {}).items():
+                    ids = [t for t, _, _ in trows]
+                    rank = ids.index(q["expect_topic"]) + 1 if q["expect_topic"] in ids else None
+                    topic_hits[(q["id"], variant)] = (ids[0] if ids else None, rank)
         else:
             results, _ = search_discovery(cur, emb.model_name, q["source"], limit=100)
         times.append(time.time() - t0)
         for m in METHODS:
             ranked = [(d, s) for d, s in results.get(m, []) if s > 1e-6]
             rows[(q["id"], m)] = (ndcg([d for d, _ in ranked], q["judgments"]), separation(ranked, q["judgments"]))
-    return rows, sum(times) / len(times)
+    return rows, topic_hits, sum(times) / len(times)
 
 
 def main():
@@ -66,11 +72,13 @@ def main():
     cur = conn.cursor()
     summary = []
     per_query = {}
+    per_topic = {}
     for name in models:
         print(f"… {name}（{MODELS.get(name, {}).get('note', '')}）の準備中", flush=True)
         emb, load_sec = load.main(name, quiet=True)
-        rows, avg_sec = evaluate(cur, emb, data)
+        rows, topic_hits, avg_sec = evaluate(cur, emb, data)
         per_query[name] = rows
+        per_topic[name] = topic_hits
         for m in VECTOR_METHODS:
             nd = [rows[(q["id"], m)][0] for q in data["queries"]]
             sp = [rows[(q["id"], m)][1] for q in data["queries"] if rows[(q["id"], m)][1] is not None]
@@ -89,17 +97,37 @@ def main():
         c = q.get("category", "その他")
         if c not in cats:
             cats.append(c)
-    print(f"\n■ 問いの種類ごとの nDCG@{TOP}（方式：disc_full。（ ）内は問いの数）")
-    print(f"{'種類':<16}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
-    for c in cats:
-        qs = [q for q in data["queries"] if q.get("category", "その他") == c]
-        vals = [sum(per_query[n][(q["id"], "disc_full")][0] for q in qs) / len(qs) for n in models]
-        print(f"{c + '（' + str(len(qs)) + '）':<16}" + "".join(f"{v:>20.2f}" for v in vals))
+    for method in ("disc_full", "disc_topics", "disc+topic"):
+        print(f"\n■ 問いの種類ごとの nDCG@{TOP}（方式：{method}。（ ）内は問いの数）")
+        print(f"{'種類':<16}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
+        for c in cats:
+            qs = [q for q in data["queries"] if q.get("category", "その他") == c]
+            vals = [sum(per_query[n][(q["id"], method)][0] for q in qs) / len(qs) for n in models]
+            print(f"{c + '（' + str(len(qs)) + '）':<16}" + "".join(f"{v:>20.2f}" for v in vals))
 
-    print(f"\n■ 問いごとの nDCG@{TOP}（方式：disc_full）")
+    tq = [q for q in data["queries"] if q.get("expect_topic")]
+    if tq:
+        print(f"\n■ 話題の当たり（期待した話題が何位か。上位3件に無ければ -）")
+        for variant in ("about", "about_findings"):
+            print(f"  [{variant}]")
+            print(f"  {'問い':<24}{'期待':<10}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
+            for q in tq:
+                cells = []
+                for n in models:
+                    top, rank = per_topic[n].get((q["id"], variant), (None, None))
+                    cells.append(f"{(str(rank) if rank else '-') + '位' + ('' if rank == 1 else f'（1位 {top}）'):>20}")
+                print(f"  {q['id']:<24}{q['expect_topic']:<10}" + "".join(cells))
+            hits = [sum(1 for q in tq if per_topic[n].get((q["id"], variant), (None, None))[1] == 1) for n in models]
+            print(f"  {'1位の数':<34}" + "".join(f"{f'{h}/{len(tq)}':>20}" for h in hits))
+
+    print(f"\n■ 問いごとの nDCG@{TOP}（disc_full → disc+topic）")
     print(f"{'問い':<20}" + "".join(f"{n.split('/')[-1][:18]:>20}" for n in models))
     for q in data["queries"]:
-        print(f"{q['id']:<20}" + "".join(f"{per_query[n][(q['id'], 'disc_full')][0]:>20.2f}" for n in models))
+        cells = []
+        for n in models:
+            a, b = per_query[n][(q["id"], "disc_full")][0], per_query[n][(q["id"], "disc+topic")][0]
+            cells.append(f"{f'{a:.2f}→{b:.2f}':>20}")
+        print(f"{q['id']:<20}" + "".join(cells))
 
     print("\n問いごとの上位の並びは、EXDAY_MODEL=<モデル名> python search.py で確認できます。")
 
