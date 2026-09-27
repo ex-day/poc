@@ -10,6 +10,8 @@
   subject_vec      問いとSubjectのベクトルの近さ（Discoveryごとに、いちばん近いSubjectの点数）
   disc_name_subj   問いとDiscoveryのベクトルの近さ（名前＋Subjectをベクトル化したもの）
   disc_full        同上（名前＋Subject＋わかってきたことをベクトル化したもの）
+  disc_topics      同上（disc_full に、話題ごとの「何について」の1行と話題でわかってきたことを足したもの）
+  disc+topic       Discovery全体（disc_full）と、そのDiscoveryの話題（1行＋わかってきたこと）の、近いほうの点数
 """
 import json
 import math
@@ -21,7 +23,7 @@ from common import Embedder, connect, normalize
 
 HERE = Path(__file__).parent
 TOP = 5
-METHODS = ["exact", "subject_vec", "disc_name_subj", "disc_full"]
+METHODS = ["exact", "subject_vec", "disc_name_subj", "disc_full", "disc_topics", "disc+topic"]
 
 
 def search_text(cur, emb, text, limit=TOP):
@@ -45,13 +47,35 @@ def search_text(cur, emb, text, limit=TOP):
         (q, emb.model_name, limit),
     )
     results["subject_vec"] = cur.fetchall()
-    for method, variant in (("disc_name_subj", "name_subjects"), ("disc_full", "full")):
+    for method, variant in (("disc_name_subj", "name_subjects"), ("disc_full", "full"), ("disc_topics", "topics")):
         cur.execute(
             """SELECT discovery_id, 1 - (embedding <=> %s) AS score FROM poc.discovery_embedding
                WHERE model = %s AND variant = %s ORDER BY embedding <=> %s LIMIT %s""",
             (q, emb.model_name, variant, q, limit),
         )
         results[method] = cur.fetchall()
+    # Discovery全体と話題の、近いほうの点数
+    cur.execute(
+        """SELECT discovery_id, max(s) AS score FROM (
+             SELECT discovery_id, 1 - (embedding <=> %(q)s) AS s FROM poc.discovery_embedding
+               WHERE model = %(m)s AND variant = 'full'
+             UNION ALL
+             SELECT tp.discovery_id, 1 - (te.embedding <=> %(q)s) AS s FROM poc.topic_embedding te
+               JOIN poc.topic tp ON tp.id = te.topic_id WHERE te.model = %(m)s AND te.variant = 'about_findings'
+           ) x GROUP BY discovery_id ORDER BY score DESC LIMIT %(n)s""",
+        {"q": q, "m": emb.model_name, "n": limit},
+    )
+    results["disc+topic"] = cur.fetchall()
+    # 話題の順位（表示と、期待した話題が1位かの確認用）
+    results["_topics"] = {}
+    for variant in ("about", "about_findings"):
+        cur.execute(
+            """SELECT te.topic_id, tp.about, 1 - (te.embedding <=> %s) AS score FROM poc.topic_embedding te
+               JOIN poc.topic tp ON tp.id = te.topic_id WHERE te.model = %s AND te.variant = %s
+               ORDER BY te.embedding <=> %s LIMIT 3""",
+            (q, emb.model_name, variant, q),
+        )
+        results["_topics"][variant] = cur.fetchall()
     return results, time.time() - t0
 
 
@@ -82,7 +106,7 @@ def search_discovery(cur, model, source, limit=TOP):
         {"m": model, "s": source, "n": limit},
     )
     results["subject_vec"] = cur.fetchall()
-    for method, variant in (("disc_name_subj", "name_subjects"), ("disc_full", "full")):
+    for method, variant in (("disc_name_subj", "name_subjects"), ("disc_full", "full"), ("disc_topics", "topics")):
         cur.execute(
             """SELECT d.discovery_id, 1 - (d.embedding <=> s.embedding) AS score
                FROM poc.discovery_embedding d JOIN poc.discovery_embedding s
@@ -92,6 +116,7 @@ def search_discovery(cur, model, source, limit=TOP):
             (source, model, variant, limit),
         )
         results[method] = cur.fetchall()
+    results["disc+topic"] = results["disc_topics"]  # Discovery起点では話題単位の比較はしない（disc_topics と同じ）
     return results, time.time() - t0
 
 
@@ -112,6 +137,9 @@ def print_results(results, names, judgments=None):
         line = " / ".join(items) if items else "（該当なし）"
         extra = f"  nDCG@{TOP}={ndcg([d for d, _ in rows], judgments):.2f}" if judgments else ""
         print(f"  {m:<15}{extra}\n      {line}")
+    for variant, rows in results.get("_topics", {}).items():
+        line = " / ".join(f"{about}（{score:.2f}）" for _, about, score in rows)
+        print(f"  話題[{variant}]\n      {line}")
 
 
 def main():

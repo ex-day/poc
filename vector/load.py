@@ -16,13 +16,23 @@ from common import Embedder, connect, content_hash, normalize
 HERE = Path(__file__).parent
 
 
-def discovery_texts(d):
-    """Discoveryをベクトル化する文章を2通り作る（何をベクトル化すると精度が上がるかを比べるため）。"""
+def discovery_texts(d, topics=()):
+    """Discoveryをベクトル化する文章を作る（何をベクトル化すると精度が上がるかを比べるため）。
+    name_subjects：名前＋対象＋観点
+    full         ：上に、わかってきたことを足す
+    topics       ：上に、話題ごとの「何について」の1行と、話題でわかってきたことを足す（話題がなければ full と同じ）
+    """
     targets = [s for s, k in d["subjects"] if k in ("target", "place", "event")]
     viewpoints = [s for s, k in d["subjects"] if k == "viewpoint"]
     base = f"{d['name']}。対象：{'、'.join(targets)}。観点：{'、'.join(viewpoints)}。"
     full = base + "".join(f"{t}。" for _, t in d["findings"])
-    return {"name_subjects": base, "full": full}
+    with_topics = full + "".join(f"{t['about']}。" + "".join(f"{x}。" for _, x in t["findings"]) for t in topics)
+    return {"name_subjects": base, "full": full, "topics": with_topics}
+
+
+def topic_texts(t):
+    """話題をベクトル化する文章。about：何についての1行だけ、about_findings：1行＋わかってきたこと。"""
+    return {"about": t["about"], "about_findings": t["about"] + "。" + "".join(f"{x}。" for _, x in t["findings"])}
 
 
 def main(model_name=None, quiet=False):
@@ -31,7 +41,7 @@ def main(model_name=None, quiet=False):
     cur = conn.cursor()
 
     # データの入れ直し（埋め込みは model ごとに残す）
-    cur.execute("DELETE FROM poc.discovery_subject; DELETE FROM poc.discovery_finding;")
+    cur.execute("DELETE FROM poc.discovery_subject; DELETE FROM poc.discovery_finding; DELETE FROM poc.topic_finding;")
     for d in data["discoveries"]:
         cur.execute(
             """INSERT INTO poc.discovery (id, name, spatial_type, note) VALUES (%s,%s,%s,%s)
@@ -55,6 +65,17 @@ def main(model_name=None, quiet=False):
                 "INSERT INTO poc.discovery_finding (discovery_id, kind, text) VALUES (%s,%s,%s)",
                 (d["id"], kind, text),
             )
+
+    topics = data.get("topics", [])
+    for t in topics:
+        cur.execute(
+            """INSERT INTO poc.topic (id, discovery_id, place, target, viewpoint, about) VALUES (%s,%s,%s,%s,%s,%s)
+               ON CONFLICT (id) DO UPDATE SET discovery_id=EXCLUDED.discovery_id, place=EXCLUDED.place,
+               target=EXCLUDED.target, viewpoint=EXCLUDED.viewpoint, about=EXCLUDED.about""",
+            (t["id"], t["discovery_id"], t["place"], t["target"], t["viewpoint"], t["about"]),
+        )
+        for kind, text in t["findings"]:
+            cur.execute("INSERT INTO poc.topic_finding (topic_id, kind, text) VALUES (%s,%s,%s)", (t["id"], kind, text))
 
     t0 = time.time()
     emb = Embedder(model_name)
@@ -80,10 +101,11 @@ def main(model_name=None, quiet=False):
             )
     log(f"Subject：{len(subjects)} 件（作り直し {len(todo)} 件、{time.time() - t0:.2f} 秒）")
 
-    # Discoveryの埋め込み（2通りの文章）
+    # Discoveryの埋め込み（3通りの文章）
     rows = []
     for d in data["discoveries"]:
-        for variant, text in discovery_texts(d).items():
+        own = [t for t in topics if t["discovery_id"] == d["id"]]
+        for variant, text in discovery_texts(d, own).items():
             rows.append((d["id"], variant, text))
     cur.execute("SELECT discovery_id, variant, content_hash FROM poc.discovery_embedding WHERE model=%s", (emb.model_name,))
     have = {(a, b): c for a, b, c in cur.fetchall()}
@@ -99,6 +121,21 @@ def main(model_name=None, quiet=False):
                 (did, emb.model_name, variant, text, content_hash(text), v),
             )
     log(f"Discovery：{len(rows)} 件（作り直し {len(todo)} 件、{time.time() - t0:.2f} 秒）")
+    # 話題の埋め込み（2通りの文章）
+    rows = [(t["id"], variant, text) for t in topics for variant, text in topic_texts(t).items()]
+    cur.execute("SELECT topic_id, variant, content_hash FROM poc.topic_embedding WHERE model=%s", (emb.model_name,))
+    have = {(a, b): c for a, b, c in cur.fetchall()}
+    todo = [r for r in rows if have.get((r[0], r[1])) != content_hash(r[2])]
+    if todo:
+        vecs = emb.passage([t for _, _, t in todo])
+        for (tid, variant, text), v in zip(todo, vecs):
+            cur.execute(
+                """INSERT INTO poc.topic_embedding VALUES (%s,%s,%s,%s,%s,%s)
+                   ON CONFLICT (topic_id, model, variant) DO UPDATE SET source_text=EXCLUDED.source_text,
+                   content_hash=EXCLUDED.content_hash, embedding=EXCLUDED.embedding""",
+                (tid, emb.model_name, variant, text, content_hash(text), v),
+            )
+    log(f"話題：{len(topics)} 件（作り直し {len(todo)} 件）")
     log("完了。次は python search.py を実行してください。")
     return emb, load_sec
 
