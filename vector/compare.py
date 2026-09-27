@@ -10,6 +10,7 @@
 見る数字：
   nDCG@5   上位5件の並びが正解にどれだけ近いか（1.00が理想）
   分離     正解（関連度2以上）の中でいちばん低い点数 − 不正解（関連度0・正解に無いもの）の中でいちばん高い点数。
+           ※ 問いごとの値。全部の問いに共通の1本の線を引けるかは、別の表「共通の1本の線」で見る。
            プラスなら「どこかにしきい値を引けば正解だけを取り出せる」。マイナスなら点数だけでは分けられない。
            e5 のように点数が0.8前後に固まるモデルでは小さくなりやすい。
 """
@@ -43,6 +44,34 @@ def separation(ranked, judgments):
     return min(pos) - max(neg)
 
 
+def split_scores(ranked, judgments):
+    """正解（2以上）の点数と、不正解（0・未判定）の点数。関連度1はどちらにも入れない"""
+    pos = [s for d, s in ranked if judgments.get(d, 0) >= 2]
+    neg = [s for d, s in ranked if judgments.get(d, 0) == 0]
+    return pos, neg
+
+
+def common_threshold(splits):
+    """全部の問いに共通の1本の線（しきい値）を引いたとき、何問で正解と不正解をきれいに分けられるか。
+    splits：問いごとの (正解の点数, 不正解の点数)。どちらかが空の問いは数えない（分離と同じ）。
+    線 t について「正解はすべて t 以上、不正解はすべて t 未満」なら、その問いはきれいに分けられたとする。
+    いちばん多くの問いを分けられる t と、そのときの問いの数、取りこぼした正解・紛れ込んだ不正解の数を返す。"""
+    splits = [(p, n) for p, n in splits if p and n]
+    if not splits:
+        return None
+    best = None
+    for t in sorted({x for p, _ in splits for x in p}):
+        clean = sum(1 for p, n in splits if min(p) >= t and max(n) < t)
+        missed = sum(1 for p, _ in splits for x in p if x < t)
+        leaked = sum(1 for _, n in splits for x in n if x >= t)
+        key = (clean, -(missed + leaked))
+        if best is None or key > best[0]:
+            best = (key, t, clean, missed, leaked)
+    _, t, clean, missed, leaked = best
+    return {"t": t, "clean": clean, "n": len(splits), "missed": missed, "leaked": leaked,
+            "pos": sum(len(p) for p, _ in splits), "neg": sum(len(n) for _, n in splits)}
+
+
 def expected_topics(q):
     """expect_topic は1つ（文字列）か、どれでも正解（リスト）"""
     e = q.get("expect_topic")
@@ -68,7 +97,8 @@ def evaluate(cur, emb, data):
         times.append(time.time() - t0)
         for m in METHODS:
             ranked = [(d, s) for d, s in results.get(m, []) if s > 1e-6]
-            rows[(q["id"], m)] = (ndcg([d for d, _ in ranked], q["judgments"]), separation(ranked, q["judgments"]))
+            rows[(q["id"], m)] = (ndcg([d for d, _ in ranked], q["judgments"]), separation(ranked, q["judgments"]),
+                                  split_scores(ranked, q["judgments"]))
     return rows, topic_hits, sum(times) / len(times)
 
 
@@ -98,6 +128,20 @@ def main():
     print(f"{'モデル':<32}{'次元':>5}  {'方式':<15}{'nDCG@5':>8}{'分離(平均)':>11}{'分離>0':>8}{'読込(秒)':>9}{'1問(ms)':>9}")
     for name, dim, m, nd, sp, ok, n, load_sec, avg_sec in summary:
         print(f"{name:<32}{dim:>5}  {m:<15}{nd:>8.2f}{sp:>11.3f}{ok:>5}/{n:<2}{load_sec:>9.1f}{avg_sec * 1000:>9.0f}")
+
+    print(f"\n■ 共通の1本の線（しきい値）で分けられるか（方式ごと。関連度1はどちらでもよい）")
+    print("  問いごと：その問いの中でなら線を引ける問い（分離>0）の数")
+    print("  共通の線：全部の問いに同じ1本の線を引いたとき、きれいに分けられた問いの数（いちばん多く分けられる線で）")
+    print(f"{'モデル':<32}{'方式':<15}{'問いごと':>8}{'共通の線':>9}{'線の位置':>9}{'取りこぼした正解':>14}{'紛れ込んだ不正解':>14}")
+    for name in models:
+        for m in VECTOR_METHODS:
+            splits = [per_query[name][(q["id"], m)][2] for q in data["queries"]]
+            per_q = sum(1 for q in data["queries"] if (per_query[name][(q["id"], m)][1] or 0) > 0)
+            r = common_threshold(splits)
+            if r is None:
+                continue
+            print(f"{name:<32}{m:<15}{per_q:>5}/{r['n']:<3}{r['clean']:>6}/{r['n']:<3}{r['t']:>9.3f}"
+                  f"{r['missed']:>9}/{r['pos']:<5}{r['leaked']:>9}/{r['neg']:<5}")
 
     cats = []
     for q in data["queries"]:
