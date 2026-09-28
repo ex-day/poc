@@ -1,22 +1,22 @@
-# pgvector を触ってみる（Issue #1）
+# pgvector を触ってみる（Issue [#1](https://github.com/ex-day/platform/issues/1)）
 
 完全一致（Subjectの名前）とベクトル検索（意味の近さ）を並べて比べるための一式。**費用はかからない**（pgvectorはPostgreSQLの拡張機能、埋め込みは手元で動くモデル）。
 
-- 検証用の物理テーブルであり、本番のドメイン設計には持ち込まない（#1 の注意点）
-- 場所でつながる関連（地理の判定）は #82 で扱う。ここでは意味のつながりを見る
+- 検証用の物理テーブルであり、本番のドメイン設計には持ち込まない（[#1](https://github.com/ex-day/platform/issues/1) の注意点）
+- 場所でつながる関連（地理の判定）は [#82](https://github.com/ex-day/platform/issues/82) で扱う。ここでは意味のつながりを見る
 
 ## 中身
 
 | ファイル | 役割 |
 |---|---|
-| `../../docker/postgres/init/02_schema.sql` | 検証用のテーブル（`poc` スキーマ） |
-| `sample_data.json` | Discovery 12件（#1 の A・B・C、#82 の A〜D、#61 のシナリオの既存のDiscovery、場所の離れた廃線跡）と、正解付きの問い6件 |
+| `../docker/postgres/init/02_schema.sql` | 検証用のテーブル（`poc` スキーマ） |
+| `sample_data.json` | Discovery 12件（[#1](https://github.com/ex-day/platform/issues/1) の A・B・C、[#82](https://github.com/ex-day/platform/issues/82) の A〜D、[#61](https://github.com/ex-day/platform/issues/61) のシナリオの既存のDiscovery、場所の離れた廃線跡）と、正解付きの問い6件 |
 | `common.py` | DB接続と、文章をベクトルにする処理 |
 | `load.py` | データを入れ、埋め込みを作って保存する |
 | `search.py` | 4つの方式で検索し、並べて比べる |
 | `compare.py` | 複数のモデルを同じ問いで比べ、表にまとめる |
-| `../../docker/postgres/init/03_multi_model.sql` | 次元の違うモデルを同じテーブルに入れられるようにする |
-| `../../docker/postgres/init/04_topic.sql` | 話題（会話の集合）単位のテーブル |
+| `../docker/postgres/init/03_multi_model.sql` | 次元の違うモデルを同じテーブルに入れられるようにする |
+| `../docker/postgres/init/04_topic.sql` | 話題（会話の集合）単位のテーブル |
 
 ## 準備
 
@@ -33,7 +33,7 @@ docker compose exec -T db psql -U postgres -d ex_day_poc < docker/postgres/init/
 ### 2. Pythonの環境を作る
 
 ```bash
-cd poc/vector
+cd vector
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -118,7 +118,7 @@ Discovery 23件、正解付きの問い41問（種類：名前、名前の一部
 | q3 P21「桜木町から山下公園まで歩くなら…」 | 似たDiscoveryの案内（F03）。地名が入っていれば完全一致でも拾える |
 | q4「昔の貨物線の跡を歩ける場所ってある？」 | 地名のない自由文。場所の離れたアプトの道（廃線跡）も出るか |
 | q5「夕方に船がきれいに見える場所」 | 言い換え（船→氷川丸、夕方→ライトアップ） |
-| q6「山下公園って、赤い靴に関連する…」 | #61 シナリオの P12 |
+| q6「山下公園って、赤い靴に関連する…」 | [#61](https://github.com/ex-day/platform/issues/61) シナリオの P12 |
 
 ## 参考：比較用の基準（ngram-baseline）での結果
 
@@ -139,7 +139,7 @@ Discovery 23件、正解付きの問い41問（種類：名前、名前の一部
 
 ```bash
 docker compose exec -T db psql -U postgres -d ex_day_poc < docker/postgres/init/04_topic.sql
-cd poc/vector
+cd vector
 python compare.py        # load.py が話題も入れて埋め込みを作る（変わったものだけ作り直す）
 ```
 
@@ -155,4 +155,4 @@ python compare.py        # load.py が話題も入れて埋め込みを作る（
 ## 後で試すこと
 
 - 件数を増やしたときの速さ（架空のDiscoveryを1千・1万・10万件入れて、HNSWインデックスの有無で比べる）
-- 完全一致＋ベクトル＋場所（#82）を組み合わせた並べ方
+- 完全一致＋ベクトル＋場所（[#82](https://github.com/ex-day/platform/issues/82)）を組み合わせた並べ方
