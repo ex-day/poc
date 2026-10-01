@@ -44,28 +44,31 @@ def content_hash(text: str) -> str:
 class Embedder:
     """文章をベクトルにする。次元はモデルごとに違ってよい（テーブルは次元を固定していない）。"""
 
-    def __init__(self, model_name: str = None):
+    def __init__(self, model_name: str = None, device: str = None):
+        """device：cpu / mps / cuda。省略時は sentence-transformers が自動で選ぶ（GPU があれば GPU）"""
         self.model_name = model_name or MODEL
         self.prefix = MODELS.get(self.model_name, {"query": "", "passage": ""})
         if self.model_name == "ngram-baseline":
             self._model = None
             self.dim = NGRAM_DIM
+            self.device = "cpu"
         else:
             from sentence_transformers import SentenceTransformer  # 読み込みに時間がかかるため、使うときだけ読む
 
-            self._model = SentenceTransformer(self.model_name)
+            self._model = SentenceTransformer(self.model_name, device=device)
             self.dim = self._model.get_sentence_embedding_dimension()
+            self.device = str(self._model.device)
 
-    def query(self, texts):
-        return self._encode([self.prefix["query"] + t for t in texts])
+    def query(self, texts, batch_size=32):
+        return self._encode([self.prefix["query"] + t for t in texts], batch_size)
 
-    def passage(self, texts):
-        return self._encode([self.prefix["passage"] + t for t in texts])
+    def passage(self, texts, batch_size=32):
+        return self._encode([self.prefix["passage"] + t for t in texts], batch_size)
 
-    def _encode(self, texts):
+    def _encode(self, texts, batch_size=32):
         if self._model is None:
             return np.array([_ngram_vector(t) for t in texts])
-        return self._model.encode(texts, normalize_embeddings=True)
+        return self._model.encode(texts, normalize_embeddings=True, batch_size=batch_size)
 
 
 def _ngram_vector(text: str) -> np.ndarray:

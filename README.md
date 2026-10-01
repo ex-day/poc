@@ -9,6 +9,7 @@ ex-day は、今いる場所、使える時間、興味をもとに、地域の�
 | フォルダ | 内容 | 検討の issue |
 |---|---|---|
 | [`vector/`](vector/) | pgvector と手元で動く埋め込みモデルで、関連する Discovery を探す。完全一致とベクトル検索、モデル（e5・Ruri v3）、会話の話題単位のベクトルを比べる | [#1](https://github.com/ex-day/poc/issues/1) |
+| [`vector/scale/`](vector/scale/) | 件数を 1千〜100万件に増やしたときのベクトル検索の速さとインデックスの振る舞い（全件比較と HNSW、再現率、絞り込みと iterative scan、部分インデックス） | [#9](https://github.com/ex-day/poc/issues/9) |
 | [`context/`](context/) | 会話の投稿どうしや、返信で積み重なった文脈との近さを埋め込みで比べ、新しい投稿がどの話題の続きかを判定できるかを見る | [#2](https://github.com/ex-day/poc/issues/2) |
 
 今後、地名の辞書と位置の判定（[platform#82](https://github.com/ex-day/platform/issues/82)）の PoC もここに置く予定です。

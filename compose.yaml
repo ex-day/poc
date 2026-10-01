@@ -5,6 +5,9 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: ex_day_poc
+    # HNSW の並列作成は共有メモリ（/dev/shm）を maintenance_work_mem の分だけ使う。
+    # Docker の既定（64MB）では足りないため広げる（Issue #9）
+    shm_size: 1gb
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
