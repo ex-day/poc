@@ -3,3 +3,5 @@ transformers>=4.48
 sentencepiece
 protobuf
 numpy
+fugashi
+unidic-lite

@@ -1,0 +1,15 @@
+{
+ "conversation": "posts",
+ "topics": {
+  "A": "桜木町から山下公園への散歩"
+ },
+ "assign": {
+  "P1": "A",
+  "P2": "OFF",
+  "P3": "OFF",
+  "P4": "OFF",
+  "P5": "A",
+  "P6": "A",
+  "P7": "A"
+ }
+}

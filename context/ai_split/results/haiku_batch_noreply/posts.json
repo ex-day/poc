@@ -1,0 +1,5 @@
+{
+  "conversation": "posts",
+  "topics": {"A": "コース"},
+  "assign": {"P1": "A", "P2": "OFF", "P3": "OFF", "P4": "OFF", "P5": "A", "P6": "A", "P7": "A"}
+}
