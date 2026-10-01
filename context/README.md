@@ -81,6 +81,12 @@ python similarity_demo.py cl-nagoya/ruri-v3-70m intfloat/multilingual-e5-small  
 
 - `conversations/sakuragicho_21.json`：桜木町〜山下公園のシナリオ（21件。#2 の途中経過1で作ったもの）。正解の話題、返信先、投稿日つき。P21 は別の日の新しい話（F03 の対象）なので、振り分けからは外す
 - `posts.json`：PR #3 の7件
+- 会話を増やした分（Claude が書いた架空の会話。場所・歴史は実在。正解の話題は会話を書くときに決めたもので、人がざっと確かめる前提）。会話ごとにねらいを変えた（`_note` に書いた）
+  - `kamakura_40.json`：返信の中で話題が分かれる
+  - `asakusa_36.json`：返信なしの投稿が、4つの話題で並行して進む
+  - `tokyo_station_35.json`：同じ場所の別の話題
+  - `takao_36.json`：短い口語のやり取りと、問いと答え
+  - `jimbocho_35.json`：日をまたいで話題が戻ってくる、2つの話題にまたがる投稿
 
 ```bash
 pip install -r requirements.txt   # fugashi・unidic-lite（名詞の取り出し）を追加した
@@ -88,4 +94,4 @@ python first_pass.py --env "MacBook Pro（M4 Pro）"            # 既定：Ruri 
 EXDAY_MODEL=ngram-baseline python first_pass.py              # 比較用の基準（文字の重なりだけ）
 ```
 
-結果は `results/first_pass_<モデル>.md`。
+結果は `results/first_pass_<モデル>.md`。最初に全会話の合計（投稿数で重み付け）、次に会話ごと（concat・δ は中央の値）、最後に投稿ごとの振り分けを出す。
