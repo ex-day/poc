@@ -21,6 +21,7 @@ CONDITIONS = [  # (ファイル名, 表示名)
     ("judge_haiku_criteria.jsonl", "Haiku・基準あり"),
     ("judge_sonnet_base.jsonl", "Sonnet・基準なし"),
     ("judge_sonnet_criteria.jsonl", "Sonnet・基準あり"),
+    ("judge_sonnet_context.jsonl", "Sonnet・基準あり＋前提"),
 ]
 
 
@@ -60,7 +61,7 @@ def main():
     L = ["# AI の再判定と人の判定の一致（Issue #12）\n"]
     L.append("- 対象：#9 で、紛れ込み1万件のときに上位5件に入った Wikipedia の記事 100件（問い × 記事）")
     L.append("- 人の判定：`../accuracy/results/review_ruri-v3-30m.csv` の「判定（0〜3）」（1人）")
-    L.append("- AI の判定：人の判定を見せないサブエージェントに、問いと記事の題名・冒頭（最大300字）を渡して付けさせた。指示は `prompts/`（基準ありは `base.md` に `criteria.md` を足したもの）")
+    L.append("- AI の判定：人の判定を見せないサブエージェントに、問いと記事の題名・冒頭（最大300字）を渡して付けさせた。指示は `prompts/`（基準ありは `base.md` に `criteria.md` を足したもの。前提ありは、さらに `context.md` のサービスの説明と、問いごとの意図（`results/intents.jsonl`。問いの文章とサービスの説明だけから、別のサブエージェントが書いたもの）を足したもの）")
     L.append("- 比較用に、#9 の Claude の仮判定（題名だけから推測、記事の本文は見ていない）も並べる")
     L.append("- 3区分：0／1／2以上。正反対：一方が2以上、もう一方が0\n")
 
