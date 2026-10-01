@@ -182,7 +182,9 @@ def run_size(n, judged, distractors, qvecs, qsrc, queries, jvecs, dvecs, extra=N
             if len(ids) >= 50:
                 break
         j = {k: v for k, v in q["judgments"].items() if k != src}
-        j.update((extra or {}).get(q["id"], {}))  # 紛れ込みのうち、人（または仮判定）が関連度を付けたもの
+        # 紛れ込みのうち、人（または仮判定）が関連度を付けたもの。その件数のときに混ぜていない記事は数えない
+        # （入れると、件数の少ないときに「見つかるはずのない正解」が再現率・nDCG の分母に入ってしまう）
+        j.update({k: v for k, v in (extra or {}).get(q["id"], {}).items() if k in by_id})
         best_pos = max([sc for d, sc in zip(ids, scores) if j.get(d, 0) >= 2], default=None)
         best_wiki = max([sc for d, sc in zip(ids, scores) if not by_id[d]["judged"] and j.get(d, 0) == 0], default=None)
         per_query.append({"qid": q["id"], "text": q.get("text") or f"（{q['source']} 起点）", "category": q.get("category"),
