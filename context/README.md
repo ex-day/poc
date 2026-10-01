@@ -115,3 +115,7 @@ EXDAY_MODEL=ngram-baseline python first_pass.py              # 比較用の基�
 ```bash
 python first_pass_v2.py --env "MacBook Pro（M4 Pro）"
 ```
+
+### AI にまとめて振り分けさせる
+
+ルールとベクトルでは、話題の切れ目を見分けられなかった。そこで、会話をまとめて AI に渡して振り分けさせる実験をした。[`ai_split/`](ai_split/) を参照。
