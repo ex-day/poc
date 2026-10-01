@@ -7,6 +7,7 @@
 | ファイル | 役割 |
 |---|---|
 | `bench_scale.py` | 件数ごとに、読み込み・全件比較・HNSW の作成と検索・絞り込み（iterative scan、部分インデックス）を測り、`results/` に表（.md）と生データ（.json.gz）を書く |
+| `reaggregate.py` | 正解を保存していなかった版の結果（.json.gz）を、保存されている全件比較の1回目を正解として再集計し、表を作り直す |
 | `gen_texts.py` | `--vectors model` 用に、架空の Discovery の文章（名前＋対象＋観点＋わかってきたこと）と問いを量産する |
 | `results/` | 計測結果 |
 
@@ -66,4 +67,6 @@ gen_texts.py の文章は短い（60〜120字程度）ので、実際の長い�
 
 [results/](results/) を参照。考察は Issue [#9](https://github.com/ex-day/poc/issues/9) に残す。
 
-`results/model_256d*.md` の最初の版（commit 1d578b8・6953c07）は、改修前のスクリプトの結果（実行デバイス未記録、問いごとの結果なし）。改修後のスクリプトで取り直したら置き換える。
+`results/model_256d.md`・`model_256d_100k.md`（commit 1d578b8・6953c07）は改修前のスクリプトの結果だったため削除し、改修後のスクリプトで取り直した `model_256d_cpu.md`・`model_256d_mps.md` に置き換えた。
+
+再現率・1位の正解（全件比較の結果）は、JSON の `results[].truth` に残す。正解を保存していなかった版の結果（このフォルダの5つ）は、`reaggregate.py` で、保存されている全件比較の1回目（runs[0]）を正解として再集計した（速さは計り直していない）。

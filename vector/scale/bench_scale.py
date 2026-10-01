@@ -264,6 +264,10 @@ def bench_size(conn, vecs, queries, args, extra):
     truth["all"] = tmp["exact"][1]
     for f in filters:
         truth[f] = tmp[f"exact {f}"][1]
+    # 再現率・1位の基準に使った正解を、そのまま残す（同点があると全件比較でも回ごとに並びが入れ替わるため）
+    res["truth"] = {"source": "計測前に1回流した全件比較（問いの番号順）",
+                    "sets": {key: {"ids": tmp[name][1], "dists": tmp[name][2]}
+                             for key, name in [("all", "exact")] + [(f, f"exact {f}") for f in filters]}}
     res["exact"] = measure_phase(conn, conds, queries, truth, args, rng)
     print(f"全件比較 {summary(res['exact']['exact'])}", flush=True)
 
@@ -355,6 +359,8 @@ def to_markdown(results, meta):
     a = meta["info"]["args"]
     L.append(f"- HNSW：m={a['m']}、ef_construction={a['ef_construction']}。問い {a['queries']} 件、上位 {a['k']} 件。条件ごとに暖機 {a['warmup']} 件、{a['repeat']} 回くり返し（回ごとに条件と問いの順番を入れ替え）")
     L.append("- 時間は「p50／p95（ms）」。p95 は nearest-rank。再現率・1位・順は最後の回の結果")
+    src = (results[0].get("truth") or {}).get("source", "計測前に1回流した全件比較")
+    L.append(f"- 再現率・1位の正解：{src}（JSON の results[].truth）")
     L.append("- 1位：1位が全件比較の1位と一致した割合。順：距離の小さい順に並んでいた割合。どちらも 1.00 のときは省略")
     L.append("- （全件走査）：測定と同じ SQL の実行計画に、HNSW のインデックスが現れなかった（件数が少ないとプランナーが全件走査を選ぶ）")
     if results and "model" in results[0]:
