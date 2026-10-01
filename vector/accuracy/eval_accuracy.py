@@ -290,6 +290,7 @@ def write(out, judged, distractors):
                  f"{sum(q['top1_wiki'] for q in pq)}／{len(pq)} | {np.mean(bp):.3f} | {(f'{np.mean(bw):.3f}' if bw else '－')} |")
 
     L.append("\n## 2. 候補の決め方ごとの結果\n")
+    L.append("**読み方**：紛れ込みのうち関連度を付けていない記事は、関係があっても紛れ込み（不正解）として数えている。多く出す決め方ほど厳しめに出るため、決め方どうしの厳密な優劣ではなく傾向として読む。しきい値（下の太字の値）は、この問い・紛れ込み0件で F1 が最良だった値で、製品の固定の値ではない。\n")
     L.append(f"各欄は「適合率／再現率・出す件数（平均）・紛れ込み（平均）」。しきい値は、紛れ込み0件のときに F1 がいちばん良かった **{meta['best_threshold']:.2f}** を中心に並べた。\n")
     names = [f"上位{k}件" for k in (1, 3, 5, 10)]
     bt = meta["best_threshold"]
