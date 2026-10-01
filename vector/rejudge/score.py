@@ -3,7 +3,7 @@
 入力：
   - ../accuracy/results/review_ruri-v3-30m.csv（人の判定「判定（0〜3）」と、Claude の仮判定）
   - results/judge_*.jsonl（AI の判定。1行1組：pair_id, rel, reason_type, reason）
-  - data/pairs.jsonl（組と、問い・候補の対応。build_pairs.py で作る）
+  - results/pairs_index.jsonl（pair_id と、問いID・記事ID の対応。判定したときの対応を固定したもの）
 
 出力：results/score.md
 
@@ -54,11 +54,19 @@ def opposite(a, b):
 
 
 def main():
-    rows = list(csv.DictReader(open(REVIEW, encoding="utf-8")))
+    # 対応は「問いID × 記事ID」で取る。CSV の並びや pair_id の振り方が変わっても、取り違えないようにする
+    pairs = [json.loads(l) for l in (HERE / "results" / "pairs_index.jsonl").read_text(encoding="utf-8").splitlines()]
+    review = {}
+    for r in csv.DictReader(open(REVIEW, encoding="utf-8")):
+        key = (r["問いID"], r["記事ID"])
+        assert key not in review, f"review に同じ組が2回ある：{key}"
+        review[key] = r
+    keys = [(p["query_id"], p["candidate_id"]) for p in pairs]
+    assert len(set(keys)) == len(keys), "pairs_index に同じ組が2回ある"
+    assert set(keys) == set(review), "pairs_index と review の組が一致しない"
+    rows = [review[k] for k in keys]
     human = [int(r["判定（0〜3）"]) for r in rows]
     prov = [int(r["仮判定（Claude）"]) for r in rows]
-    pairs = [json.loads(l) for l in (HERE / "data" / "pairs.jsonl").read_text(encoding="utf-8").splitlines()]
-    assert [p["candidate_id"] for p in pairs] == [r["記事ID"] for r in rows], "組の並びが review と一致しない"
 
     L = ["# AI の再判定と人の判定の一致（Issue #12）\n"]
     L.append("- 対象：#9 で、紛れ込み1万件のときに上位5件に入った Wikipedia の記事 100件（問い × 記事）")
@@ -72,8 +80,14 @@ def main():
         p = HERE / "results" / fn
         if not p.exists():
             continue
-        js = [json.loads(l) for l in p.read_text(encoding="utf-8").splitlines() if l.strip()]
-        assert [j["pair_id"] for j in js] == [x["pair_id"] for x in pairs], f"{fn} の並びが合わない"
+        by_id = {}
+        for l in p.read_text(encoding="utf-8").splitlines():
+            if l.strip():
+                j = json.loads(l)
+                assert j["pair_id"] not in by_id, f"{fn} に同じ pair_id が2回ある"
+                by_id[j["pair_id"]] = j
+        assert set(by_id) == {x["pair_id"] for x in pairs}, f"{fn} の pair_id が pairs_index と一致しない"
+        js = [by_id[x["pair_id"]] for x in pairs]
         conds.append((name, [int(j["rel"]) for j in js], js))
 
     L.append("## 1. 人の判定との一致\n")

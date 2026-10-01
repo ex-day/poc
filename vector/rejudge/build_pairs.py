@@ -8,6 +8,8 @@ AI に渡す組を作る。**人の判定・Claude の仮判定は入れない**
 - 候補：Wikipedia の記事の題名と冒頭（最大300字）
 
 出力：data/pairs.jsonl（記事の本文を含むため、リポジトリには入れない）
+pair_id は results/pairs_index.jsonl（問いID・記事ID との対応）で固定する。ファイルがあればその対応を使い、
+なければ作る。review の並びが変わっても、判定済みの結果との対応がずれないようにするため。
 
 python build_pairs.py
 """
@@ -43,12 +45,28 @@ def main():
         a = json.loads(line)
         wiki[f"wiki:{a['pageid']}"] = a
     OUT.parent.mkdir(exist_ok=True)
+    index_path = HERE / "results" / "pairs_index.jsonl"
+    index = {}
+    if index_path.exists():
+        for l in index_path.read_text(encoding="utf-8").splitlines():
+            x = json.loads(l)
+            index[(x["query_id"], x["candidate_id"])] = x["pair_id"]
+    rows = list(csv.DictReader(open(REVIEW, encoding="utf-8")))
+    if index:
+        assert {(r["問いID"], r["記事ID"]) for r in rows} == set(index), "review の組が pairs_index と一致しない"
+    else:
+        index = {(r["問いID"], r["記事ID"]): f"P{i:03d}" for i, r in enumerate(rows, 1)}
+        index_path.parent.mkdir(exist_ok=True)
+        with index_path.open("w", encoding="utf-8") as fh:
+            for (qid, cid), pid in sorted(index.items(), key=lambda kv: kv[1]):
+                fh.write(json.dumps({"pair_id": pid, "query_id": qid, "candidate_id": cid, "candidate_title": wiki[cid]["title"]}, ensure_ascii=False) + "\n")
+    rows.sort(key=lambda r: index[(r["問いID"], r["記事ID"])])
     n = 0
-    with open(REVIEW, encoding="utf-8") as fh, OUT.open("w", encoding="utf-8") as out:
-        for i, row in enumerate(csv.DictReader(fh), 1):
+    with OUT.open("w", encoding="utf-8") as out:
+        for row in rows:
             q = queries[row["問いID"]]
             a = wiki[row["記事ID"]]
-            pair = {"pair_id": f"P{i:03d}", "query_id": q["id"], "candidate_id": row["記事ID"],
+            pair = {"pair_id": index[(row["問いID"], row["記事ID"])], "query_id": q["id"], "candidate_id": row["記事ID"],
                     "candidate_title": a["title"], "candidate_text": a["extract"]}
             if q["type"] == "discovery":
                 pair["query_kind"] = "discovery"
