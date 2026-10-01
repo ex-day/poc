@@ -157,8 +157,10 @@ def build_sql(k, where="", resort=False):
     w = f"WHERE {where}" if where else ""
     inner = f"SELECT id, embedding <=> %(q)s AS d FROM {TABLE} {w} ORDER BY embedding <=> %(q)s LIMIT {k}"
     if resort:
-        # relaxed_order は距離順が前後することがあるため、取り出した候補を距離で並べ直す（pgvector の README の方法）
-        return f"WITH c AS MATERIALIZED ({inner}) SELECT id, d FROM c ORDER BY d"
+        # relaxed_order は距離順が前後することがあるため、取り出した候補を距離で並べ直す（pgvector の README の方法）。
+        # PostgreSQL 17 以降は、MATERIALIZED の CTE の並び順を外側に引き継ぐため、ORDER BY d だと
+        # 「もう並んでいる」と見なされて並べ直しが省かれる。d + 0 にして必ず並べ直させる
+        return f"WITH c AS MATERIALIZED ({inner}) SELECT id, d FROM c ORDER BY d + 0"
     return inner
 
 
