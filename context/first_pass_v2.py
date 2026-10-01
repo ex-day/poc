@@ -38,6 +38,9 @@ def load(files):
         c = json.loads(Path(f).read_text(encoding="utf-8"))
         c["_name"] = Path(f).stem
         c["_posts"] = [p for p in c["posts"] if not p.get("new_thread")]
+        for p in c["_posts"]:  # posts.json（PR #3）は reply_to が null か文字列なので、リストにそろえる
+            r = p.get("reply_to")
+            p["reply_to"] = r if isinstance(r, list) else ([r] if r else [])
         convs.append(c)
     return convs
 
