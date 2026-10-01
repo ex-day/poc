@@ -22,6 +22,10 @@ CONDS = [
     ("sonnet_batch_reply", "Sonnet・一括・返信先あり"),
     ("haiku_batch_noreply", "Haiku・一括・返信先なし"),
     ("sonnet_batch_noreply", "Sonnet・一括・返信先なし"),
+    ("haiku_flow_reply", "Haiku・流れ・返信先あり"),
+    ("sonnet_flow_reply", "Sonnet・流れ・返信先あり"),
+    ("haiku_flow_noreply", "Haiku・流れ・返信先なし"),
+    ("sonnet_flow_noreply", "Sonnet・流れ・返信先なし"),
 ]
 HUMAN = {"posts"}  # written_by がない会話のうち、人が書いたもの
 
@@ -36,6 +40,23 @@ def gold_convs():
         yield c
 
 
+def merged_f(c, r, assign):
+    """細分を許すまとまりの F：AI の話題を、多数決で対応づけた正解の話題ごとに束ねてから B-cubed を出す。
+    1つの正解の話題を細かく分けただけなら満点に近く、別の話題を混ぜると下がる"""
+    lab = {pid: r["label"][t] for pid, t in assign.items()}
+    g = {p["id"]: (set(p["topics"]) or {"OFF"}) for p in c["_posts"]}
+    ids = list(g)
+    bp = br = 0.0
+    for i in ids:
+        sp = [j for j in ids if lab[j] == lab[i]]
+        sg = [j for j in ids if g[i] & g[j]]
+        both = sum(1 for j in sp if g[i] & g[j])
+        bp += both / len(sp)
+        br += both / len(sg)
+    bp, br = bp / len(ids), br / len(ids)
+    return 2 * bp * br / (bp + br) if bp + br else 0.0
+
+
 def agg(rows):
     n = sum(r["n"] for _, r, _ in rows)
     w = lambda k: sum(r[k] * r["n"] for _, r, _ in rows) / n  # noqa: E731
@@ -48,11 +69,14 @@ def main():
     L.append("- 判定役：正解を見せないサブエージェント（Claude Code。Haiku・Sonnet）。指示は `prompts/split.md`")
     L.append("- 一括：会話の全投稿を一度に渡す。返信先なし：reply_to を全部消した入力")
     L.append("- 精度・まとまりの F・話題の数の意味は `../first_pass.py` の結果と同じ。比べるときは、まとまりの F を主に見る")
+    L.append("- 流れ：指示を `prompts/split_flow.md`（会話の流れのひとまとまりを話題にする）に替えたもの。それ以外は `prompts/split.md`（同じ対象を話題にする）")
     L.append("- 正解が複数ある投稿（「T3 でも可」など）は、どれに振り分けても当たり")
+    L.append("- 適合が低い＝別々の話題を混ぜた（重い外れ。あとから分け直せない）。再現が低い＝1つの話題を細かく分けた（軽い外れ。束ねれば戻せる）")
+    L.append("- 細分を許す F：AI の話題を、多数決で対応づけた正解の話題ごとに束ねてから数えたもの。細かく分けただけなら下がらず、混ぜると下がる")
     L.append("- 人が書いた会話：" + "、".join(c["_name"] for c in convs if c["_human"]) + "。それ以外は Claude が書いた会話\n")
     L.append("## 1. まとめ\n")
-    L.append("| 条件 | 会話 | 件数 | 精度 | まとまりの F | 適合（分けすぎない） | 再現（まとめ損ねない） | 話題の数 | 正解の話題の数 |")
-    L.append("|---|---|---|---|---|---|---|---|---|")
+    L.append("| 条件 | 会話 | 件数 | 精度 | まとまりの F | 適合（別の話題を混ぜない） | 再現（同じ話題を分けすぎない） | 細分を許す F | 話題の数 | 正解の話題の数 |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
     per, detail, alt = [], [], []
     for key, name in CONDS:
         d = HERE / "results" / key
@@ -67,16 +91,18 @@ def main():
             assign = {p["id"]: j["assign"].get(p["id"], "MISSING") for p in c["_posts"]}
             missing = [i for i, t in assign.items() if t == "MISSING"]
             assert not missing, f"{key}/{c['_name']}：振り分けがない投稿 {missing}"
-            rows.append((c, evaluate(c, c["_posts"], assign, set()), j))
+            r = evaluate(c, c["_posts"], assign, set())
+            r["merged"] = merged_f(c, r, assign)
+            rows.append((c, r, j))
         for label, sel in (("人が書いた会話", lambda c: c["_human"]), ("Claude が書いた会話", lambda c: not c["_human"])):
             rs = [x for x in rows if sel(x[0])]
             if not rs:
                 continue
             n, w = agg(rs)
-            L.append(f"| **{name}** | {label}（{len(rs)}本） | {n} | {w('acc'):.2f} | {w('bcubed'):.2f} | {w('bp'):.2f} | {w('br'):.2f} | "
+            L.append(f"| **{name}** | {label}（{len(rs)}本） | {n} | {w('acc'):.2f} | {w('bcubed'):.2f} | {w('bp'):.2f} | {w('br'):.2f} | {w('merged'):.2f} | "
                      f"{sum(r['n_topics'] for _, r, _ in rs)} | {sum(len(c['topics']) for c, _, _ in rs)} |")
         for c, r, j in rows:
-            per.append(f"| {name} | {c['_name']}{'（人）' if c['_human'] else ''} | {r['n']} | {r['acc']:.2f} | {r['bcubed']:.2f} | {r['bp']:.2f} | {r['br']:.2f} | {r['n_topics']} | {len(c['topics'])} |")
+            per.append(f"| {name} | {c['_name']}{'（人）' if c['_human'] else ''} | {r['n']} | {r['acc']:.2f} | {r['bcubed']:.2f} | {r['bp']:.2f} | {r['br']:.2f} | {r['merged']:.2f} | {r['n_topics']} | {len(c['topics'])} |")
             topics_txt = "AI の話題：" + "、".join(f"{k} {v}" for k, v in j["topics"].items()) + "\n"
             wrong = [p for p in c["_posts"] if not r["ok"][p["id"]]]
             if wrong:
@@ -99,8 +125,8 @@ def main():
                     alt.append(f"| {p['id']} | {p['text'][:24]} | {','.join(p['topics'])} | {t} {j['topics'].get(t, '')} | {r['label'][t]} |")
                 alt.append("")
     L.append("\n## 2. 会話ごと\n")
-    L.append("| 条件 | 会話 | 件数 | 精度 | まとまりの F | 適合（分けすぎない） | 再現（まとめ損ねない） | 話題の数 | 正解の話題の数 |")
-    L.append("|---|---|---|---|---|---|---|---|---|")
+    L.append("| 条件 | 会話 | 件数 | 精度 | まとまりの F | 適合（別の話題を混ぜない） | 再現（同じ話題を分けすぎない） | 細分を許す F | 話題の数 | 正解の話題の数 |")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
     L += per
     L.append("\n## 3. 正解が複数ある投稿を、AI はどちらに入れたか\n")
     L += alt
