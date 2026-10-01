@@ -22,6 +22,8 @@ CONDITIONS = [  # (ファイル名, 表示名)
     ("judge_sonnet_base.jsonl", "Sonnet・基準なし"),
     ("judge_sonnet_criteria.jsonl", "Sonnet・基準あり"),
     ("judge_sonnet_context.jsonl", "Sonnet・基準あり＋前提"),
+    ("judge_sonnet_knowledge.jsonl", "Sonnet・基準あり＋記憶で補う"),
+    ("judge_sonnet_long.jsonl", "Sonnet・基準あり＋長い本文"),
 ]
 
 
