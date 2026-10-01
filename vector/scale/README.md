@@ -31,7 +31,7 @@
 
 ## 使い方
 
-DB は #1 と同じ（リポジトリのルートで `docker compose up -d`）。Python の環境は `vector/` のもの（`vector/README.md`）を使う。
+DB は #1 と同じ（リポジトリのルートで `docker compose up -d`）。HNSW の並列作成は共有メモリを `maintenance_work_mem`（既定 1GB）の分だけ使うため、`compose.yaml` で `shm_size: 1gb` にしてある。これより前に作ったコンテナは `docker compose up -d` で作り直す（データは消えない）。足りないと `could not resize shared memory segment ... No space left on device` になる。Python の環境は `vector/` のもの（`vector/README.md`）を使う。
 
 ```bash
 cd vector/scale
