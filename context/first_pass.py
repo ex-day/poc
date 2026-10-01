@@ -255,7 +255,25 @@ def evaluate(conv, posts, assign, ai):
         ok[p["id"]] = (lab in gold[p["id"]]) or (lab == "OFF" and not gold[p["id"]])
     n = len(posts)
     auto = [i for i in ok if i not in ai]
+    # まとまりの F（B-cubed）：多数決の対応づけは、話題を細かく分けすぎても当たりになるため、分けすぎ・まとめすぎの両方を数える
+    #   投稿ごとに、同じ予測の話題に入った投稿のうち正解でも同じ話題のものの割合（適合）と、
+    #   正解で同じ話題の投稿のうち同じ予測の話題に入ったものの割合（再現）を出し、平均して F にする。
+    #   正解で「同じ話題」は、話題を1つでも共有すること（話題外どうしも同じとみなす）
+    g = {p["id"]: (gold[p["id"]] or {"OFF"}) for p in posts}
+    ids = [p["id"] for p in posts]
+    bp = br = 0.0
+    for i in ids:
+        same_pred = [j for j in ids if assign[j] == assign[i]]
+        same_gold = [j for j in ids if g[i] & g[j]]
+        both = sum(1 for j in same_pred if g[i] & g[j])
+        bp += both / len(same_pred)
+        br += both / len(same_gold)
+    bp, br = bp / n, br / n
     return {
+        "bcubed": 2 * bp * br / (bp + br) if bp + br else 0.0,
+        "bp": bp,
+        "br": br,
+        "n_topics": len({assign[i] for i in ids} - {"OFF"}),
         "n": n,
         "acc": sum(ok.values()) / n,
         "acc_auto": (sum(ok[i] for i in auto) / len(auto)) if auto else None,
@@ -290,9 +308,10 @@ def main():
     L.append(f"- 会話：{names}")
     L.append("- 精度：予測の話題を正解の話題に多数決で対応づけ、投稿が正解の話題（複数ありうる）に入ったか。話題外（雑談）は「話題外」に入れば当たり")
     L.append("- 精度（AI なし）：AI に回した投稿も、ルールの仮の振り分けで扱ったもの。精度（自動で振り分けた分）：AI に回さなかった投稿だけの精度。精度（AI が正しい場合）：AI に回した投稿を正解どおりに振り分けたもの（以降の投稿にも効く）")
-    L.append(f"- 返信先を消す割合 0.5 は、{args.seeds} 回の平均\n")
-    head = ("| {} | 文脈のベクトル | δ | 分岐の候補（新しい名詞の数） | 返信先を消す割合 | 精度（AI なし） | 精度（自動で振り分けた分） | 精度（AI が正しい場合） | AI に回す割合 |",
-            "|---|---|---|---|---|---|---|---|---|")
+    L.append(f"- 返信先を消す割合 0.5 は、{args.seeds} 回の平均")
+    L.append("- まとまりの F（B-cubed）：多数決の対応づけでは話題を細かく分けすぎても当たりになるため、分けすぎ・まとめすぎの両方を数える指標も出す。話題の数は、全体では全会話の合計（正解は全体で {} 個）\n".format(sum(len(c["topics"]) for c in convs)))
+    head = ("| {} | 文脈のベクトル | δ | 分岐の候補（新しい名詞の数） | 返信先を消す割合 | 精度（AI なし） | 精度（自動で振り分けた分） | 精度（AI が正しい場合） | AI に回す割合 | まとまりの F（AI なし） | まとまりの F（AI が正しい場合） | 話題の数（AI なし） |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|")
     traces, stats = [], {}
     for c in convs:
         for mode in ("concat", "mean"):
@@ -312,11 +331,12 @@ def main():
                         m = lambda rs, k: np.mean([r[k] for r in rs if r[k] is not None])  # noqa: E731
                         fb, orc = row
                         n = len([p for p in c["posts"] if not p.get("new_thread")])
-                        stats[(c["_name"], mode, d, bk, drop)] = (m(fb, "acc"), m(fb, "acc_auto"), m(orc, "acc"), m(fb, "ai_rate"), n)
+                        stats[(c["_name"], mode, d, bk, drop)] = (m(fb, "acc"), m(fb, "acc_auto"), m(orc, "acc"), m(fb, "ai_rate"), n,
+                                                                    m(fb, "bcubed"), m(orc, "bcubed"), m(fb, "n_topics"))
 
     def fmt(key_name, mode, d, bk, drop, v):
-        acc, auto, orc, air, _ = v
-        return f"| {key_name} | {mode} | {d} | {bk or 'なし'} | {drop} | {acc:.2f} | {auto:.2f} | {orc:.2f} | {air:.2f} |"
+        acc, auto, orc, air, _, bf, bo, nt = v
+        return f"| {key_name} | {mode} | {d} | {bk or 'なし'} | {drop} | {acc:.2f} | {auto:.2f} | {orc:.2f} | {air:.2f} | {bf:.2f} | {bo:.2f} | {nt:.1f} |"
 
     # 全会話の合計（投稿数で重み付け。自動で振り分けた分は、自動で振り分けた投稿数で重み付け）
     L.append(f"## 全会話（{len(convs)}本・{sum(v[4] for k, v in stats.items() if k[1:] == next(iter(stats))[1:])}件）\n")
@@ -330,7 +350,8 @@ def main():
                     n = sum(v[4] for v in vs)
                     na = sum(v[4] * (1 - v[3]) for v in vs)
                     auto = sum(v[1] * v[4] * (1 - v[3]) for v in vs if not np.isnan(v[1])) / na if na else float("nan")
-                    agg = (sum(v[0] * v[4] for v in vs) / n, auto, sum(v[2] * v[4] for v in vs) / n, sum(v[3] * v[4] for v in vs) / n, n)
+                    agg = (sum(v[0] * v[4] for v in vs) / n, auto, sum(v[2] * v[4] for v in vs) / n, sum(v[3] * v[4] for v in vs) / n, n,
+                           sum(v[5] * v[4] for v in vs) / n, sum(v[6] * v[4] for v in vs) / n, sum(v[7] for v in vs))
                     L.append(fmt("全体", mode, d, bk, drop, agg))
     dm = args.delta[len(args.delta) // 2]
     L.append(f"\n## 会話ごと（concat、δ {dm}）\n")
