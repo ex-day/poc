@@ -17,16 +17,28 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 from first_pass import evaluate  # noqa: E402
 
-CONDS = [
-    ("haiku_batch_reply", "Haiku・一括・返信先あり"),
-    ("sonnet_batch_reply", "Sonnet・一括・返信先あり"),
-    ("haiku_batch_noreply", "Haiku・一括・返信先なし"),
-    ("sonnet_batch_noreply", "Sonnet・一括・返信先なし"),
-    ("haiku_flow_reply", "Haiku・流れ・返信先あり"),
-    ("sonnet_flow_reply", "Sonnet・流れ・返信先あり"),
-    ("haiku_flow_noreply", "Haiku・流れ・返信先なし"),
-    ("sonnet_flow_noreply", "Sonnet・流れ・返信先なし"),
-]
+# 結果のフォルダ名：<提供元>-<モデル>_<呼び方>_<指示>_<返信先>[_<回>]
+#   例：claude-sonnet_subagent_flow_reply、openai-gpt-5_api_flow_noreply_r2
+#   提供元：claude／openai など。呼び方：subagent（Claude Code のサブエージェント）／api
+#   指示：object（prompts/split.md）／flow（prompts/split_flow.md）。返信先：reply／noreply
+PROMPTS = {"object": "対象", "flow": "流れ"}
+REPLIES = {"reply": "返信先あり", "noreply": "返信先なし"}
+
+
+def conditions():
+    out = []
+    for d in sorted((HERE / "results").iterdir()):
+        if not d.is_dir():
+            continue
+        parts = d.name.split("_")
+        if len(parts) not in (4, 5) or parts[2] not in PROMPTS or parts[3] not in REPLIES:
+            print(f"読み飛ばし（フォルダ名の形が違う）：{d.name}")
+            continue
+        label = f"{parts[0]}・{parts[1]}・{PROMPTS[parts[2]]}・{REPLIES[parts[3]]}" + (f"・{parts[4]}" if len(parts) == 5 else "")
+        out.append((d.name, label))
+    return out
+
+
 HUMAN = {"posts"}  # written_by がない会話のうち、人が書いたもの
 
 
@@ -69,7 +81,7 @@ def main():
     L.append("- 判定役：正解を見せないサブエージェント（Claude Code。Haiku・Sonnet）。指示は `prompts/split.md`")
     L.append("- 一括：会話の全投稿を一度に渡す。返信先なし：reply_to を全部消した入力")
     L.append("- 精度・まとまりの F・話題の数の意味は `../first_pass.py` の結果と同じ。比べるときは、まとまりの F を主に見る")
-    L.append("- 流れ：指示を `prompts/split_flow.md`（会話の流れのひとまとまりを話題にする）に替えたもの。それ以外は `prompts/split.md`（同じ対象を話題にする）")
+    L.append("- 条件の名前：提供元-モデル・呼び方（subagent／api）・指示・返信先。指示は、対象＝`prompts/split.md`（同じ対象を話題にする）、流れ＝`prompts/split_flow.md`（会話の流れのひとまとまりを話題にする）")
     L.append("- 正解が複数ある投稿（「T3 でも可」など）は、どれに振り分けても当たり")
     L.append("- 適合が低い＝別々の話題を混ぜた（重い外れ。あとから分け直せない）。再現が低い＝1つの話題を細かく分けた（軽い外れ。束ねれば戻せる）")
     L.append("- 細分を許す F：AI の話題を、多数決で対応づけた正解の話題ごとに束ねてから数えたもの。細かく分けただけなら下がらず、混ぜると下がる")
@@ -78,7 +90,7 @@ def main():
     L.append("| 条件 | 会話 | 件数 | 精度 | まとまりの F | 適合（別の話題を混ぜない） | 再現（同じ話題を分けすぎない） | 細分を許す F | 話題の数 | 正解の話題の数 |")
     L.append("|---|---|---|---|---|---|---|---|---|---|")
     per, detail, alt = [], [], []
-    for key, name in CONDS:
+    for key, name in conditions():
         d = HERE / "results" / key
         if not d.exists():
             continue

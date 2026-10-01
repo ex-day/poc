@@ -17,8 +17,7 @@ Ruri のベクトルでは、話題の始まりと続きを見分けられなか
 | `build_inputs.py` | AI に渡す入力を作る（`data/`。正解とメモは入れない）。返信先あり／なし（全部消す）の2通り、一括と10件ずつ |
 | `prompts/split.md` | 振り分けの指示（対象の指示：同じ対象を話題にする。#8） |
 | `prompts/split_flow.md` | 振り分けの指示（流れの指示：会話の流れのひとまとまりを話題にする。#14） |
-| `results/<モデル>_batch_<reply\|noreply>/` | AI の振り分け（対象の指示。会話ごとの JSON） |
-| `results/<モデル>_flow_<reply\|noreply>/` | AI の振り分け（流れの指示） |
+| `results/<提供元>-<モデル>_<呼び方>_<指示>_<返信先>[_<回>]/` | AI の振り分け（会話ごとの JSON）。例：`claude-sonnet_subagent_flow_reply`。提供元は claude／openai など、呼び方は subagent（Claude Code のサブエージェント）／api、指示は object（`split.md`）／flow（`split_flow.md`）、返信先は reply／noreply。同じ条件を複数回回したときは `_r2` などを付ける。`score.py` はこの形のフォルダを全部読む |
 | `score.py` | 正解と比べて `results/score.md` を書く（数え方は `../first_pass.py` と同じ） |
 
 ## やり方
