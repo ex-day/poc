@@ -129,7 +129,7 @@ def select(rule, ids, scores):
 def judge_set(sel, judgments, docs_by_id):
     pos = sum(1 for d in sel if judgments.get(d, 0) >= 2)
     neg = sum(1 for d in sel if judgments.get(d, 0) == 0)
-    wiki = sum(1 for d in sel if not docs_by_id[d]["judged"])
+    wiki = sum(1 for d in sel if not docs_by_id[d]["judged"] and judgments.get(d, 0) == 0)
     total = sum(1 for v in judgments.values() if v >= 2)
     return pos, neg, wiki, total
 
@@ -154,7 +154,18 @@ def f1(s):
     return 2 * p * r / (p + r) if p + r else 0
 
 
-def run_size(n, judged, distractors, qvecs, qsrc, queries, jvecs, dvecs):
+def load_review(path, column):
+    """人が確かめた一覧（review_*.csv）から、紛れ込みに付けた関連度を読む。空欄は不正解（0）のまま"""
+    extra = {}
+    with open(path, encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            v = (row.get(column) or "").strip()
+            if v:
+                extra.setdefault(row["問いID"], {})[row["記事ID"]] = int(v)
+    return extra
+
+
+def run_size(n, judged, distractors, qvecs, qsrc, queries, jvecs, dvecs, extra=None):
     docs = judged + distractors[:n]
     vecs = np.vstack([jvecs, dvecs[:n]]) if n else jvecs
     by_id = {d["id"]: d for d in docs}
@@ -171,12 +182,13 @@ def run_size(n, judged, distractors, qvecs, qsrc, queries, jvecs, dvecs):
             if len(ids) >= 50:
                 break
         j = {k: v for k, v in q["judgments"].items() if k != src}
+        j.update((extra or {}).get(q["id"], {}))  # 紛れ込みのうち、人（または仮判定）が関連度を付けたもの
         best_pos = max([sc for d, sc in zip(ids, scores) if j.get(d, 0) >= 2], default=None)
-        best_wiki = max([sc for d, sc in zip(ids, scores) if not by_id[d]["judged"]], default=None)
+        best_wiki = max([sc for d, sc in zip(ids, scores) if not by_id[d]["judged"] and j.get(d, 0) == 0], default=None)
         per_query.append({"qid": q["id"], "text": q.get("text") or f"（{q['source']} 起点）", "category": q.get("category"),
                           "ids": ids, "scores": scores, "judgments": j, "ndcg": ndcg(ids, j),
-                          "wiki_top5": sum(1 for d in ids[:TOP] if not by_id[d]["judged"]),
-                          "top1_wiki": not by_id[ids[0]]["judged"], "best_pos": best_pos, "best_wiki": best_wiki})
+                          "wiki_top5": sum(1 for d in ids[:TOP] if not by_id[d]["judged"] and j.get(d, 0) == 0),
+                          "top1_wiki": not by_id[ids[0]]["judged"] and j.get(ids[0], 0) == 0, "best_pos": best_pos, "best_wiki": best_wiki})
     return per_query, by_id
 
 
@@ -187,6 +199,8 @@ def main():
     ap.add_argument("--batch-size", type=int, default=32)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--env", default="", help="結果に書く環境の説明")
+    ap.add_argument("--review", default=None, help="紛れ込みに関連度を付けた review_*.csv。付けたものは正解・不正解として数える")
+    ap.add_argument("--review-column", default="判定（0〜3）", help="--review で使う列（例：仮判定（Claude））")
     args = ap.parse_args()
 
     data, judged = load_judged()
@@ -214,9 +228,11 @@ def main():
     out = {"meta": {"when": datetime.now().strftime("%Y-%m-%d %H:%M"), "model": emb.model_name, "device": emb.device,
                     "env": args.env, "sizes": args.sizes, "seed": args.seed, "judged": len(judged), "queries": len(queries),
                     "excluded_titles": excluded}, "sizes": {}}
+    extra = load_review(args.review, args.review_column) if args.review else {}
+    out["meta"]["review"] = {"file": args.review, "column": args.review_column, "judged": sum(len(v) for v in extra.values())} if args.review else None
     runs = {}
     for n in args.sizes:
-        runs[n] = run_size(n, judged, distractors, qvecs, qsrc, queries, jvecs, dvecs)
+        runs[n] = run_size(n, judged, distractors, qvecs, qsrc, queries, jvecs, dvecs, extra)
     # しきい値の候補は、モデルで点数の幅が違うため、最初の件数での上位10件の点数の幅から 0.01 刻みで作る
     first = [sc for q in runs[args.sizes[0]][0] for sc in q["scores"][:10]]
     lo, hi = math.floor(min(first) * 100) / 100, math.ceil(max(first) * 100) / 100
@@ -248,7 +264,7 @@ def main():
 def write(out, judged, distractors):
     RESULTS.mkdir(exist_ok=True)
     meta = out["meta"]
-    slug = meta["model"].split("/")[-1]
+    slug = meta["model"].split("/")[-1] + ("_reviewed" if meta.get("review") else "")
     sizes = meta["sizes"]
     title = {d["id"]: d["title"] for d in judged + distractors}
     L = [f"# 件数が増えたときの検索精度（{meta['model']}）\n"]
@@ -256,6 +272,9 @@ def write(out, judged, distractors):
     L.append(f"- 正解付き：#1 の Discovery {meta['judged']} 件（文章は disc_topics）・問い {meta['queries']} 問。紛れ込み：Wikipedia（日本語版）の神奈川・東京あたりの地点記事の冒頭（{', '.join(f'{n:,}' for n in sizes)} 件）")
     L.append(f"- #1 の Discovery と同じものを指す記事（題名に Discovery の名前・対象を含むもの）は紛れ込みから外した：{len(meta['excluded_titles'])} 件")
     L.append("- 関連度2以上を正解、0 と紛れ込みを不正解、1 はどちらにも数えない。紛れ込みには正解を付けていないので、実は関係がある記事も不正解に数えている（下の「人が確かめる一覧」）")
+    if meta.get("review"):
+        rv = meta["review"]
+        L.append(f"- 紛れ込みのうち {rv['judged']} 件に、{rv['file']} の「{rv['column']}」列で関連度を付けた。2以上は正解に、0 は不正解に数え、「紛れ込み」の数からは外す（関連度を付けたものは紛れ込みではなく、見つかってよいもの・よくないものとして扱う）")
     L.append("- 検索は全件比較（近似なし）\n")
 
     L.append("## 1. 並びの良さと紛れ込み\n")

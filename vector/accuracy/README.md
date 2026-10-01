@@ -46,6 +46,25 @@ EXDAY_MODEL=cl-nagoya/ruri-v3-70m python eval_accuracy.py --device cpu --env "Ma
 
 埋め込みは `data/emb_<モデル>.npz` に取っておくので、2回目以降は速い。
 
+## 紛れ込みに関連度を付けて数え直す
+
+上位5件に入った紛れ込みには、実は問いに関係がある記事が多い（例：「横浜が開港した場所」に対する「開港広場公園」）。`results/review_*.csv` の「判定（0〜3）」列に関連度を付け、`--review` で数え直す。
+
+```bash
+EXDAY_MODEL=cl-nagoya/ruri-v3-30m python eval_accuracy.py --device cpu --review results/review_ruri-v3-30m.csv --env "..."
+# 人の判定の前に、Claude の仮判定で傾向を見るとき
+EXDAY_MODEL=cl-nagoya/ruri-v3-30m python eval_accuracy.py --device cpu --review results/review_ruri-v3-30m.csv --review-column "仮判定（Claude）" --env "..."
+```
+
+結果は `results/accuracy_<モデル>_reviewed.md` に書く。関連度を付けた記事は、2以上を正解、0 を不正解として数え、「紛れ込み」の数からは外す。上位5件の外にある記事や、別の件数のときにだけ上位に来る記事は、関連度が付いていないため、引き続き不正解（紛れ込み）として数える。
+
+- 仮判定（Claude）は、記事の題名から推測したもので、記事の中身は確かめていない。結論に使う前に、人が「判定（0〜3）」列を付ける。
+- 外す記事の決め方（題名に Discovery の名前・対象を含む）は粗く、「商店街」「鉄道」等の一般的な語を含む記事も外れている（1.2万件中84件）。
+
+## 補足
+
+macOS の numpy 2 系で、行列の積に `RuntimeWarning: divide by zero / overflow / invalid value encountered in matmul` が出ることがある。結果の点数に NaN・無限大がないことは確かめた（Apple の Accelerate を使う numpy の既知の誤った警告）。
+
 ## 結果
 
 [results/](results/) を参照。考察は Issue [#9](https://github.com/ex-day/poc/issues/9) に残す。
