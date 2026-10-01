@@ -48,7 +48,7 @@ EXDAY_MODEL=cl-nagoya/ruri-v3-30m python bench_scale.py --vectors model --device
 EXDAY_MODEL=cl-nagoya/ruri-v3-30m python bench_scale.py --vectors model --device mps --sizes 100000 --tag mps --env "MacBook Pro（機種）・Docker"
 ```
 
-gen_texts.py の文章は短い（60〜120字程度）ので、実際の長い文章では埋め込みの作成にもっと時間がかかる。また、問いはテンプレートの組み合わせで作るため重複がある（200件中149種類）。速さの計測への影響は小さいが、問いの多様さは実際より低い。
+gen_texts.py の文章は短い（60〜120字程度）ので、実際の長い文章では埋め込みの作成にもっと時間がかかる。また、問いはテンプレートの組み合わせで作るため重複がある（200件中149種類）。Discovery の文章にも同じものがある（10万件中 99,694 種類）。同じ文章は同じベクトルになり距離が同点になるため、全件比較どうしでも同点の並びが回によって入れ替わり、再現率・1位が 1.00 にならないことがある（10万件の全件比較で再現率 0.9995・1位 0.995）。速さの計測への影響は小さいが、問いの多様さは実際より低い。
 
 主なオプション：`--m`・`--ef-construction`（HNSW の作り方）、`--ef-search`、`--filter-tenths`（絞り込みで残す割合。既定 1 2 5 割）、`--filter-ef`（絞り込みのときの ef_search。既定 40）、`--maintenance-work-mem`（インデックス作成に使うメモリ。インデックスがこれに収まらないと作成が遅くなる）。
 
