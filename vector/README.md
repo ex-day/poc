@@ -154,5 +154,5 @@ python compare.py        # load.py が話題も入れて埋め込みを作る（
 
 ## 後で試すこと
 
-- 件数を増やしたときの速さ（架空のDiscoveryを1千・1万・10万件入れて、HNSWインデックスの有無で比べる）
+- 件数を増やしたときの速さ → [`scale/`](scale/)（Issue [#9](https://github.com/ex-day/poc/issues/9)）
 - 完全一致＋ベクトル＋場所（[#82](https://github.com/ex-day/platform/issues/82)）を組み合わせた並べ方
