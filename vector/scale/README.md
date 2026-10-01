@@ -43,7 +43,7 @@ python bench_scale.py --sizes 1000000 --queries 50 --tag posts   # コメント�
 EXDAY_MODEL=cl-nagoya/ruri-v3-30m python bench_scale.py --vectors model --sizes 1000 10000 100000 --env "MacBook Pro（…）・Docker"
 ```
 
-10万件の埋め込みは、CPU で1件あたり数十ミリ秒として1時間前後かかる見込み。まず1万件までで試す。
+埋め込みの作成は、MacBook Pro で Ruri v3 30m・まとめて処理して1件あたり約0.6ms（1万件で約6秒。results/model_256d.md）。10万件でも数分の見込み。ただし gen_texts.py の文章は短い（60〜120字程度）ので、実際の長い文章ではもっとかかる。
 
 主なオプション：`--m`・`--ef-construction`（HNSW の作り方）、`--ef-search`、`--filter-tenths`（絞り込みで残す割合。既定 1 2 5 割）、`--filter-ef`（絞り込みのときの ef_search。既定 40）、`--maintenance-work-mem`（インデックス作成に使うメモリ。インデックスがこれに収まらないと作成が遅くなる）。
 
