@@ -25,7 +25,7 @@ run_one() {  # $1=指示のファイル  $2=結果のファイル
   local tmp; tmp="$(mktemp -d)"
   cp "$1" "$tmp/prompt.md"
   echo ">> $(basename "$1")"
-  codex exec "${MODEL_ARGS[@]}" --skip-git-repo-check --sandbox workspace-write -C "$tmp" \
+  codex exec ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --skip-git-repo-check --sandbox workspace-write -C "$tmp" \
     "このフォルダの prompt.md を読み、書かれた指示のとおりに判定して、結果の JSON だけを out.json に書いてください。ほかのファイルやフォルダは読まないでください。" >/dev/null
   cp "$tmp/out.json" "$2"
   rm -rf "$tmp"
