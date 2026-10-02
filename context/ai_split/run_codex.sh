@@ -11,6 +11,7 @@
 #   ./run_codex.sh openai-gpt-5.6-sol_codex-seq10r20_flow_reply      # 20件で一括の振り分け直しを入れる
 #   EXDAY_CONVS=tsurumi_38,kohoku_31,posts ./run_codex.sh <条件>       # 会話を絞る
 #   CODEX_MODEL=<モデル名> ./run_codex.sh <条件>                        # モデルを指定する（省略時は Codex の既定）
+#   CODEX_BIN=<codex コマンドの場所> ./run_codex.sh <条件>             # codex にパスが通っていないとき
 #
 # 途中で止まっても、同じコマンドでやり直せる（結果のファイルがある区切りは飛ばす）。
 set -euo pipefail
@@ -25,7 +26,7 @@ run_one() {  # $1=指示のファイル  $2=結果のファイル
   local tmp; tmp="$(mktemp -d)"
   cp "$1" "$tmp/prompt.md"
   echo ">> $(basename "$1")"
-  codex exec ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --skip-git-repo-check --sandbox workspace-write -C "$tmp" \
+  "${CODEX_BIN:-codex}" exec ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --skip-git-repo-check --sandbox workspace-write -C "$tmp" \
     "このフォルダの prompt.md を読み、書かれた指示のとおりに判定して、結果の JSON だけを out.json に書いてください。ほかのファイルやフォルダは読まないでください。" >/dev/null
   cp "$tmp/out.json" "$2"
   rm -rf "$tmp"
