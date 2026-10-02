@@ -13,6 +13,7 @@
 #   CODEX_MODEL=<モデル名> ./run_codex.sh <条件>                        # モデルを指定する（省略時は Codex の既定）
 #   CODEX_BIN=<codex コマンドの場所> ./run_codex.sh <条件>             # codex にパスが通っていないとき
 #
+# codex exec の表示（使われたモデル名、トークン数を含む）は、work/<条件>/<会話>_<k>.log に残す。
 # 途中で止まっても、同じコマンドでやり直せる（結果のファイルがある区切りは飛ばす）。
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -27,7 +28,7 @@ run_one() {  # $1=指示のファイル  $2=結果のファイル
   cp "$1" "$tmp/prompt.md"
   echo ">> $(basename "$1")"
   "${CODEX_BIN:-codex}" exec ${MODEL_ARGS[@]+"${MODEL_ARGS[@]}"} --skip-git-repo-check --sandbox workspace-write -C "$tmp" \
-    "このフォルダの prompt.md を読み、書かれた指示のとおりに判定して、結果の JSON だけを out.json に書いてください。ほかのファイルやフォルダは読まないでください。" </dev/null >/dev/null
+    "このフォルダの prompt.md を読み、書かれた指示のとおりに判定して、結果の JSON だけを out.json に書いてください。ほかのファイルやフォルダは読まないでください。" </dev/null >"${2%.out.json}.log" 2>&1
   [ -s "$tmp/out.json" ] || { echo "結果が書かれなかった：$1（作業フォルダ $tmp）" >&2; exit 1; }
   cp "$tmp/out.json" "$2"
   rm -rf "$tmp"
