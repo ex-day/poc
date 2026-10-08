@@ -8,12 +8,12 @@ DROP TABLE IF EXISTS reach.station_spot_walk, reach.spot_walk, reach.station_wal
 -- 取り込んだまま（load_n13.py が入れる）
 CREATE TABLE reach.n13_road (
   id         serial PRIMARY KEY,
-  kind       text,   -- N13_002 種別（1 が大半。公園・境内の中の細い道は 2 が多い）
-  road_class text,   -- N13_003 道路分類
-  state      text,   -- N13_004 道路状態
+  kind       text,   -- N13_002 種別（1 通常部、2 庭園路、3 徒歩道、4 石段、5 不明）
+  road_class text,   -- N13_003 道路分類（1 国道、2 都道府県道、3 市区町村道等、4 高速自動車国道等、5 その他、6 不明）
+  state      text,   -- N13_004 道路状態（1 通常部、2 橋・高架、3 トンネル、4 雪覆い、5 建設中、6 その他、7 不明）
   layer      int,    -- N13_005 階層順（0 が地上。高架などは 1 以上）
-  width      text,   -- N13_006 幅員区分
-  toll       text,   -- N13_007 有料区分（2 が有料と見られる）
+  width      text,   -- N13_006 幅員区分（1 3m未満 … 5 19.5m以上、6 不明）
+  toll       text,   -- N13_007 有料区分（1 無料、2 有料）
   geom       geometry(LineString, 6668) NOT NULL
 );
 

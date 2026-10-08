@@ -74,7 +74,9 @@ LANGUAGE sql STABLE AS $$
   best AS (
     SELECT DISTINCT ON (ok.spot_id) ok.*
     FROM ok
-    ORDER BY ok.spot_id, ok.t1_min + ok.t2_min, ok.walk_min
+    -- 代表の駅は、実際に使う時間（電車の行き帰り＋歩きの往復）がいちばん短い駅。
+    -- 電車の時間だけで選ぶと、電車が少し短いだけで歩きがずっと長い駅を選ぶことがある（PR #24 のレビュー）
+    ORDER BY ok.spot_id, ok.t1_min + ok.t2_min + 2 * ok.walk_min, ok.walk_min
   )
   SELECT s.spot_id, s.source, s.name, s.kinds,
          b.group_code, b.station_name,

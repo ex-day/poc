@@ -62,6 +62,26 @@ def main() -> None:
                 f"- つながった塊：{len(comps):,} 個。いちばん大きい塊に点の {comps[0] / nodes:.1%}"
                 f"（2番目 {comps[1] if len(comps) > 1 else 0:,} 点、10点以下の塊 {sum(1 for c in comps if c <= 10):,} 個）。{sec_cc:.0f}秒", ""]
 
+        # 1b. 道路の属性ごとの本数と、歩きから除いた本数
+        cur.execute("""
+            SELECT road_class, state, count(*),
+                   count(*) FILTER (WHERE toll = '2' OR road_class = '4' OR state = '5')
+            FROM reach.n13_road GROUP BY 1, 2 ORDER BY 1, 2""")
+        rows = cur.fetchall()
+        rc = {"1": "国道", "2": "都道府県道", "3": "市区町村道等", "4": "高速自動車国道等", "5": "その他", "6": "不明"}
+        stt = {"1": "通常部", "2": "橋・高架", "3": "トンネル", "4": "雪覆い", "5": "建設中", "6": "その他", "7": "不明"}
+        out += ["### 道路分類・道路状態ごとの本数", "",
+                "除いた ＝ 有料（有料区分 2）・高速自動車国道等（道路分類 4）・建設中（道路状態 5）のどれか。", "",
+                "| 道路分類 | 道路状態 | 本数 | 除いた |", "|---|---|---|---|"]
+        out += [f"| {rc.get(a, a)} | {stt.get(b, b)} | {n:,} | {x:,} |" for a, b, n, x in rows]
+        out += ["", f"- 計 {sum(r[2] for r in rows):,} 本、除いた {sum(r[3] for r in rows):,} 本", ""]
+        cur.execute("""SELECT count(*) FILTER (WHERE toll = '2'), count(*) FILTER (WHERE road_class = '4'),
+                              count(*) FILTER (WHERE state = '5'),
+                              count(*) FILTER (WHERE road_class = '4' AND toll IS DISTINCT FROM '2')
+                       FROM reach.n13_road""")
+        t, h, c, h_free = cur.fetchone()
+        out += [f"- 有料 {t:,}、高速自動車国道等 {h:,}（うち有料区分が有料でないもの {h_free:,}）、建設中 {c:,}", ""]
+
         # 2. 道のりは直線の何倍か（駅の代表点から場所まで）
         cur.execute("""
             SELECT w.walk_min * 80.0 AS walk_m,

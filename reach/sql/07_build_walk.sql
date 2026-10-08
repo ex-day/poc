@@ -3,14 +3,18 @@
 
 TRUNCATE reach.spot_walk, reach.station_walk, reach.walk_edge, reach.walk_node RESTART IDENTITY;
 
--- 有料の道路（高速道路など）は歩けないので除く（N13_007 = 2 を有料とみなした。要確認）
+-- 歩けない道路を除く（コードは製品仕様書 KS-PS-N13 v1.1 のコードリストで確認）：
+--   有料（toll = 2）、高速自動車国道等（road_class = 4）、建設中（state = 5）
+-- N13 には歩道・歩行者通行禁止・横断できるかの情報が無いので、それ以外は歩けるとみなす
 CREATE TEMP TABLE road_ends AS
 SELECT id AS road_id,
        ST_SnapToGrid(ST_StartPoint(geom), 0.0000001) AS p_start,
        ST_SnapToGrid(ST_EndPoint(geom),   0.0000001) AS p_end,
        geom
 FROM reach.n13_road
-WHERE toll IS DISTINCT FROM '2';
+WHERE toll IS DISTINCT FROM '2'
+  AND road_class IS DISTINCT FROM '4'
+  AND state IS DISTINCT FROM '5';
 
 INSERT INTO reach.walk_node (geom)
 SELECT DISTINCT p FROM (
