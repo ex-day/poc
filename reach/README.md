@@ -123,3 +123,112 @@ VALUES ('京浜急行電鉄', '本線', '横浜', '浦賀', 30, '聞いた話：
 ## やらないこと
 
 - **グループコードが違う、歩いて乗り換えられる駅どうし（例：綱島と新綱島）はつながない。** データの手入れが大変になるうえ、ほしいのは駅ではなく、駅のまわりの施設や Discovery だから。その分、経路は遅めに出る（「行けない側に寄せる」方針の範囲）。正確な乗り継ぎは、乗換案内のアプリに任せる
+
+---
+
+# 寄り道の提案を組み立てる（Issue [#6](https://github.com/ex-day/poc/issues/6)）
+
+寄り道できる駅のリスト（#5）は、それだけではユーザーへの価値にならない。駅のまわりにある場所と、ユーザーの興味を突き合わせて、「寄り道の提案」にできるかを確かめる。
+
+比べること：
+
+1. **絞り込みの順序**
+   - 案1：行ける駅 → 駅のまわりの場所 → 興味で並べる（`reach.suggest_reach_first`）
+   - 案2：興味で全国から上位 k 件を探す → そのうち行ける駅のまわりにあるものだけ残す（`reach.suggest_interest_first`）
+2. **並べ方**（`compare_suggest.py`）
+   - A：興味との近さの順
+   - B：近さの上位30件を、遠回りの小さい順に並べ直す
+   - C：近さ − 0.05 × 遠回り（時間）の順
+
+## 場所のデータ
+
+### Wikidata（仮の Discovery）
+
+本番の Discovery はまだ少なく、場所も横浜周辺に偏っているので、Wikidata（CC0）の場所を仮の Discovery として使う。国土数値情報の観光資源（P12）は、非商用の条件があり、データも2014年が基準なので使わない。
+
+取り方：https://query.wikidata.org で次を実行し、「ダウンロード → JSON file」で保存する（このリポジトリには入れない。`reach/data/` に置く想定）。
+
+```sparql
+SELECT ?item ?itemLabel ?itemDescription ?typeLabel ?coord WHERE {
+  VALUES ?type {
+    wd:Q845945 wd:Q5393308 wd:Q23413 wd:Q33506 wd:Q207694 wd:Q22698
+    wd:Q1107656 wd:Q177380 wd:Q34038 wd:Q23397 wd:Q570116
+  }
+  ?item wdt:P31 ?type ;
+        wdt:P17 wd:Q17 ;
+        wdt:P625 ?coord .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "ja,en". }
+}
+```
+
+2026-10-08 に取った結果：40,464行（場所としては40,191件。種類が複数ある場所は1件にまとめた）。
+
+| 種類 | 行数 |
+|---|---|
+| 仏教寺院 | 19,398 |
+| 神社 | 16,692 |
+| 公園 | 1,913 |
+| 博物館 | 881 |
+| 美術館 | 810 |
+| 滝 | 422 |
+| 湖 | 197 |
+| 庭園 | 64 |
+| 熱水泉（温泉） | 55 |
+| 城 | 31 |
+| 観光地 | 1 |
+
+気づいたこと：
+
+- 神社と寺で9割近くを占める。どの駅のまわりにも神社と寺があるので、興味で並べないと埋もれる
+- 城が31件しかない。日本の城の多くは、別の種類（城跡など）で登録されていると思われる
+- 説明は「park in Japan」「横浜市にある公園」のような短いものが多い。埋め込みの材料としては薄い
+- 「〜にあった公園」のように、今はない場所も混ざっている
+- 飲食店は入っていない。「魚料理を食べたい」のような興味には、このデータでは応えられない（あえて比べる興味に入れた）
+
+### サンプルの Discovery
+
+`vector/sample_data.json` の Discovery（中身が濃い）も、手で付けた概略の座標で入れる（`load_spots.py` の `SAMPLE_COORDS`）。「別地域の貝料理」は特定の場所がないので入れない。22件。
+
+### テーブル
+
+| ファイル | 役割 |
+|---|---|
+| `sql/04_spot.sql` | `reach.spot`（場所、種類、埋め込みに使った文章、埋め込み、座標）を作り直す |
+| `load_spots.py` | Wikidata の JSON とサンプルを入れ、埋め込みを作る（`vector/common.py` の Embedder） |
+| `sql/05_suggest.sql` | 案1・案2の関数 |
+| `compare_suggest.py` | 条件×興味で案1・案2・並べ方を比べ、`results/suggest_<モデル>.md` に書く |
+
+埋め込みに使う文章は、Wikidata は「名前。説明。種類」、サンプルは「名前。Subject。わかってきたこと」。
+
+## 駅のまわりの範囲（仮）
+
+- 滞在時間の中で、駅から800m（片道10分ほど）までは歩けるものとする
+- それより遠い場所は、余分に歩く往復の時間が余裕に収まれば候補にする。半径 ＝ 800m ＋ 分速80m × 余裕 ÷ 2（上限2km）。距離は直線
+- 同じ場所に複数の駅から行けるときは、遠回りが小さい駅を使う
+- 遠回り ＝ その駅を経由した t1＋t2 − まっすぐ帰る時間。まっすぐ帰る時間は、寄り道できる駅のうち t1＋t2 が最小のもので近似する
+
+## 動かし方
+
+```bash
+cd ~/IdeaProjects/ex-day/poc
+docker-compose exec -T db psql -U postgres -d ex_day_poc < reach/sql/04_spot.sql
+docker-compose exec -T db psql -U postgres -d ex_day_poc < reach/sql/05_suggest.sql
+
+cd reach
+EXDAY_MODEL=cl-nagoya/ruri-v3-30m python load_spots.py data/wikidata_spots.json
+EXDAY_MODEL=cl-nagoya/ruri-v3-30m python compare_suggest.py
+```
+
+`vector/` の venv（sentence-transformers・pgvector が入っている）を使う。#5 の `reach.reachable` が入っている DB が前提。
+
+## 試した結果
+
+### 仕組みの確認（文字の重なりの基準 `ngram-baseline`。意味は分からない）
+
+クラウドの検証環境（PostgreSQL 16、PostGIS 3.4、pgRouting 3.6、pgvector）で、流れが動くことだけを確かめた。
+
+- 取り込み：40,084件（Wikidata 40,062、サンプル 22）。埋め込みを含めて8秒
+- 案1の候補：新大阪 → 新横浜で 3,365件、新横浜 → 東京で 3,582件。1回 2〜5秒（初回が遅い）
+- 案2：1回 0.8〜0.9秒
+
+並び順の良し悪しは、Ruri の埋め込みで動かしてから見る。
