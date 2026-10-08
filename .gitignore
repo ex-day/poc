@@ -1,0 +1,6 @@
+.idea
+.worktrees
+.venv
+
+# OpenTripPlanner の入力（OSM・仮 GTFS）とグラフ。大きいので入れない（Issue #7）
+docker/otp/data
