@@ -21,26 +21,43 @@
 
 ## 手順
 
-poc の直下で行う。
+worktree で行う場合も含め、poc のフォルダ（compose.yaml のあるところ）で行う。zsh ではコマンドの後ろに `# …` を書くとコメントにならず引数として渡るので、コマンドだけを打つ。
+
+1. OSM を置く
 
 ```sh
 mkdir -p docker/otp/data
 cp ~/Downloads/kanto-*.osm.pbf docker/otp/data/
+```
 
-# 1. 仮 GTFS を作る（ファイル名に gtfs を含めること）
+2. 仮 GTFS を作る（ファイル名に gtfs を含めること）
+
+```sh
 python reach/otp/make_gtfs.py docker/otp/data/exday-pseudo-gtfs.zip
+```
 
-# 2. グラフを作る（数分〜十数分。docker/otp/data/graph.obj ができる）
+3. グラフを作る（10分前後。最後に graph.obj を保存したと出れば成功）
+
+```sh
 docker-compose run --rm otp --build --save
+```
 
-# 3. 起動する（http://127.0.0.1:8080）。"Grizzly server running" が出るまで待つ
+4. 起動する（http://127.0.0.1:8080）。`Grizzly server running` が出たら Ctrl+C で抜ける
+
+```sh
 docker-compose --profile otp up -d otp
 docker-compose --profile otp logs -f otp
+```
 
-# 4. 比べる（reach/results/otp_compare.md に書く）
+5. 比べる（`reach/results/otp_compare.md` に書く）。DB（#5 の reach の表）が起動していること
+
+```sh
 python reach/otp/compare_otp.py
+```
 
-# 止める
+6. 止める
+
+```sh
 docker-compose --profile otp stop otp
 ```
 
