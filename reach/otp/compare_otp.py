@@ -17,6 +17,7 @@ import statistics
 import sys
 import time
 import urllib.request
+from collections import defaultdict
 from pathlib import Path
 
 import psycopg
@@ -31,7 +32,8 @@ query($from: InputCoordinates!, $to: InputCoordinates!, $date: String!, $time: S
       $arriveBy: Boolean!, $modes: [TransportMode]) {
   plan(from: $from, to: $to, date: $date, time: $time, arriveBy: $arriveBy,
        transportModes: $modes, numItineraries: 3) {
-    itineraries { duration walkTime legs { mode duration } }
+    itineraries { duration walkTime waitingTime
+                  legs { mode duration distance from { name } to { name } route { shortName longName } } }
   }
 }
 """
@@ -54,6 +56,46 @@ def otp_plan(frm, to, t, arrive_by, modes):
     best = min(its, key=lambda i: i["duration"])
     modes_used = "→".join(l["mode"] for l in best["legs"] if l["mode"] != "WALK")
     return best["duration"] / 60.0, modes_used
+
+
+def breakdown(it):
+    """所要時間を、出発の歩き・乗換の歩き・到着の歩き・待ち・乗車（分）に分ける"""
+    legs = it["legs"]
+    ride = sum(l["duration"] for l in legs if l["mode"] != "WALK")
+    walks = [i for i, l in enumerate(legs) if l["mode"] == "WALK"]
+    first = legs[0]["duration"] if legs and legs[0]["mode"] == "WALK" else 0
+    last = legs[-1]["duration"] if len(legs) > 1 and legs[-1]["mode"] == "WALK" else 0
+    xfer = sum(legs[i]["duration"] for i in walks) - first - last
+    m = lambda x: x / 60.0  # noqa: E731
+    return {"total": m(it["duration"]), "access": m(first), "xfer": m(xfer), "egress": m(last),
+            "wait": m(it["waitingTime"]), "ride": m(ride)}
+
+
+def route_text(it):
+    parts = []
+    for l in it["legs"]:
+        d = l["duration"] / 60.0
+        if l["mode"] == "WALK":
+            parts.append(f"歩{d:.0f}分({l['distance']:.0f}m)")
+        else:
+            r = l.get("route") or {}
+            name = r.get("shortName") or r.get("longName") or l["mode"]
+            parts.append(f"{name} {l['from']['name']}→{l['to']['name']} {d:.0f}分")
+    return " / ".join(parts)
+
+
+def otp_best(frm, to, t, arrive_by, modes):
+    """いちばん短い経路をそのまま返す（内訳を見るため）"""
+    body = json.dumps({"query": QUERY, "variables": {
+        "from": {"lat": frm[1], "lon": frm[0]}, "to": {"lat": to[1], "lon": to[0]},
+        "date": DATE, "time": t, "arriveBy": arrive_by, "modes": modes}}).encode()
+    req = urllib.request.Request(OTP, data=body, headers={"Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=60) as r:
+        res = json.load(r)
+    if res.get("errors"):
+        raise RuntimeError(json.dumps(res["errors"], ensure_ascii=False)[:500])
+    its = res["data"]["plan"]["itineraries"]
+    return min(its, key=lambda i: i["duration"]) if its else None
 
 
 def stats(diffs):
@@ -107,6 +149,30 @@ def main() -> None:
         sec = time.perf_counter() - t0
         out += ["", f"- 行き：{stats(d1)}", f"- 帰り：{stats(d2)}",
                 f"- OTP の問い合わせ {n_calls} 回で {sec:.1f}秒（1回 {sec / max(n_calls, 1):.2f}秒）", ""]
+
+        # A の内訳：OTP の時間を、歩き（出発・乗換・到着）・待ち・乗車に分ける
+        out += ["## A の内訳（新横浜 → 各駅、10:00 発）", "",
+                "OTP の所要時間の内訳（分）。pg は pgRouting の t1（乗り始めの待ち5分・乗換10分を含む）。", "",
+                "| 駅 | pg | OTP 計 | 出発の歩き | 乗換の歩き | 到着の歩き | 待ち | 乗車 |",
+                "|---|---|---|---|---|---|---|---|"]
+        sums = defaultdict(list)
+        routes = []
+        for g, name, t1, t2, lon, lat in pick:
+            it = otp_best(shin_yokohama, (lon, lat), "10:00", False, TRANSIT)
+            if it is None:
+                out.append(f"| {name} | {t1} | — | | | | | |")
+                continue
+            b = breakdown(it)
+            for k, v in b.items():
+                sums[k].append(v)
+            out.append(f"| {name} | {t1} | {b['total']:.0f} | {b['access']:.0f} | {b['xfer']:.0f} | "
+                       f"{b['egress']:.0f} | {b['wait']:.0f} | {b['ride']:.0f} |")
+            routes.append(f"- {name}（pg {t1}分・OTP {b['total']:.0f}分）：{route_text(it)}")
+        if sums["total"]:
+            md = lambda k: statistics.median(sums[k])  # noqa: E731
+            out += ["", f"- 中央値：計 {md('total'):.1f}、出発の歩き {md('access'):.1f}、乗換の歩き {md('xfer'):.1f}、"
+                        f"到着の歩き {md('egress'):.1f}、待ち {md('wait'):.1f}、乗車 {md('ride'):.1f}", ""]
+        out += ["### 経路（OTP）", ""] + routes + [""]
 
         # C：歩き。N13 で道のりと直線の差が大きい組10と、ランダムな20組
         cur.execute("""
