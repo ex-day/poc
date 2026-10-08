@@ -1,11 +1,13 @@
 """N02 と表定速度（reach の表）から、仮の GTFS を作る（Issue #7）。
 
 時刻表を使わずに OpenTripPlanner（OTP）を動かすためのもの。実在のダイヤではない。
-- 駅：reach.station（駅コードごと）。座標はホームの中ほど
+- 駅：reach.station の駅のまとまり（group_code）ごとに1つの停留所。座標はまとまりの中の駅（ホームの中ほど）の重心。
+  #5 の乗換（同じまとまりの中で乗り換える）に合わせ、乗換で駅の中を歩く分は無し。乗換の手間は OTP の transferSlack（既定2分）
 - 路線の走る順番：reach.edge（乗車の辺）を路線ごとにたどる。路線の端（行き止まりの点）どうしを結ぶ最短の経路を、それぞれ1つの系統とする。
   環状線（端がない路線）は1周を1系統にする
 - 駅と駅の間の所要時間：reach.edge.cost（距離 ÷ 表定速度。区間の上書きを含む）。#5 の reach.reachable と同じ値
-- 本数：種別ごとに「何分おき」を仮に決め、frequencies.txt に書く（05:00〜24:00）
+- 本数：種別ごとに「何分おき」を仮に決め、frequencies.txt に書く（05:00〜24:00）。
+  exact_times=1（決まった時刻に出る列車）にする。0 だと OTP は毎回「1本逃した直後」の待ち（間隔そのもの）を見るため
 - 範囲：経度・緯度の四角（既定は関東）の中の駅だけ。四角の外に出る系統は、中にある連続した部分だけを使う
 
 使い方：
@@ -115,11 +117,17 @@ def main() -> None:
         adj_by_line[line_id][s].append((t, cost, eid))
         adj_by_line[line_id][t].append((s, cost, eid))
         edge_cost[eid] = cost
+    # 駅のまとまりごとに1つの停留所（座標は重心、名前はまとまりの中でいちばん小さい名前）
     station_by_edge = {}
-    stop_rows = {}
+    members = defaultdict(list)
     for code, name, group, line_id, eid, lon, lat in stations:
-        station_by_edge[eid] = code
-        stop_rows[code] = (code, name, lat, lon, group)
+        station_by_edge[eid] = group
+        members[group].append((name, lon, lat))
+    stop_rows = {}
+    for group, ms in members.items():
+        lon = sum(m[1] for m in ms) / len(ms)
+        lat = sum(m[2] for m in ms) / len(ms)
+        stop_rows[group] = (group, min(m[0] for m in ms), lat, lon, group)
 
     routes, trips, stop_times, freqs = [], [], [], []
     used_stops = set()
@@ -190,7 +198,7 @@ def main() -> None:
                         hh = f"{sec // 3600:02d}:{sec % 3600 // 60:02d}:{sec % 60:02d}"
                         stop_times.append((trip_id, hh, hh, code, i))
                         used_stops.add(code)
-                    freqs.append((trip_id, "05:00:00", "24:00:00", HEADWAY_MIN.get(service_type, 15) * 60))
+                    freqs.append((trip_id, "05:00:00", "24:00:00", HEADWAY_MIN.get(service_type, 15) * 60, 1))
                     route_added = True
         if route_added:
             routes.append((route_id, "exday", line_name[:20], f"{operator} {line_name}",
@@ -217,7 +225,7 @@ def main() -> None:
         z.writestr("stop_times.txt", table(
             ["trip_id", "arrival_time", "departure_time", "stop_id", "stop_sequence"], stop_times))
         z.writestr("frequencies.txt", table(
-            ["trip_id", "start_time", "end_time", "headway_secs"], freqs))
+            ["trip_id", "start_time", "end_time", "headway_secs", "exact_times"], freqs))
         z.writestr("calendar.txt", table(
             ["service_id", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
              "start_date", "end_date"],
