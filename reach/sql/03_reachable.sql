@@ -7,6 +7,11 @@
 -- 時刻表を使わずに「距離 ÷ 表定速度 ＋ 乗換の時間」で粗く出す。
 -- t1 ＋ 滞在時間 ＋ t2 ≦ 使える時間 を満たす駅（駅グループ単位）を、余裕（slack）つきで返す。
 -- 駅の指定は、駅名またはグループコード。同じ駅名のグループが複数あるときは、グループコードで指定する。
+--
+-- 1つの駅グループは、ホームの両端の点を複数持つ（新大阪で10点）。pgr_drivingDistance に開始点を複数渡すと、
+-- 開始点ごとに探索を1回ずつ行うため遅い（新大阪で約4秒）。そこで、仮の点 0 を置き、そこから各開始点へ
+-- 所要時間 0 の辺を足して、仮の点から1回だけ探索する。ほしいのは開始点のうちの最小の時間なので、結果は同じ。
+-- （equicost := true も試したが、3駅で1分ずれた。仮の点のほうが、複数の開始点の最小と正確に一致する）
 
 CREATE OR REPLACE FUNCTION reach.group_nodes(p_station text)
 RETURNS bigint[] LANGUAGE plpgsql STABLE AS $$
@@ -26,6 +31,16 @@ BEGIN
   WHERE s.group_code = groups[1] AND n IS NOT NULL;
   RETURN nodes;
 END $$;
+
+-- pgRouting に渡す辺の SQL。仮の点 0 から、開始点のそれぞれへ所要時間 0 の辺を足す。
+CREATE OR REPLACE FUNCTION reach.edges_from(p_nodes bigint[])
+RETURNS text LANGUAGE sql IMMUTABLE AS $$
+  SELECT format(
+    'SELECT id, source, target, cost, reverse_cost FROM reach.edge
+     UNION ALL
+     SELECT -n, 0, n, 0, 0 FROM unnest(%L::bigint[]) AS n',
+    p_nodes)
+$$;
 
 CREATE OR REPLACE FUNCTION reach.reachable(
   p_from          text,                          -- 出発駅
@@ -51,15 +66,13 @@ LANGUAGE sql STABLE AS $$
   from_dd AS (
     SELECT node, min(agg_cost) AS t
     FROM pgr_drivingDistance(
-      'SELECT id, source, target, cost, reverse_cost FROM reach.edge',
-      reach.group_nodes(p_from), (SELECT move_max FROM budget), directed := true)
+      reach.edges_from(reach.group_nodes(p_from)), 0, (SELECT move_max FROM budget), directed := true)
     GROUP BY node
   ),
   to_dd AS (
     SELECT node, min(agg_cost) AS t
     FROM pgr_drivingDistance(
-      'SELECT id, source, target, cost, reverse_cost FROM reach.edge',
-      reach.group_nodes(p_to), (SELECT move_max FROM budget), directed := true)
+      reach.edges_from(reach.group_nodes(p_to)), 0, (SELECT move_max FROM budget), directed := true)
     GROUP BY node
   ),
   per_station AS (
