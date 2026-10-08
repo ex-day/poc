@@ -31,7 +31,7 @@ INTERESTS = [
 
 TOP_N = 5          # 並べ方ごとに見せる件数
 B_POOL = 30        # 並べ方B：近さの上位何件から、遠回りの小さい順に並べ直すか
-C_ALPHA = 0.05     # 並べ方C：近さ − C_ALPHA × 遠回り（時間）
+C_ALPHA = 0.05     # 並べ方C：近さ − C_ALPHA × 遠回り（時間）。遠回り1時間につき0.05を引く
 K_LIST = [50, 200, 1000]  # 案2：興味で先に取る件数
 
 COLS = ["spot_id", "source", "name", "kinds", "group_code", "station_name", "dist_m",
@@ -56,7 +56,7 @@ def main() -> None:
            f"- モデル：{emb.model_name}",
            f"- 並べ方A：興味との近さの順",
            f"- 並べ方B：近さの上位{B_POOL}件を、遠回りの小さい順に",
-           f"- 並べ方C：近さ − {C_ALPHA} × 遠回り（時間）の順",
+           f"- 並べ方C：近さ − {C_ALPHA} × 遠回り（時間）の順（遠回り1時間につき{C_ALPHA}を引く）",
            f"- 案2：興味で全国から上位k件を先に取り、そのうち行ける駅のまわりにあるものだけ残す", ""]
     with connect() as conn, conn.cursor() as cur:
         cur.execute("SELECT model, count(*) FROM reach.spot GROUP BY 1")
