@@ -22,7 +22,7 @@ import io
 import os
 import sys
 import zipfile
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
 
 import psycopg
@@ -231,6 +231,59 @@ def main() -> None:
              "start_date", "end_date"],
             [("everyday", 1, 1, 1, 1, 1, 1, 1, "20260101", "20271231")]))
     print(f"路線 {len(routes)}、系統（片道） {len(trips)}、駅 {len(used_stops)}、停車 {len(stop_times)} → {out}")
+    report = coverage(stations, lines, stop_rows, trips, stop_times)
+    path = Path(__file__).resolve().parent.parent / "results" / "otp_gtfs_coverage.md"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(report, encoding="utf-8")
+    print(f"網羅性の検査：{path}")
+
+
+def coverage(stations, lines, stop_rows, trips, stop_times) -> str:
+    """仮 GTFS が、四角の中の駅・路線をどれだけ覆っているか、区間ごとに系統がいくつ重なっているかを調べる（PR #25 のレビュー）"""
+    trip_route = {t[2]: t[0] for t in trips}
+    seq = defaultdict(list)
+    for trip_id, _, _, stop_id, _ in stop_times:
+        seq[trip_id].append(stop_id)
+    # 四角の中の駅のまとまりと、（まとまり, 路線）の組
+    inside_groups = {g for g, (_, _, lat, lon, _) in stop_rows.items() if inside(lon, lat)}
+    pairs = {(group, line_id) for _, _, group, line_id, _, _, _ in stations if group in inside_groups}
+    covered_pairs = {(s, int(trip_route[t][1:])) for t, ss in seq.items() for s in ss}
+    used = {s for ss in seq.values() for s in ss}
+    missing_groups = sorted(inside_groups - used)
+    missing_pairs = sorted(pairs - covered_pairs)
+    # 区間（向きつき）ごとに、何系統が通るか。2以上なら、設定した間隔より本数が多い
+    seg = Counter()
+    for t, ss in seq.items():
+        for a, b in zip(ss, ss[1:]):
+            seg[(trip_route[t], a, b)] += 1
+    vals = sorted(seg.values())
+    n = len(vals)
+    name = lambda g: stop_rows[g][1] if g in stop_rows else g  # noqa: E731
+    line_name = lambda lid: " ".join(lines[lid][:2]) if lid in lines else str(lid)  # noqa: E731
+    out = ["# 仮 GTFS の網羅性（make_gtfs.py が書く）", "",
+           f"- 範囲（経度・緯度）：{BBOX}、最大系統数／路線：{MAX_PATTERNS_PER_LINE}", "",
+           "## 駅", "",
+           f"- 四角の中の駅のまとまり {len(inside_groups):,} のうち、GTFS に入らなかったもの {len(missing_groups):,}",
+           f"- （まとまり, 路線）の組 {len(pairs):,} のうち、どの系統も止まらないもの {len(missing_pairs):,}", ""]
+    by_line = defaultdict(list)
+    for g, lid in missing_pairs:
+        by_line[lid].append(name(g))
+    if by_line:
+        out += ["| 路線 | 止まらない駅 |", "|---|---|"]
+        out += [f"| {line_name(lid)} | {'、'.join(sorted(v))} |" for lid, v in sorted(by_line.items(), key=lambda x: -len(x[1]))]
+        out.append("")
+    out += ["## 区間ごとの系統の重なり", "",
+            "向きつきの区間（隣り合う停留所）ごとに、通る系統の数。どの系統も同じ間隔で走らせているので、重なった分だけ本数が多くなる。", ""]
+    if n:
+        out += [f"- 区間 {n:,}。1系統だけ {sum(v == 1 for v in vals) / n:.1%}、2系統以上 {sum(v > 1 for v in vals) / n:.1%}、"
+                f"中央値 {vals[n // 2]}、上位10% {vals[int(n * 0.9)]}、最大 {vals[-1]}", ""]
+        worst = Counter()
+        for (rid, _, _), c in seg.items():
+            worst[rid] = max(worst[rid], c)
+        out += ["重なりの多い路線：", ""]
+        out += [f"- {line_name(int(rid[1:]))}：最大 {c} 系統" for rid, c in worst.most_common(10)]
+        out.append("")
+    return "\n".join(out)
 
 
 if __name__ == "__main__":
