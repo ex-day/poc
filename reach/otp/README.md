@@ -154,3 +154,60 @@ pgRouting との違いとして出そうなこと：
 - OTP の等時間線（帯つき、到着時刻からの逆向き）で、全候補を出す時間とメモリを測る
 - #6（PR #22）の提案を OTP の時間でやり直し、候補・上位10件・代表の駅の差を出す
 
+---
+
+# 仮 GTFS を直し、全駅の到達判定と等時間線を比べる（Issue [#26](https://github.com/ex-day/poc/issues/26)）
+
+PR #25 のレビューで挙がった、OTP を採用するかを決める前の追加実験。
+
+## 仮 GTFS の作り直し
+
+- 系統：端どうしの最短経路（最大15本）をやめ、路線の辺を重ならないたどりに分ける（`cover_trails`）。どの区間もちょうど1つの系統が通るので、区間ごとの本数は設定した間隔のとおりになる。環状に枝が付いた路線（大江戸線・ユーカリが丘線）も覆う
+- 分かれ目：系統の始まり・終わりに、隣の系統のいちばん近い駅を足し、乗り継げるようにする
+- 発車の位相：路線・向きごとにずらす（全系統が 05:00 ちょうどに出ないように）
+- 網羅性（`reach/results/otp_gtfs_coverage.md`）：抜けたまとまり 28 → **0**、どの系統も止まらない（まとまり, 路線）60 → **3**（N02 でほかの辺とつながっていないホーム：伊勢崎線の押上など。どれもほかの路線では止まる）、2系統以上が重なる区間 30.6% → **0.7%**（最大2）
+
+## 全駅の到達判定と等時間線（compare_otp_reach.py）
+
+OTP の TravelTime API（`/otp/traveltime/isochrone`、試験的な機能）で、行き（出発時刻から）と帰り（期限に着く逆向き）の等時間線を5分刻みの帯でもらい、PostGIS で駅のまとまりの重心がどの帯に入るかを調べる。`reach.reachable` の t1・t2 と比べ、全駅を「両方／pgRouting だけ／OTP だけ／どちらも行けない」に分ける。
+
+- 条件：新横浜 → 東京（10:00、180分、滞在60分）、八王子 → 千葉（09:00、300分、滞在90分）、新宿 → 鎌倉（09:00、240分、滞在60分）
+- 発車時刻を0〜8分ずらして5回。OTP の判定は中央値と安全側（80パーセンタイル）
+- 帯の上限を使うので、OTP の時間は最大5分長めに出る（「行けない」側に寄せる）
+
+### 手順
+
+worktree（compose.yaml のあるところ）で行う。DB は poc の本体で起動しておく。
+
+1. OSM・設定・仮 GTFS を置く
+
+```sh
+mkdir -p docker/otp/data
+cp ~/Downloads/kanto-261006.osm.pbf docker/otp/data/
+cp reach/otp/otp-config.json docker/otp/data/
+python reach/otp/make_gtfs.py docker/otp/data/exday-pseudo-gtfs.zip
+```
+
+2. グラフを作る（colima のメモリが 16GB あること：`docker info --format '{{.MemTotal}}'`）
+
+```sh
+docker-compose run --rm otp --build --save
+```
+
+3. 起動して、`Grizzly server running` が出たら Ctrl+C
+
+```sh
+docker-compose --profile otp up -d otp
+docker-compose --profile otp logs -f otp
+```
+
+4. 比べる。前後でメモリを見る
+
+```sh
+docker stats --no-stream
+python reach/otp/compare_otp_reach.py
+docker stats --no-stream
+```
+
+結果は `reach/results/otp_reach_compare.md`。
+
