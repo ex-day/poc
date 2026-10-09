@@ -61,7 +61,8 @@ RETURNS TABLE (
 )
 LANGUAGE sql STABLE AS $$
   WITH r AS (
-    SELECT * FROM reach.reachable(p_from, p_to, p_available_min, p_stay_min)
+    -- 出発駅・帰着駅も、場所の最寄りの駅として使う（外すと、東京駅のそばの場所が有楽町駅に割り当てられた。Issue #27）
+    SELECT * FROM reach.reachable(p_from, p_to, p_available_min, p_stay_min, p_include_ends := true)
   ),
   direct AS (SELECT min(r.t1_min + r.t2_min) AS t FROM r),
   ok AS (
@@ -82,7 +83,9 @@ LANGUAGE sql STABLE AS $$
          b.group_code, b.station_name,
          round(ST_Distance(s.geom::geography, b.st_geom::geography)::numeric, 0),
          b.t1_min, b.t2_min, round(b.slack_left::numeric, 0),
-         (b.t1_min + b.t2_min) - (SELECT t FROM direct),
+         -- 遠回り：電車の遠回りに、歩きの往復を足す。電車の時間だけだと、駅から歩いて20分の場所も
+         -- 電車の遠回りが0分なら上位に来た（Issue #27。代表の駅の選び方と同じ「実際に使う時間」にそろえる）
+         round(((b.t1_min + b.t2_min) - (SELECT t FROM direct) + 2 * b.walk_min)::numeric, 0),
          1 - (s.embedding <=> p_qvec),
          round(b.walk_min::numeric, 1)
   FROM best b
