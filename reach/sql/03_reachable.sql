@@ -42,12 +42,16 @@ RETURNS text LANGUAGE sql IMMUTABLE AS $$
     p_nodes)
 $$;
 
+-- 引数を足したので、前の形（引数5つ）を消してから作る。残すと、引数4つの呼び出しがどちらとも取れて失敗する（Issue #27）
+DROP FUNCTION IF EXISTS reach.reachable(text, text, double precision, double precision, double precision);
 CREATE OR REPLACE FUNCTION reach.reachable(
   p_from          text,                          -- 出発駅
   p_to            text,                          -- 帰着駅
   p_available_min double precision,              -- 使える時間（分）：出発から帰着の期限まで
   p_stay_min      double precision,              -- 寄り道先での滞在時間（分）
-  p_wait_min      double precision DEFAULT 5     -- 乗り始めの待ち時間（分）。行き・帰りのそれぞれに足す
+  p_wait_min      double precision DEFAULT 5,    -- 乗り始めの待ち時間（分）。行き・帰りのそれぞれに足す
+  p_include_ends  boolean DEFAULT false          -- 出発駅・帰着駅も返すか。駅の一覧（寄り道先の駅）では外す。
+                                                 -- 場所の最寄りの駅として使うとき（suggest_walk）は入れる（Issue #27）
 )
 RETURNS TABLE (
   group_code   text,
@@ -103,8 +107,8 @@ LANGUAGE sql STABLE AS $$
          g.geom
   FROM per_group g
   WHERE g.t1 + p_stay_min + g.t2 <= p_available_min
-    AND g.group_code NOT IN (
+    AND (p_include_ends OR g.group_code NOT IN (
       SELECT s.group_code FROM reach.station s
-      WHERE s.station_name IN (p_from, p_to) OR s.group_code IN (p_from, p_to))
+      WHERE s.station_name IN (p_from, p_to) OR s.group_code IN (p_from, p_to)))
   ORDER BY 6 DESC;
 $$;
