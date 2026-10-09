@@ -3,11 +3,12 @@
 時刻表を使わずに OpenTripPlanner（OTP）を動かすためのもの。実在のダイヤではない。
 - 駅：reach.station の駅のまとまり（group_code）ごとに1つの停留所。座標はまとまりの中の駅（ホームの中ほど）の重心。
   #5 の乗換（同じまとまりの中で乗り換える）に合わせ、乗換で駅の中を歩く分は無し。乗換の手間は OTP の transferSlack（既定2分）
-- 路線の走る順番：reach.edge（乗車の辺）を路線ごとにたどる。路線の端（行き止まりの点）どうしを結ぶ最短の経路を、それぞれ1つの系統とする。
-  環状線（端がない路線）は1周を1系統にする
+- 路線の走る順番：reach.edge（乗車の辺）を路線ごとにたどり、どの辺もちょうど1つの系統に入るように分ける（cover_trails）。
+  環状線・環状に枝が付いた路線も覆う。分かれ目の駅は、その先の系統にも最初（最後）の駅として入れる（Issue #26）
 - 駅と駅の間の所要時間：reach.edge.cost（距離 ÷ 表定速度。区間の上書きを含む）。#5 の reach.reachable と同じ値
 - 本数：種別ごとに「何分おき」を仮に決め、frequencies.txt に書く（05:00〜24:00）。
-  exact_times=1（決まった時刻に出る列車）にする。0 だと OTP は毎回「1本逃した直後」の待ち（間隔そのもの）を見るため
+  exact_times=1（決まった時刻に出る列車）にする。0 だと OTP は毎回「1本逃した直後」の待ち（間隔そのもの）を見るため。
+  発車の位相は路線・向きごとにずらす（Issue #26）
 - 範囲：経度・緯度の四角（既定は関東）の中の駅だけ。四角の外に出る系統は、中にある連続した部分だけを使う
 
 使い方：
@@ -42,57 +43,75 @@ ROUTE_TYPE = {
     "shinkansen": 2, "conventional": 2, "subway": 1, "monorail": 12,
     "agt": 12, "tram": 0, "cable": 7, "other": 2,
 }
-MAX_PATTERNS_PER_LINE = 15  # 端が多すぎる路線で、系統が増えすぎないようにする
 
 
 def inside(lon, lat):
     return BBOX[0] <= lon <= BBOX[2] and BBOX[1] <= lat <= BBOX[3]
 
 
-def dijkstra(adj, src):
-    dist = {src: 0.0}
-    prev = {}
-    q = [(0.0, src)]
+def chain_cost(adj, u, first_edge, covered):
+    """u から first_edge に入り、次の分かれ目（次数が2でない点）か覆った辺に当たるまでの所要時間"""
+    v, w, e = first_edge
+    total, prev, seen = w, u, {e}
+    while len(adj[v]) == 2:
+        nxt = [x for x in adj[v] if x[2] not in seen and x[2] not in covered]
+        if not nxt:
+            break
+        prev, (v, w, e) = v, nxt[0]
+        seen.add(e)
+        total += w
+    return total
+
+
+def nearest_station(adj, node, exclude, station_by_edge):
+    """node から、exclude に入っていない辺をたどって、いちばん近い駅（ホームの辺の真ん中）と、そこまでの所要時間"""
+    dist = {node: 0.0}
+    q = [(0.0, node)]
     while q:
         d, u = heapq.heappop(q)
         if d > dist.get(u, 1e18):
             continue
-        for v, w, eid in adj[u]:
-            nd = d + w
-            if nd < dist.get(v, 1e18):
-                dist[v] = nd
-                prev[v] = (u, eid)
-                heapq.heappush(q, (nd, v))
-    return dist, prev
+        for v, w, e in adj[u]:
+            if e in exclude:
+                continue
+            if e in station_by_edge:
+                return station_by_edge[e], d + w / 2
+            if d + w < dist.get(v, 1e18):
+                dist[v] = d + w
+                heapq.heappush(q, (d + w, v))
+    return None
 
 
-def path_edges(prev, src, dst):
-    edges = []
-    v = dst
-    while v != src:
-        u, eid = prev[v]
-        edges.append((u, v, eid))
-        v = u
-    return list(reversed(edges))
+def cover_trails(adj):
+    """路線の辺を、重ならないたどり（系統）に分ける（Issue #26）。
 
-
-def cycle_edges(adj):
-    """端のない路線（環状線）：どこかの点から1周たどる。"""
-    start = next(iter(adj))
-    edges, prev_node, u = [], None, start
-    seen = set()
-    while True:
-        nxt = [(v, w, e) for v, w, e in adj[u] if e not in seen and v != prev_node] or \
-              [(v, w, e) for v, w, e in adj[u] if e not in seen]
-        if not nxt:
-            break
-        v, w, e = nxt[0]
-        seen.add(e)
-        edges.append((u, v, e))
-        prev_node, u = u, v
-        if u == start:
-            break
-    return edges
+    どの辺もちょうど1つの系統に入るので、区間ごとの本数は設定した間隔のとおりになる。
+    たどり始めは、まだ覆っていない辺の数が奇数の点（行き止まりを先に）。分かれ目では、先が長いほうへ進む。
+    環状線や、環状に枝が付いた路線（大江戸線・ユーカリが丘線）も、辺を残さず覆う。
+    """
+    covered = set()
+    trails = []
+    all_edges = {e for u in adj for _, _, e in adj[u]}
+    while len(covered) < len(all_edges):
+        def free(u):
+            return [x for x in adj[u] if x[2] not in covered]
+        nodes = [u for u in adj if free(u)]
+        odd = [u for u in nodes if len(free(u)) % 2 == 1]
+        if odd:
+            start = min(odd, key=lambda u: (len(adj[u]) != 1, len(adj[u])))
+        else:
+            start = nodes[0]
+        trail, u = [], start
+        while True:
+            cand = free(u)
+            if not cand:
+                break
+            v, w, e = max(cand, key=lambda x: chain_cost(adj, u, x, covered))
+            covered.add(e)
+            trail.append((u, v, e))
+            u = v
+        trails.append(trail)
+    return trails
 
 
 def main() -> None:
@@ -134,34 +153,7 @@ def main() -> None:
     n_patterns = 0
     for line_id, adj in adj_by_line.items():
         operator, line_name, service_type = lines[line_id]
-        # 路線のつながった塊ごとに、端（次数1の点）を集める
-        seen_nodes = set()
-        patterns = []
-        for start in list(adj):
-            if start in seen_nodes:
-                continue
-            comp, stack = [], [start]
-            seen_nodes.add(start)
-            while stack:
-                u = stack.pop()
-                comp.append(u)
-                for v, _, _ in adj[u]:
-                    if v not in seen_nodes:
-                        seen_nodes.add(v)
-                        stack.append(v)
-            ends = [u for u in comp if len(adj[u]) == 1]
-            if not ends:
-                sub = {u: adj[u] for u in comp}
-                patterns.append(cycle_edges(sub))
-                continue
-            pairs = [(a, b) for i, a in enumerate(ends) for b in ends[i + 1:]]
-            for a, b in pairs:
-                dist, prev = dijkstra(adj, a)
-                if b in dist:
-                    patterns.append(path_edges(prev, a, b))
-        # 長い系統から使い、上限で打ち切る
-        patterns.sort(key=lambda p: -len(p))
-        patterns = patterns[:MAX_PATTERNS_PER_LINE]
+        patterns = cover_trails(adj)
 
         route_id = f"L{line_id}"
         route_added = False
@@ -169,12 +161,26 @@ def main() -> None:
             # 系統の上の駅と、出発からの所要時間（駅のホームの辺の真ん中）
             t = 0.0
             seq = []
+            # 系統の始まり・終わりの点から、ほかの系統のいちばん近い駅を、最初・最後の駅として足す
+            # （分かれ目の駅が別の系統に入っていても乗り継げるように。ホームの辺だけの短い系統も、2駅以上になる）
+            trail_edges = {e for _, _, e in p}
+            # 隣の系統の駅：始まりの点から、この系統の辺を通らずに行ける、いちばん近い駅
+            h = nearest_station(adj, p[0][0], trail_edges, station_by_edge)
+            head = [(h[0], -h[1])] if h else []
+            if head:
+                seq.append(head[0])
             for u, v, eid in p:
                 c = edge_cost[eid]
                 code = station_by_edge.get(eid)
                 if code and (not seq or seq[-1][0] != code):
                     seq.append((code, t + c / 2))
                 t += c
+            tl = nearest_station(adj, p[-1][1], trail_edges, station_by_edge)
+            tail = [(tl[0], t + tl[1])] if tl else []
+            if tail and seq and seq[-1][0] != tail[0][0]:
+                seq.append(tail[0])
+            if head and len(seq) > 1 and seq[0][0] == seq[1][0]:
+                seq.pop(0)
             # 四角の中の、連続した部分に分ける
             runs, cur_run = [], []
             for code, tm in seq:
@@ -198,7 +204,10 @@ def main() -> None:
                         hh = f"{sec // 3600:02d}:{sec % 3600 // 60:02d}:{sec % 60:02d}"
                         stop_times.append((trip_id, hh, hh, code, i))
                         used_stops.add(code)
-                    freqs.append((trip_id, "05:00:00", "24:00:00", HEADWAY_MIN.get(service_type, 15) * 60, 1))
+                    hw = HEADWAY_MIN.get(service_type, 15)
+                    # 発車の位相：路線・向きごとにずらす（全系統が 05:00 ちょうどに出ると、乗換の待ちが偏る。PR #25 のレビュー）
+                    off = (line_id * 7 + direction * 3) % hw
+                    freqs.append((trip_id, f"05:{off:02d}:00", "24:00:00", hw * 60, 1))
                     route_added = True
         if route_added:
             routes.append((route_id, "exday", line_name[:20], f"{operator} {line_name}",
@@ -261,7 +270,7 @@ def coverage(stations, lines, stop_rows, trips, stop_times) -> str:
     name = lambda g: stop_rows[g][1] if g in stop_rows else g  # noqa: E731
     line_name = lambda lid: " ".join(lines[lid][:2]) if lid in lines else str(lid)  # noqa: E731
     out = ["# 仮 GTFS の網羅性（make_gtfs.py が書く）", "",
-           f"- 範囲（経度・緯度）：{BBOX}、最大系統数／路線：{MAX_PATTERNS_PER_LINE}", "",
+           f"- 範囲（経度・緯度）：{BBOX}", "",
            "## 駅", "",
            f"- 四角の中の駅のまとまり {len(inside_groups):,} のうち、GTFS に入らなかったもの {len(missing_groups):,}",
            f"- （まとまり, 路線）の組 {len(pairs):,} のうち、どの系統も止まらないもの {len(missing_pairs):,}", ""]
