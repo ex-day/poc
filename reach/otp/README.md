@@ -211,3 +211,29 @@ docker stats --no-stream
 
 結果は `reach/results/otp_reach_compare.md`。
 
+### 等時間線の API が無かった（OTP 2.11）
+
+`compare_otp_reach.py` は `/otp/traveltime/isochrone` で 404 になった。OTP の TravelTime API（等時間線・時間の面）は 2.5 までで、2.6 以降は設定項目（`SandboxAPITravelTime`）も無い。説明ページでも UNSUPPORTED。今の OTP で行ける駅の一覧を出すには、駅ごとに経路を問い合わせるしかない（全駅で行き・帰り約4,400回）。そこで、実験2・3は一対多の所要時間の表を出す R5 で行う（`compare_otp_reach.py` は OTP 2.5 以前でなら動く想定のまま残す）。
+
+- メモリ：関東のグラフを読み込んで検索を待っている OTP は約6GB（`docker stats`）
+
+## R5 で全駅の到達判定（compare_r5_reach.py）
+
+[R5](https://github.com/conveyal/r5)（Conveyal）を [r5py](https://r5py.readthedocs.io/) から使う。OTP と同じ OSM と仮 GTFS から交通網を作り、出発駅から全駅への所要時間の表（TravelTimeMatrix）を1回で出す。出発時刻を10分の幅でずらした中の中央値（p50）と安全側（p80）で判定する。
+
+- 帰り（全駅 → 帰着駅）は多対一で、出発地の数だけ探索が要る。仮 GTFS は上りと下りが同じ作りなので、帰着駅 → 全駅で近似し、最初の条件で本来の多対一との差と時間を確かめる
+- R5 は Python と同じプロセスの中の Java（JDK 21 以上）で動く。メモリの上限は環境変数 `EXDAY_R5_MEMORY`（既定 10G）
+- R5 本体の jar は、r5py が最初に使うときに自動で取ってくる
+
+### 手順
+
+venv はリポジトリ直下の `.venv`（Python 3.10 以上。リポジトリの README）。OTP は止めておく。worktree で行う場合：
+
+```sh
+source ../../.venv/bin/activate
+docker-compose --profile otp stop otp
+python reach/otp/compare_r5_reach.py docker/otp/data/kanto-261006.osm.pbf docker/otp/data/exday-pseudo-gtfs.zip
+```
+
+結果は `reach/results/r5_reach_compare.md`。
+

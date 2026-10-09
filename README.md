@@ -24,6 +24,16 @@ docker compose up -d
 
 `docker/postgres/init/` の SQL は、DB が空の初回起動のときだけ自動で実行されます。各 PoC の手順は、それぞれのフォルダの README を見てください。
 
+Python は、リポジトリの直下に venv を1つ作り、すべての PoC（worktree を含む）で共有します。Python 3.10 以上（R5 の r5py が 3.10 以上を必要とするため。3.12 で確認）。
+
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+pip install -r context/requirements.txt -r vector/requirements.txt -r reach/otp/requirements-r5.txt
+```
+
+worktree（`.worktrees/<名前>`）からは `source ../../.venv/bin/activate` で使えます。
+
 ## 判断の記録
 
 このリポジトリには、検証のコードと結果を置きます。検証を受けて何をどう判断したかは、[ex-day/platform の issue](https://github.com/ex-day/platform/issues) に記録しています。

@@ -3,7 +3,7 @@
 OTP 2.11 には等時間線の API が無いので、一対多の所要時間の表を出すのが本業の R5 で試す。
 入力は OTP と同じ：関東の OSM と、make_gtfs.py の仮 GTFS。
 
-使い方（R5 用の venv で。手順は README.md）：
+使い方（リポジトリ直下の .venv で。Python 3.10 以上。手順は README.md）：
   python compare_r5_reach.py <OSM の pbf> <仮 GTFS の zip>
 
 比べること：
