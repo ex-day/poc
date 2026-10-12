@@ -182,7 +182,7 @@ def main():
            f"| 探す（{len(conds)}条件×2周） | — | {peak_search / GB:.1f}GB | {rss_after / GB:.1f}GB（GC 後） | "
            f"{heap_search[0]:.1f} / {heap_search[1]:.1f} / {heap_search[2]:.1f}GB（GC 前） |",
            "",
-           "## 寄り道の検索1回（行き＋帰り、それぞれ全国の駅への一対多）", "",
+           "## 寄り道の検索1回（行き＋帰り、それぞれ交通網の中の駅への一対多）", "",
            "| 周 | 条件 | 行き | 帰り | 合計 | 行ける駅（行き・帰り、p80 で " + f"{MAX_MIN}分以内） |",
            "|---|---|---|---|---|---|"]
     for rnd, name, s1, s2, c1, c2 in rows:
