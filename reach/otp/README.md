@@ -403,4 +403,34 @@ EXDAY_R5_MEMORY=8G python reach/otp/r5_scale.py docker/otp/data/japan-latest.osm
 EXDAY_R5_MEMORY=10G python reach/otp/r5_scale.py docker/otp/data/kanto-261006.osm.pbf docker/otp/data/exday-pseudo-gtfs.zip kanto-load
 ```
 
+### 全国を1つの交通網にはできない（R5 の範囲の上限）
+
+全国の OSM（`japan-latest.osm.pbf`）で作ると、メモリより先に次のエラーで止まった。
+
+```
+java.lang.IllegalArgumentException: Geographic extent of street layer (6764372 km2) exceeds limit of 975000 km2.
+```
+
+R5 は、道路の層の範囲（四角）を 97.5万 km² までに決め打ちしている（R5 の本体に書かれた上限で、r5py・r5r からは変えられない。[r5r の FAQ](https://cloud.r-project.org/web/packages/r5r/vignettes/faq.html)）。日本の OSM は南鳥島・沖ノ鳥島まで入るので約676万 km²。本土の4島だけでも四角は約239万 km²、本州・四国・九州で約137万 km² あり、どう切っても1つには入らない。
+
+そこで、重なりを持たせた地域ごとの交通網に分けて測る（四角の面積は概算）。
+
+| 地域 | 四角（経度・緯度） | 面積 |
+|---|---|---|
+| 北海道 | 139.3,41.3,146.0,45.6 | 約26万 km² |
+| 東（東北・関東・中部・近畿） | 134.8,33.4,142.1,41.6 | 約59万 km² |
+| 西（近畿・中国・四国・九州） | 129.3,30.9,137.0,36.0 | 約41万 km² |
+
+近畿は東と西の両方に入れ、東京〜大阪のような寄り道も東の1つで探せるようにする。地域をまたぐ寄り道（東京 → 博多など）は、どの交通網にも入らない（本番でどう扱うかは別に決める）。
+
+OSM は osmium（`brew install osmium-tool`）で四角に切る。仮 GTFS も同じ四角で作る。
+
+```sh
+osmium extract -b 134.8,33.4,142.1,41.6 docker/otp/data/japan-latest.osm.pbf -o docker/otp/data/east.osm.pbf
+EXDAY_GTFS_BBOX=134.8,33.4,142.1,41.6 EXDAY_GTFS_REPORT=otp_gtfs_coverage_east.md python reach/otp/make_gtfs.py docker/otp/data/exday-pseudo-gtfs-east.zip
+EXDAY_R5_BBOX=134.8,33.4,142.1,41.6 EXDAY_R5_MEMORY=20G python reach/otp/r5_scale.py docker/otp/data/east.osm.pbf docker/otp/data/exday-pseudo-gtfs-east.zip east-build
+```
+
+（西・北海道も同じ。`EXDAY_R5_BBOX` を渡すと、行き先の駅と探す条件をその四角の中に絞る）
+
 20G で作れなかったら（`OutOfMemoryError`、または Mac が固まる）、どこで止まったか（最後に出たログ）と、アクティビティモニタで見たメモリを記録する。次の手として、OSM から歩きに要らないもの（建物・土地利用など）を除いてから作る（osmium の tags-filter）か、AWS のメモリの大きいインスタンスで作る。

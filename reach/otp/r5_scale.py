@@ -13,6 +13,7 @@ r5py は、作った交通網を ~/.cache/r5py/<入力の sha256>.transport_netw
 
   ラベルは結果のファイル名（reach/results/r5_scale_<ラベル>.md）。例：japan-build、japan-load-12G、kanto-load
   EXDAY_R5_MEMORY は Java のヒープの上限（既定 20G）。常に動かすときに要る量は、load をこの値を下げながら流して見る
+  EXDAY_R5_BBOX は地域ごとの交通網のときの四角（例：134.8,33.4,142.1,41.6）。行き先の駅と条件をその中に絞る
 
 探すとき：寄り道の検索1回＝出発駅 → 全国の駅（行き）と、帰着駅 → 全国の駅（帰りの近似。#26 と同じ）の一対多を1回ずつ。
 5つの条件（東京・大阪・福岡・札幌・仙台）を2周する（1周目は温まっていない）。駅は DB の reach.station（全国）。
@@ -51,6 +52,12 @@ CONDITIONS = [
     ("仙台 → 福島", "仙台", "福島", "10:00"),
 ]
 GB = 1024 ** 3
+# 地域ごとの交通網のときは、四角（経度・緯度）を渡す。行き先の駅と条件を、その中に絞る（全国は1つの交通網にできない）
+BBOX = tuple(float(x) for x in os.environ["EXDAY_R5_BBOX"].split(",")) if os.environ.get("EXDAY_R5_BBOX") else None
+
+
+def inside(lon, lat):
+    return BBOX is None or (BBOX[0] <= lon <= BBOX[2] and BBOX[1] <= lat <= BBOX[3])
 
 
 class Peak:
@@ -108,8 +115,12 @@ def main():
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
         cur.execute("""SELECT group_code, ST_X(ST_Centroid(ST_Collect(geom))), ST_Y(ST_Centroid(ST_Collect(geom)))
                        FROM reach.station GROUP BY group_code""")
-        groups = cur.fetchall()
+        groups = [g for g in cur.fetchall() if inside(g[1], g[2])]
+        names = {g[0] for g in groups}
         conds = [(n, group_of(cur, a), group_of(cur, b), t) for n, a, b, t in CONDITIONS]
+        conds = [c for c in conds if c[1] in names and c[2] in names]
+    if not conds:
+        sys.exit("四角の中に入る条件が無い")
     stations = gpd.GeoDataFrame({"id": [g[0] for g in groups]},
                                 geometry=[Point(g[1], g[2]) for g in groups], crs="EPSG:4326")
     pt = {g[0]: (g[1], g[2]) for g in groups}
@@ -161,7 +172,7 @@ def main():
            f"- 入力：{osm.name}（{osm.stat().st_size / GB:.2f}GB）、{gtfs.name}（{gtfs.stat().st_size / 1024 ** 2:.1f}MB）",
            f"- 交通網：{'作った（キャッシュが無かった）' if built else '保存したものを読んだ'}"
            + (f"。保存したファイル {net_file.stat().st_size / GB:.2f}GB" if net_file else ""),
-           f"- 駅グループ（行き先）：{len(groups):,}", "",
+           f"- 駅グループ（行き先）：{len(groups):,}" + (f"（四角 {BBOX} の中）" if BBOX else ""), "",
            "## メモリ（プロセス全体の RSS。Java を含む）", "",
            "| 区間 | 時間 | RSS の最大 | 区間の後の RSS | Java ヒープ（使用 / 確保 / 上限） |",
            "|---|---|---|---|---|",
