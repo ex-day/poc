@@ -16,6 +16,9 @@
   例：python make_gtfs.py ../../docker/otp/data/exday-pseudo-gtfs.zip
 
 ファイル名に「gtfs」を含めること（OTP の決まり）。
+
+全国（Issue #30）：
+  EXDAY_GTFS_BBOX=122,20,154,46 EXDAY_GTFS_REPORT=otp_gtfs_coverage_japan.md python make_gtfs.py <出力する zip>
 """
 import csv
 import heapq
@@ -241,7 +244,8 @@ def main() -> None:
             [("everyday", 1, 1, 1, 1, 1, 1, 1, "20260101", "20271231")]))
     print(f"路線 {len(routes)}、系統（片道） {len(trips)}、駅 {len(used_stops)}、停車 {len(stop_times)} → {out}")
     report = coverage(stations, lines, stop_rows, trips, stop_times)
-    path = Path(__file__).resolve().parent.parent / "results" / "otp_gtfs_coverage.md"
+    # 関東（既定）以外の四角で作るときは、別の名前にする（例：全国は EXDAY_GTFS_REPORT=otp_gtfs_coverage_japan.md。Issue #30）
+    path = Path(__file__).resolve().parent.parent / "results" / os.environ.get("EXDAY_GTFS_REPORT", "otp_gtfs_coverage.md")
     path.parent.mkdir(exist_ok=True)
     path.write_text(report, encoding="utf-8")
     print(f"網羅性の検査：{path}")

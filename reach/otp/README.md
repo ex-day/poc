@@ -351,3 +351,56 @@ EXDAY_MODEL=cl-nagoya/ruri-v3-30m python reach/otp/compare_r5_suggest.py docker/
 - S03（Discovery の詳細）の経路の説明：OTP か R5 の詳しい経路、または乗換案内へのリンク
 - 仮 GTFS は、上りと下りが同じ作りなので、帰りを一対多で近似できた。実在の時刻表を使う場合は、この近似が崩れうる
 
+
+---
+
+# 全国版の R5 のメモリと時間（Issue [#30](https://github.com/ex-day/poc/issues/30)）
+
+関東（#26）では、交通網を作るのに94秒、プロセス全体で約4.5GB、1回の寄り道検索 0.6〜0.7秒だった。全国の OSM と仮 GTFS で、作る・常に使う・探すときのメモリと時間を測り、本番の月額を見積もり直す（platform の DEC-0014 の最終判断の材料）。
+
+## 測り方（r5_scale.py）
+
+- R5 は Python と同じプロセスの中の Java で動くので、プロセス全体の RSS（Java を含む）を 0.2秒ごとに測り、区間ごとの最大を取る。あわせて Java のヒープの使用量も記録する
+- r5py は、作った交通網を `~/.cache/r5py/<入力の sha256>.transport_network` に保存し、次からはそれを読む。1回目が「作る」、2回目以降が「常に動くサーバーの起動」にあたる。どちらだったかは結果に書く
+- 探すとき：寄り道の検索1回＝出発駅 → 全国の駅（行き）と、帰着駅 → 全国の駅（帰りの近似）の一対多。東京・新大阪・博多・札幌・仙台の5条件を2周する
+- 結果は `reach/results/r5_scale_<ラベル>.md`
+
+## 手順
+
+前提：DB に全国の `reach` の表（#5）があること。ディスクに 20GB ほどの空き（OSM の MapDB と交通網の保存先は `~/.cache/r5py`）。
+
+1. 全国の OSM を置く（Geofabrik の `japan-latest.osm.pbf`、約2.4GB、ODbL）
+
+```sh
+mkdir -p docker/otp/data
+mv ~/Downloads/japan-latest.osm.pbf docker/otp/data/
+```
+
+2. 全国の仮 GTFS を作る（関東の網羅性の結果を上書きしないように、別の名前で書く）
+
+```sh
+EXDAY_GTFS_BBOX=122,20,154,46 EXDAY_GTFS_REPORT=otp_gtfs_coverage_japan.md python reach/otp/make_gtfs.py docker/otp/data/exday-pseudo-gtfs-japan.zip
+```
+
+3. 作る（1回目）。ほかのアプリ・OTP・colima は止め、DB だけ動かしておく。Java の上限は 20G から
+
+```sh
+export JAVA_HOME=$(/usr/libexec/java_home)
+EXDAY_R5_MEMORY=20G python reach/otp/r5_scale.py docker/otp/data/japan-latest.osm.pbf docker/otp/data/exday-pseudo-gtfs-japan.zip japan-build
+```
+
+4. 常に動かすとき（2回目以降、保存した交通網を読む）。上限を下げながら、読めて探せる最小を見る
+
+```sh
+EXDAY_R5_MEMORY=16G python reach/otp/r5_scale.py docker/otp/data/japan-latest.osm.pbf docker/otp/data/exday-pseudo-gtfs-japan.zip japan-load-16G
+EXDAY_R5_MEMORY=12G python reach/otp/r5_scale.py docker/otp/data/japan-latest.osm.pbf docker/otp/data/exday-pseudo-gtfs-japan.zip japan-load-12G
+EXDAY_R5_MEMORY=8G python reach/otp/r5_scale.py docker/otp/data/japan-latest.osm.pbf docker/otp/data/exday-pseudo-gtfs-japan.zip japan-load-8G
+```
+
+5. 比べるために、関東も同じ測り方で（#26 の OSM と仮 GTFS。保存した交通網があれば読むだけ）
+
+```sh
+EXDAY_R5_MEMORY=10G python reach/otp/r5_scale.py docker/otp/data/kanto-261006.osm.pbf docker/otp/data/exday-pseudo-gtfs.zip kanto-load
+```
+
+20G で作れなかったら（`OutOfMemoryError`、または Mac が固まる）、どこで止まったか（最後に出たログ）と、アクティビティモニタで見たメモリを記録する。次の手として、OSM から歩きに要らないもの（建物・土地利用など）を除いてから作る（osmium の tags-filter）か、AWS のメモリの大きいインスタンスで作る。
