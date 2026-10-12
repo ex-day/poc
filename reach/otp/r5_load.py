@@ -11,11 +11,13 @@
 測ること：
   A. 1件ずつ流したときの、1件あたりの時間と CPU 時間（プロセス全体。Java の GC なども含む）
      出発時刻の幅（10分・5分・1分）× 探す時間の上限（300分・150分）
-  B. 同時に 1・2・4・8 件流したときの、応答時間（中央値・95パーセンタイル）、1秒あたりの件数、Java ヒープの最大
+  B. 同時に 1・2・4・8 件流したときの、応答時間（中央値・95パーセンタイル（nearest-rank、参考））、1秒あたりの件数、Java ヒープの最大
      A の今の設定（幅10分・300分）と、軽い設定（幅5分・150分）の2つ
 
 結果は reach/results/r5_load_<ラベル>.md。
 """
+import csv
+import math
 import os
 import random
 import statistics
@@ -80,8 +82,9 @@ def cpu_sec():
 
 
 def q(xs, p):
+    """nearest-rank のパーセンタイル（n 件の ceil(p×n) 番目）。PR #33 のレビューで直した（前は 1つ手前を取っていた）"""
     xs = sorted(xs)
-    return xs[min(len(xs) - 1, int(round(p * (len(xs) - 1))))]
+    return xs[max(0, math.ceil(p * len(xs)) - 1)]
 
 
 def main():
@@ -148,11 +151,13 @@ def main():
         print(out[-1], flush=True)
 
     out += ["", "## B. 同時に流したとき", "",
-            "| 設定 | 同時 | 件数 | 応答（中央値） | 応答（95%） | 1秒あたり | CPU 時間/件 | Java ヒープの最大 | RSS の最大 |",
+            "応答（95%）は nearest-rank（件数が少ないので参考の値）。1件ごとの応答時間は r5_load_<ラベル>_latency.csv", "",
+            "| 設定 | 同時 | 件数 | 応答（中央値） | 応答（95%、参考） | 1秒あたり | CPU 時間/件 | Java ヒープの最大 | RSS の最大 |",
             "|---|---|---|---|---|---|---|---|---|"]
+    raw = []
     for window, max_min in CONFIGS_B:
         for c in CONCURRENCY:
-            n = max(16, 4 * c)
+            n = max(40, 8 * c)   # p95 を出すので件数を多めに（40件なら上から3件目、64件なら上から4件目）
             batch = (jobs * 2)[:n]
             sampler.reset()
             c0, t0 = cpu_sec(), time.perf_counter()
@@ -160,7 +165,9 @@ def main():
                 lat = list(ex.map(lambda j: search(j, window, max_min), batch))
             wall = time.perf_counter() - t0
             cpu = (cpu_sec() - c0) / n
-            out.append(f"| 幅{window}分・{max_min}分 | {c} | {n} | {q(lat, .5):.2f}秒 | {q(lat, .95):.2f}秒 | "
+            for x in lat:
+                raw.append((window, max_min, c, round(x, 3)))
+            out.append(f"| 幅{window}分・{max_min}分 | {c} | {n} | {statistics.median(lat):.2f}秒 | {q(lat, .95):.2f}秒 | "
                        f"{n / wall:.2f}件 | {cpu:.2f}秒 | {sampler.heap / GB:.1f}GB | {sampler.rss / GB:.1f}GB |")
             print(out[-1], flush=True)
     sampler.stop = True
@@ -169,6 +176,10 @@ def main():
             "- 1秒あたりにさばける件数は、おおよそ「vCPU の数 ÷ 1件の CPU 時間」。CPU が2つのマシンなら、A の CPU 時間で割って見積もる",
             "- 同時の数を増やしても1秒あたりの件数が増えなくなったところが、このマシンの上限。応答時間は同時の数に比例して延びる",
             ""]
+    with open(HERE.parent / "results" / f"r5_load_{label}_latency.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["window_min", "max_min", "concurrency", "latency_sec"])
+        w.writerows(raw)
     path = HERE.parent / "results" / f"r5_load_{label}.md"
     path.write_text("\n".join(out) + "\n", encoding="utf-8")
     print("\n".join(out))
