@@ -100,7 +100,11 @@ def group_of(cur, name):
 def main():
     if len(ARGS) != 3:
         sys.exit(__doc__)
-    osm, gtfs, label = Path(ARGS[0]).expanduser(), Path(ARGS[1]).expanduser(), ARGS[2]
+    osm, gtfs, label = Path(ARGS[0]).expanduser().resolve(), Path(ARGS[1]).expanduser().resolve(), ARGS[2]
+    # r5py は ~/.cache/r5py に入力へのリンクを作って読むので、無いファイルを渡すと、そのリンクが無いという分かりにくいエラーになる
+    for p in (osm, gtfs):
+        if not p.is_file():
+            sys.exit(f"ファイルが無い：{p}")
     with psycopg.connect(DSN) as conn, conn.cursor() as cur:
         cur.execute("""SELECT group_code, ST_X(ST_Centroid(ST_Collect(geom))), ST_Y(ST_Centroid(ST_Collect(geom)))
                        FROM reach.station GROUP BY group_code""")
