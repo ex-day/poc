@@ -1,0 +1,280 @@
+{
+ "conversation": "tsurumi_38",
+ "facts": [
+  {
+   "id": "F1",
+   "verdict": "正しい",
+   "support": [
+    "P4",
+    "P5"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F2",
+   "verdict": "正しい",
+   "support": [
+    "P6"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F3",
+   "verdict": "正しい",
+   "support": [
+    "P6",
+    "P7"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F4",
+   "verdict": "正しい",
+   "support": [
+    "P7",
+    "P8"
+   ],
+   "extra": [],
+   "missing": [
+    "P6"
+   ],
+   "note": "P7の「そのちょっと鶴見より」が天金を指すと決めるのがP6。"
+  },
+  {
+   "id": "F5",
+   "verdict": "正しい",
+   "support": [
+    "P7",
+    "P8",
+    "P9"
+   ],
+   "extra": [],
+   "missing": [
+    "P6"
+   ],
+   "note": "P7の「そのちょっと鶴見より」が天金を指すと決めるのがP6。"
+  },
+  {
+   "id": "F6",
+   "verdict": "正しい",
+   "support": [
+    "P10"
+   ],
+   "extra": [
+    "P12"
+   ],
+   "missing": [],
+   "note": "P12はP10と同じことの繰り返しで、主張に何も足さない。"
+  },
+  {
+   "id": "F7",
+   "verdict": "正しい",
+   "support": [
+    "P10",
+    "P11"
+   ],
+   "extra": [],
+   "missing": [
+    "P16"
+   ],
+   "note": "P16(自分はもっぱら川崎)も川崎に流れる人がいることを支える。"
+  },
+  {
+   "id": "F8",
+   "verdict": "正しい",
+   "support": [
+    "P15",
+    "P16"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F9",
+   "verdict": "正しい",
+   "support": [
+    "P17"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F10",
+   "verdict": "正しい",
+   "support": [
+    "P18"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F11",
+   "verdict": "正しい",
+   "support": [
+    "P18"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F12",
+   "verdict": "正しい",
+   "support": [
+    "P19",
+    "P20"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F13",
+   "verdict": "正しい",
+   "support": [
+    "P19",
+    "P20"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F14",
+   "verdict": "正しい",
+   "support": [
+    "P21"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F15",
+   "verdict": "正しい",
+   "support": [
+    "P24",
+    "P25"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F16",
+   "verdict": "正しい",
+   "support": [
+    "P25",
+    "P26"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F17",
+   "verdict": "正しい",
+   "support": [
+    "P27"
+   ],
+   "extra": [],
+   "missing": [
+    "P24"
+   ],
+   "note": "P27の「あの辺」が生麦を指すと決めるのがP24。"
+  },
+  {
+   "id": "F18",
+   "verdict": "正しい",
+   "support": [
+    "P27",
+    "P28"
+   ],
+   "extra": [],
+   "missing": [
+    "P24"
+   ],
+   "note": "「あの辺」が生麦を指すと決めるのがP24。"
+  },
+  {
+   "id": "F19",
+   "verdict": "正しい",
+   "support": [
+    "P30",
+    "P31"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F20",
+   "verdict": "正しい",
+   "support": [
+    "P32"
+   ],
+   "extra": [
+    "P31"
+   ],
+   "missing": [],
+   "note": "キスの話のきっかけにすぎず、主張の中身はP32にある。"
+  },
+  {
+   "id": "F21",
+   "verdict": "正しい",
+   "support": [
+    "P33"
+   ],
+   "extra": [
+    "P30"
+   ],
+   "missing": [],
+   "note": "P33だけで主張は読み取れる。P30は話のきっかけ。"
+  },
+  {
+   "id": "F22",
+   "verdict": "正しい",
+   "support": [
+    "P35"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F23",
+   "verdict": "正しい",
+   "support": [
+    "P35"
+   ],
+   "extra": [
+    "P34"
+   ],
+   "missing": [],
+   "note": "P34は話のきっかけで、主張の中身はP35にある。"
+  }
+ ],
+ "uncovered": [
+  {
+   "post": "P3",
+   "info": "鶴見の三業地は変わった(様子が変わった)"
+  },
+  {
+   "post": "P13",
+   "info": "飲んだあとの移動は、一人なら電車もあるが、飲んでいるとつい タクシーになる"
+  },
+  {
+   "post": "P23",
+   "info": "立石が行きにくいので、金町・新小岩・小岩で飲んでいる"
+  }
+ ]
+}

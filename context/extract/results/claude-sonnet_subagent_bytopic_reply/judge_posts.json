@@ -1,0 +1,59 @@
+{
+ "conversation": "posts",
+ "facts": [
+  {
+   "id": "F1",
+   "verdict": "正しい",
+   "support": [
+    "P1"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F2",
+   "verdict": "正しい",
+   "support": [
+    "P2",
+    "P3"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F3",
+   "verdict": "正しい",
+   "support": [
+    "P3"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F4",
+   "verdict": "正しい",
+   "support": [
+    "P5",
+    "P6"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F5",
+   "verdict": "正しい",
+   "support": [
+    "P6",
+    "P7"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  }
+ ],
+ "uncovered": []
+}

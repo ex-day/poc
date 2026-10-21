@@ -1,0 +1,64 @@
+{
+ "conversation": "posts",
+ "condition": "claude-sonnet_subagent_bytopic_reply",
+ "facts": [
+  {
+   "id": "F1",
+   "content": "天気のよい日に桜木町から山下公園まで散歩すると気持ちよかった。",
+   "kind": "体験",
+   "place": "桜木町から山下公園",
+   "when": null,
+   "src": [
+    "P1"
+   ],
+   "unit": "posts_T1"
+  },
+  {
+   "id": "F2",
+   "content": "桜木町から山下公園まで散歩したとき、風はそこまで吹いていなかった。",
+   "kind": "体験",
+   "place": "桜木町から山下公園",
+   "when": null,
+   "src": [
+    "P2",
+    "P3"
+   ],
+   "unit": "posts_T1"
+  },
+  {
+   "id": "F3",
+   "content": "桜木町から山下公園の辺りは海が近く、ビル風もある。",
+   "kind": "事実",
+   "place": "桜木町から山下公園",
+   "when": null,
+   "src": [
+    "P3"
+   ],
+   "unit": "posts_T1"
+  },
+  {
+   "id": "F4",
+   "content": "Aさんはロープウェイのところを歩いた。",
+   "kind": "体験",
+   "place": "ロープウェイのところ",
+   "when": null,
+   "src": [
+    "P5",
+    "P6"
+   ],
+   "unit": "posts_T2"
+  },
+  {
+   "id": "F5",
+   "content": "ロープウェイのところを歩いたAさんは、汽車道や赤レンガにも寄ったのかどうか、答えが出ていない。",
+   "kind": "疑問",
+   "place": "汽車道・赤レンガ",
+   "when": null,
+   "src": [
+    "P6",
+    "P7"
+   ],
+   "unit": "posts_T2"
+  }
+ ]
+}
