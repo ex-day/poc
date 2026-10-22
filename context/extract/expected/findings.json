@@ -1,6 +1,6 @@
 {
- "_note": "知見の層の正解（Issue #34。人（利明）が書いた期待を、Maker が形にした）。from_conversation は会話から読めること、local_knowledge は人の土地勘・経験で足したこと（AI には出せないので、採点では求めない）。priority：want（拾いたい）／optional（取りこぼしてもよい）。question は、次に投稿してほしい問い（まだわかっていないこと）。question_type：範囲（どこか）／確度（本当か）／理由（なぜか）。priority の undecided は、拾うかを人が決めていないもの（採点では求めない）。question_in_conversation が true の問いは、AI が立てるのではなく会話の中で出て答えのない問い。question_optional が true の問いは、出ても出なくても外れにしない。src は Maker が会話から付けたもので、人の確認待ち",
- "status": "途中（鶴見：生麦の漁師・青柳、釣り船 は未記入。港北：富士の付く地名（P8〜P15、富士見台・吉田富士・憧れ説）をどこに入れるかは人の確認待ち）",
+ "_note": "知見の層の正解（Issue #34。人（利明）が書いた期待を、Maker が形にした）。from_conversation は会話から読めること、local_knowledge は人の土地勘・経験で足したこと（AI には出せないので、採点では求めない）。priority：want（拾いたい）／optional（取りこぼしてもよい）。question は、次に投稿してほしい問い（まだわかっていないこと）。question_type：範囲（どこか）／確度（本当か）／理由（なぜか）／条件（誰でも行けるか）／現状（今はどうか）。priority の exclude は知見にしないもの（出たら余計として数える）。undecided は、拾うかを人が決めていないもの（採点では求めない）。question_in_conversation が true の問いは、AI が立てるのではなく会話の中で出て答えのない問い。question_optional が true の問いは、出ても出なくても外れにしない。src は Maker が会話から付けたもので、人の確認待ち",
+ "status": "途中（鶴見：生麦の漁師と青柳（P24〜P29）をどう扱うかは人の確認待ち）",
  "findings": [
   {
    "id": "K1",
@@ -21,12 +21,13 @@
    "conversation": "kohoku_31",
    "from_conversation": "国道246号は飛ばす車が多く、運転に注意が要る",
    "local_knowledge": null,
-   "priority": "optional",
+   "priority": "exclude",
    "src": [
     "P26"
    ],
    "question": null,
-   "group": "道路から見える富士山"
+   "group": "道路から見える富士山",
+   "_memo": "運転の注意は人それぞれなので、知見にしない（人）"
   },
   {
    "id": "K3",
@@ -69,7 +70,7 @@
    "id": "K6",
    "conversation": "tsurumi_38",
    "from_conversation": "魚河岸通りのあたりには、天金のほかにも寿司屋や小料理屋があった（天金はまだある。寿司屋・小料理屋は今もあるかわからない）",
-   "local_knowledge": null,
+   "local_knowledge": "魚河岸通りは生麦にある",
    "priority": "want",
    "src": [
     "P6",
@@ -146,14 +147,14 @@
    "id": "K12",
    "conversation": "kohoku_31",
    "group": "道路から見える富士山",
-   "from_conversation": "緑産業道路はトラックが多い（前にトラックがいると富士山が見えない）",
+   "from_conversation": "緑産業道路では、前を走るトラックで富士山が見えないことがある",
    "local_knowledge": null,
    "priority": "undecided",
    "src": [
     "P4"
    ],
    "question": null,
-   "_memo": "知識とするかは要検討（人）。会話は「トラックが前にいなければ」で、「多い」は一段強い読み"
+   "_memo": "「トラックが多い」は言いすぎ（人）。運の要素なので、知見とするかは別に決める"
   },
   {
    "id": "K13",
@@ -161,12 +162,12 @@
    "group": "道路から見える富士山",
    "from_conversation": "緑産業道路は飛ばす車が多く、運転に注意が要る",
    "local_knowledge": null,
-   "priority": "undecided",
+   "priority": "exclude",
    "src": [
     "P5"
    ],
    "question": null,
-   "_memo": "知識とするかは要検討（人）。246 の同じ種類の知見（K2）は optional にしている。そろえるかは人が決める"
+   "_memo": "運転の注意は人それぞれなので、知見にしない（人）"
   },
   {
    "id": "K14",
@@ -215,6 +216,90 @@
    ],
    "question": null,
    "_memo": "港北以外の地域についての話なので、どう位置づけるかは要検討（人）"
+  },
+  {
+   "id": "K17",
+   "conversation": "kohoku_31",
+   "group": "地名の由来",
+   "from_conversation": "富士見台など「富士」の付く地名が多い（吉田富士のように、富士らしくない所にも付いている）。富士山への憧れから付いたのではないかという説がある",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P12",
+    "P13",
+    "P14",
+    "P15"
+   ],
+   "question": null,
+   "_memo": "人の指示でグループに入れた。文は Maker が書いたもので、人の確認待ち"
+  },
+  {
+   "id": "K18",
+   "conversation": "tsurumi_38",
+   "group": "釣り船",
+   "from_conversation": "鶴見には釣り船が多い",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P26"
+   ],
+   "question": null
+  },
+  {
+   "id": "K19",
+   "conversation": "tsurumi_38",
+   "group": "釣り船",
+   "from_conversation": "釣り船は、春と秋はキスをねらう（八景島のほうまで行く）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P30",
+    "P31"
+   ],
+   "question": null
+  },
+  {
+   "id": "K20",
+   "conversation": "tsurumi_38",
+   "group": "釣り船",
+   "from_conversation": "産業道路寄りからは、イカ釣りの船も出ている",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P33"
+   ],
+   "question": null
+  },
+  {
+   "id": "K21",
+   "conversation": "tsurumi_38",
+   "group": "鶴見の店",
+   "from_conversation": "鶴見は、地元の人がやっている店が多い",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P35"
+   ],
+   "question": null
+  },
+  {
+   "id": "K22",
+   "conversation": "tsurumi_38",
+   "group": "鶴見の店",
+   "from_conversation": "三業地の様子は変わった。京急前の祭寿司や金寿司のように、昔よく行った店がなくなった",
+   "local_knowledge": "三業地でも閉店した店が多く、昔なじみの店が少なくなった。入れ替わりに新しい店が増えている",
+   "priority": "want",
+   "src": [
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "question": "新しくできた店で、おすすめの店はあるか",
+   "question_type": "現状"
   }
  ]
 }
