@@ -1,0 +1,63 @@
+{
+ "_note": "知見の層の正解（Issue #34。人（利明）が書いた期待を、Maker が形にした）。from_conversation は会話から読めること、local_knowledge は人の土地勘・経験で足したこと（AI には出せないので、採点では求めない）。priority：want（拾いたい）／optional（取りこぼしてもよい）。question は、次に投稿してほしい問い（まだわかっていないこと）。question_type：範囲（どこか）／確度（本当か）／理由（なぜか）。question_optional が true の問いは、出ても出なくても外れにしない。src は Maker が会話から付けたもので、人の確認待ち",
+ "status": "途中（鶴見：生麦の漁師・青柳、釣り船／港北：港北ICの富士山、地名の由来 は未記入）",
+ "findings": [
+  {
+   "id": "K1", "conversation": "kohoku_31",
+   "from_conversation": "国道246号には、富士山が綺麗に見える区間がある（大和のほうまで行かないと見えないかもしれない）",
+   "local_knowledge": null, "priority": "want", "src": ["P24", "P25"],
+   "question": "富士山が綺麗に見えるのは、どの区間か", "question_type": "範囲"
+  },
+  {
+   "id": "K2", "conversation": "kohoku_31",
+   "from_conversation": "国道246号は飛ばす車が多く、運転に注意が要る",
+   "local_knowledge": null, "priority": "optional", "src": ["P26"],
+   "question": null
+  },
+  {
+   "id": "K3", "conversation": "kohoku_31",
+   "from_conversation": "茅ヶ崎中央のあたりの、新栄高校からの道路の一段下に公園がある",
+   "local_knowledge": "その公園は、新栄高校から茅ヶ崎中央までの道路沿いに続いている",
+   "priority": "want", "src": ["P29"],
+   "question": null
+  },
+  {
+   "id": "K4", "conversation": "kohoku_31",
+   "from_conversation": "その公園には、桜が植えられているかもしれない（「咲いてた気がする」）",
+   "local_knowledge": null, "priority": "want", "src": ["P29"],
+   "question": "その公園に、桜は植えられているか", "question_type": "確度"
+  },
+  {
+   "id": "K5", "conversation": "kohoku_31",
+   "from_conversation": "桜が見える場所が減っているという話がある。その例として、座間の海軍道路は工事で桜がなくなった",
+   "local_knowledge": null, "priority": "want", "src": ["P19"],
+   "question": "桜が見える場所が減っているのはなぜか（工事・開発など）", "question_type": "理由"
+  },
+  {
+   "id": "K6", "conversation": "tsurumi_38",
+   "from_conversation": "魚河岸通りのあたりには、天金のほかにも寿司屋や小料理屋があった（天金はまだある。寿司屋・小料理屋は今もあるかわからない）",
+   "local_knowledge": null, "priority": "want", "src": ["P6", "P7"],
+   "question": null
+  },
+  {
+   "id": "K7", "conversation": "tsurumi_38",
+   "from_conversation": "鶴見周辺の飲食店は、遅くまで営業している店が少ない",
+   "local_knowledge": null, "priority": "want", "src": ["P10", "P12"],
+   "question": null
+  },
+  {
+   "id": "K8", "conversation": "tsurumi_38",
+   "from_conversation": "鶴見で飲んだあとは、遅くまでやっている川崎や野毛に流れる",
+   "local_knowledge": null, "priority": "want", "src": ["P10", "P11", "P16"],
+   "question": null
+  },
+  {
+   "id": "K9", "conversation": "tsurumi_38",
+   "from_conversation": "立石は、せんべろの流行で安く飲める店が集まり、人が多い。野毛も同じような場所として話されている（P21 の「立石も」）",
+   "local_knowledge": "野毛も立石も、せんべろで有名",
+   "priority": "want", "src": ["P20", "P21"],
+   "question": "野毛や立石で、一人でも入りやすい店はあるか（会話の中で、一人では行きにくいと2人が言っている）",
+   "question_type": "条件", "question_optional": true
+  }
+ ]
+}
