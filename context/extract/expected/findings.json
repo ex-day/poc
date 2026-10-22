@@ -1,6 +1,6 @@
 {
- "_note": "知見の層の正解（Issue #34。人（利明）が書いた期待を、Maker が形にした）。from_conversation は会話から読めること、local_knowledge は人の土地勘・経験で足したこと（AI には出せないので、採点では求めない）。priority：want（拾いたい）／optional（取りこぼしてもよい）。question は、次に投稿してほしい問い（まだわかっていないこと）。question_type：範囲（どこか）／確度（本当か）／理由（なぜか）／条件（誰でも行けるか）／現状（今はどうか）。priority の exclude は知見にしないもの（出たら余計として数える）。undecided は、拾うかを人が決めていないもの（採点では求めない）。question_in_conversation が true の問いは、AI が立てるのではなく会話の中で出て答えのない問い。question_optional が true の問いは、出ても出なくても外れにしない。src は Maker が会話から付けたもので、人の確認待ち",
- "status": "途中（鶴見：生麦の漁師と青柳（P24〜P29）をどう扱うかは人の確認待ち）",
+ "_note": "知見の層の正解（Issue #34。人（利明）が書いた期待を、Maker が形にした）。from_conversation は会話から読めること、local_knowledge は人の土地勘・経験で足したこと（AI には出せないので、採点では求めない）。priority：want（拾いたい）／optional（取りこぼしてもよい）。question は、次に投稿してほしい問い（まだわかっていないこと）。question_type：範囲（どこか）／確度（本当か）／理由（なぜか）／条件（誰でも行けるか）／現状（今はどうか）。priority の exclude は知見にしないもの（出たら余計として数える）。undecided は、拾うかを人が決めていないもの（採点では求めない）。question_in_conversation が true の問いは、AI が立てるのではなく会話の中で出て答えのない問い。question_optional が true の問いは、出ても出なくても外れにしない。src は Maker が会話から付けたもので、人の確認待ち。次に投稿してほしい問いは、答えが付けば、その知見が確かになる（または足りない部分が埋まる）問い（人）",
+ "status": "ひととおり記入済み（Maker が書いた文と src は人の確認待ち。説の扱いは未決）",
  "findings": [
   {
    "id": "K1",
@@ -300,6 +300,39 @@
    ],
    "question": "新しくできた店で、おすすめの店はあるか",
    "question_type": "現状"
+  },
+  {
+   "id": "K23",
+   "conversation": "tsurumi_38",
+   "group": "生麦",
+   "from_conversation": "生麦のあたりで、青柳を干したものを食べていた",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P24",
+    "P27"
+   ],
+   "question": "青柳を干したものは、どこで食べられるか",
+   "question_type": "範囲",
+   "question_in_conversation": true,
+   "question_src": [
+    "P27"
+   ]
+  },
+  {
+   "id": "K24",
+   "conversation": "tsurumi_38",
+   "group": "生麦",
+   "from_conversation": "生麦の通りには昔、漁師が多かった。裏手が鶴見川の河口で、すぐ海に出られたからだという",
+   "local_knowledge": null,
+   "priority": "undecided",
+   "kind": "説",
+   "src": [
+    "P24",
+    "P25"
+   ],
+   "question": null,
+   "_memo": "説であり、事実とは少し違う（人）。DEC-0009 では説もわかってきたことの1つ。K15（耳障りのいい名前を付けた）も説なので、説の扱いはそろえて決める"
   }
  ]
 }
