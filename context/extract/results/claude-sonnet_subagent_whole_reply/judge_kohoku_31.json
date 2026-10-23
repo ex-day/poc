@@ -1,0 +1,190 @@
+{
+ "conversation": "kohoku_31",
+ "facts": [
+  {
+   "id": "F1",
+   "verdict": "正しい",
+   "support": [
+    "P1"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F2",
+   "verdict": "正しい",
+   "support": [
+    "P1",
+    "P2"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F3",
+   "verdict": "正しい",
+   "support": [
+    "P1",
+    "P3"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F4",
+   "verdict": "正しい",
+   "support": [
+    "P4"
+   ],
+   "extra": [
+    "P3"
+   ],
+   "missing": [
+    "P1"
+   ],
+   "note": "P3は夕富士の話で、運の話の中身ではない。場所を決めるP1が漏れている。"
+  },
+  {
+   "id": "F5",
+   "verdict": "正しい",
+   "support": [
+    "P5"
+   ],
+   "extra": [
+    "P4"
+   ],
+   "missing": [
+    "P1"
+   ],
+   "note": "P4は運の話で飛ばす車の話ではない。「あそこ」の場所を決めるP1が漏れている。"
+  },
+  {
+   "id": "F6",
+   "verdict": "正しい",
+   "support": [
+    "P6"
+   ],
+   "extra": [
+    "P5"
+   ],
+   "missing": [
+    "P1"
+   ],
+   "note": "P5は飛ばす車の話で混雑の話ではない。「あのあたり」の場所を決めるP1が漏れている。"
+  },
+  {
+   "id": "F7",
+   "verdict": "正しい",
+   "support": [
+    "P7"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F8",
+   "verdict": "正しい",
+   "support": [
+    "P10"
+   ],
+   "extra": [
+    "P12"
+   ],
+   "missing": [],
+   "note": "P12は同じ感想の繰り返しで主張に何も足さない。"
+  },
+  {
+   "id": "F9",
+   "verdict": "正しい",
+   "support": [
+    "P21",
+    "P22",
+    "P23"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F10",
+   "verdict": "正しい",
+   "support": [
+    "P24",
+    "P25"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F11",
+   "verdict": "正しい",
+   "support": [
+    "P26"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F12",
+   "verdict": "正しい",
+   "support": [
+    "P19"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F13",
+   "verdict": "正しい",
+   "support": [
+    "P27"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F14",
+   "verdict": "正しい",
+   "support": [
+    "P29"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F15",
+   "verdict": "正しい",
+   "support": [
+    "P30"
+   ],
+   "extra": [
+    "P29"
+   ],
+   "missing": [],
+   "note": "P30だけで桜が綺麗な場所が読み取れる。P29は茅ヶ崎中央の話で、この主張には不要。"
+  }
+ ],
+ "uncovered": [
+  {
+   "post": "P9",
+   "info": "富士見台など富士の付く地名が多く、そこから富士山が見えたのではないかという問い"
+  },
+  {
+   "post": "P19",
+   "info": "最近、桜が見えるところが減っている"
+  },
+  {
+   "post": "P20",
+   "info": "鶴見に鶴がいたのかという疑問(地名と実態が合わない)"
+  }
+ ]
+}

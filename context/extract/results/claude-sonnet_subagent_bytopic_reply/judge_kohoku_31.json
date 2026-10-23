@@ -1,0 +1,262 @@
+{
+ "conversation": "kohoku_31",
+ "facts": [
+  {
+   "id": "F1",
+   "verdict": "正しい",
+   "support": [
+    "P1"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F2",
+   "verdict": "正しい",
+   "support": [
+    "P1",
+    "P2"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F3",
+   "verdict": "正しい",
+   "support": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F4",
+   "verdict": "正しい",
+   "support": [
+    "P3",
+    "P4"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F5",
+   "verdict": "正しい",
+   "support": [
+    "P5"
+   ],
+   "extra": [],
+   "missing": [
+    "P1"
+   ],
+   "note": "「あそこ」が緑産業道路の港北IC近辺を指すことはP1で決まる。"
+  },
+  {
+   "id": "F6",
+   "verdict": "正しい",
+   "support": [
+    "P6"
+   ],
+   "extra": [],
+   "missing": [
+    "P1"
+   ],
+   "note": "「あのあたり」の指す場所はP1で決まる。"
+  },
+  {
+   "id": "F7",
+   "verdict": "正しい",
+   "support": [
+    "P7"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F8",
+   "verdict": "正しい",
+   "support": [
+    "P8",
+    "P9"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F9",
+   "verdict": "正しい",
+   "support": [
+    "P11"
+   ],
+   "extra": [
+    "P15"
+   ],
+   "missing": [
+    "P13",
+    "P14"
+   ],
+   "note": "P15は同意のみ。意見の根拠はP13・P14（富士山が見えて喜んでいる）にある。"
+  },
+  {
+   "id": "F10",
+   "verdict": "正しい",
+   "support": [
+    "P10"
+   ],
+   "extra": [
+    "P12"
+   ],
+   "missing": [],
+   "note": "P12はP10の繰り返しで何も足していない。"
+  },
+  {
+   "id": "F11",
+   "verdict": "正しい",
+   "support": [
+    "P19"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F12",
+   "verdict": "正しい",
+   "support": [
+    "P21",
+    "P22",
+    "P23"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F13",
+   "verdict": "正しい",
+   "support": [
+    "P21",
+    "P22",
+    "P23"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F14",
+   "verdict": "正しい",
+   "support": [
+    "P24",
+    "P25"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F15",
+   "verdict": "正しい",
+   "support": [
+    "P26"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F16",
+   "verdict": "正しい",
+   "support": [
+    "P26"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F17",
+   "verdict": "正しい",
+   "support": [
+    "P27"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F18",
+   "verdict": "正しい",
+   "support": [
+    "P27"
+   ],
+   "extra": [],
+   "missing": [
+    "P17"
+   ],
+   "note": "「桜台」が何を指すかはP17で決まる。"
+  },
+  {
+   "id": "F19",
+   "verdict": "正しい",
+   "support": [
+    "P29"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F20",
+   "verdict": "正しい",
+   "support": [
+    "P29"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F21",
+   "verdict": "正しい",
+   "support": [
+    "P30"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F22",
+   "verdict": "正しい",
+   "support": [
+    "P30"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  }
+ ],
+ "uncovered": [
+  {
+   "post": "P17",
+   "info": "鶴見、桜台など、よく使われる地名が他にもあるという話"
+  },
+  {
+   "post": "P19",
+   "info": "最近、桜が見える場所が減っているのではないかという問い"
+  },
+  {
+   "post": "P20",
+   "info": "鶴見に鶴がいたのかという、地名の由来への疑問"
+  }
+ ]
+}
