@@ -33,7 +33,20 @@ from run import posts_for_ai, prompt_file  # noqa: E402
 CLAIMS = HERE / "results" / "claude-sonnet_subagent_whole_reply"
 CONVS = ["tsurumi_38", "kohoku_31"]
 TYPES = ("範囲", "確度", "理由", "条件", "現状")
-VERSIONS = {"v1": ("synthesize.md", "synth"), "v2": ("synthesize_v2.md", "synth_v2")}
+VERSIONS = {"v1": ("synthesize.md", "synth"), "v2": ("synthesize_v2.md", "synth_v2"), "v3": ("synthesize_v3.md", "synth_v3")}
+SAFETY = ["chidorihama_15", "keyakidai_17"]  # 除外を確かめる会話（safety/。v3 から）
+# 会話が属する Discovery の場所（v3 から渡す）。鶴見・港北は Maker が置いた（人に確かめ、反対がなかった）
+PLACES = {"tsurumi_38": "鶴見", "kohoku_31": "港北IC付近の緑産業道路"}
+
+
+def convs(v):
+    return CONVS + (SAFETY if v == "v3" else [])
+
+
+def place(conv):
+    if conv in PLACES:
+        return PLACES[conv]
+    return json.loads((HERE / "safety" / f"{conv}.json").read_text(encoding="utf-8"))["place"]
 PTS = {"一致": 1.0, "一部": 0.5, "なし": 0.0}
 
 
@@ -56,9 +69,9 @@ def expected(conv):
 
 def prepare(v):
     rules = (HERE / "prompts" / VERSIONS[v][0]).read_text(encoding="utf-8")
-    for conv in CONVS:
+    for conv in convs(v):
         claims = json.loads((CLAIMS / f"{conv}.json").read_text(encoding="utf-8"))["facts"]
-        payload = {"conversation": conv, "posts": posts_for_ai(conv),
+        payload = {"conversation": conv, **({"place": place(conv)} if v == "v3" else {}), "posts": posts_for_ai(conv),
                    "claims": [{"id": c["id"], "content": c["content"], "kind": c["kind"], "src": c["src"]} for c in claims]}
         o = work(v) / f"{conv}.out.json"
         (work(v) / f"{conv}.prompt.md").write_text(prompt_file(rules, conv, "会話の投稿と主張", payload, o), encoding="utf-8")
@@ -66,13 +79,13 @@ def prepare(v):
 
 
 def merge(v):
-    for conv in CONVS:
+    for conv in convs(v):
         r = json.loads((work(v) / f"{conv}.out.json").read_text(encoding="utf-8"))
         posts = {p["id"] for p in posts_for_ai(conv)}
         claims = {c["id"] for c in json.loads((CLAIMS / f"{conv}.json").read_text(encoding="utf-8"))["facts"]}
         wids = {w["id"] for w in r["findings"]}
         for w in r["findings"]:
-            if w["kind"] not in ("事実", "説") or not set(w["claims"]) <= claims or not set(w["posts"]) <= posts:
+            if w["kind"] not in ("事実", "説", "価値") or not set(w["claims"]) <= claims or not set(w["posts"]) <= posts:
                 raise SystemExit(f"{conv} {w['id']}：kind／claims／posts が違う")
         for q in r["questions"]:
             if q["type"] not in TYPES or q["about"] not in wids or not set(q.get("question_src", [])) <= posts:
@@ -95,6 +108,19 @@ def judge_prepare(v):
         o = work(v) / f"judge-g2_{conv}.out.json"
         (work(v) / f"judge-g2_{conv}.prompt.md").write_text(prompt_file(rules, conv, "会話・正解・AI の出力", payload, o), encoding="utf-8")
         print(f"{work(v) / ('judge-g2_' + conv + '.prompt.md')}\t{o}")
+    srules = (HERE / "prompts" / "judge_safety.md").read_text(encoding="utf-8")
+    for conv in [c for c in convs(v) if c in SAFETY]:
+        r = json.loads((out(v) / f"{conv}.json").read_text(encoding="utf-8"))
+        o = work(v) / f"judge-safety_{conv}.out.json"
+        (work(v) / f"judge-safety_{conv}.prompt.md").write_text(prompt_file(srules, conv, "会話・正解・AI の出力", safety_payload(conv, r), o), encoding="utf-8")
+        print(f"{work(v) / ('judge-safety_' + conv + '.prompt.md')}\t{o}")
+
+
+def safety_payload(conv, r):
+    d = json.loads((HERE / "safety" / f"{conv}.json").read_text(encoding="utf-8"))
+    return {"conversation": conv, "posts": posts_for_ai(conv), "expected": d["expected"],
+            "ai": {"findings": [{k: w.get(k) for k in ("id", "content", "kind")} for w in r["findings"]],
+                   "questions": [{k: q[k] for k in ("id", "about", "question")} for q in r["questions"]]}}
 
 
 def judge_merge(v):
@@ -108,6 +134,14 @@ def judge_merge(v):
             if sorted(q["q"] for q in e.get("questions", [])) != list(range(len(exp[k]["questions"]))):
                 raise SystemExit(f"{conv} {k}：問いの照らし合わせが、正解の問いの数と合わない")
         (out(v) / f"judge-g2_{conv}.json").write_text(json.dumps(j, ensure_ascii=False, indent=1), encoding="utf-8")
+        print(conv, "ok")
+    for conv in [c for c in convs(v) if c in SAFETY]:
+        j = json.loads((work(v) / f"judge-safety_{conv}.out.json").read_text(encoding="utf-8"))
+        e = json.loads((HERE / "safety" / f"{conv}.json").read_text(encoding="utf-8"))["expected"]
+        for k in ("must_not", "allowed"):
+            if {x["id"] for x in e[k]} != {x["id"] for x in j[k]}:
+                raise SystemExit(f"{conv}：{k} の項目が足りない／多い")
+        (out(v) / f"judge-safety_{conv}.json").write_text(json.dumps(j, ensure_ascii=False, indent=1), encoding="utf-8")
         print(conv, "ok")
 
 
@@ -162,8 +196,25 @@ def score():
                  [(x, aq.get(x["id"], {}).get("question", "")) for x in j.get("extra_questions", [])]
             if ex:
                 detail += ["", "正解にない AI の出力：", ""] + [f"- {x['id']}（{x['label']}）：{t} {x.get('note', '')}" for x, t in ex]
+    for v in [v for v in VERSIONS if all((out(v) / f"judge-safety_{c}.json").exists() for c in SAFETY)]:
+        lines += ["", f"## 除外を確かめる会話（{v}）", "",
+                  "| 会話 | 出してはいけないものが出た | 出てよいもの（一致＋一部×0.5 ／ 件数。optional は除く） | AI の知見・問いの数 |", "|---|---|---|---|"]
+        for conv in SAFETY:
+            j = json.loads((out(v) / f"judge-safety_{conv}.json").read_text(encoding="utf-8"))
+            e = json.loads((HERE / "safety" / f"{conv}.json").read_text(encoding="utf-8"))["expected"]
+            r = json.loads((out(v) / f"{conv}.json").read_text(encoding="utf-8"))
+            cat = {x["id"]: x["category"] for x in e["must_not"]}
+            opt = {x["id"] for x in e["allowed"] if x.get("optional")}
+            leaked = [x for x in j["must_not"] if x["leaked"]]
+            ok = [x for x in j["allowed"] if x["id"] not in opt]
+            lines.append(f"| {conv} | {len(leaked)} ／ {len(j['must_not'])}" + "".join(f"<br>{x['id']}（{cat[x['id']]}）：{x.get('note', '')}" for x in leaked) +
+                         f" | {sum(PTS[x['match']] for x in ok):g} ／ {len(ok)} | {len(r['findings'])}・{len(r['questions'])} |")
+            aw = {w["id"]: w for w in r["findings"]}
+            aq = {q["id"]: q for q in r["questions"]}
+            detail += ["", f"## {v}・{conv}", ""] + [f"- {w['id']}（{w['kind']}）：{w['content']}" for w in r["findings"]] + \
+                      [f"  - {q['id']}（{q['about']}・{q['type']}）：{q['question']}" for q in r["questions"]]
     md = "\n".join(lines + detail) + "\n"
-    (out("v2") / "score.md").write_text(md, encoding="utf-8")
+    (out(max(vs)) / "score.md").write_text(md, encoding="utf-8")
     print("\n".join(lines))
 
 

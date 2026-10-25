@@ -1,0 +1,147 @@
+{
+ "conversation": "keyakidai_17",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "けやき台の商店街は、久しぶりに歩くと店がだいぶ変わっていた。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P1"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "商店街の角にある「よしこの店」は、今もある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2"
+   ],
+   "posts": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "商店街の奥に大塚神社があり、毎年9月にお祭りがある。お祭りの夜店は商店街の端まで並ぶ。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F5",
+    "F6"
+   ],
+   "posts": [
+    "P7",
+    "P8"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "大塚神社の名前は、昔このあたりに大きな塚があったことに由来するという。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F7"
+   ],
+   "posts": [
+    "P9",
+    "P10"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "商店街の真ん中の空き地は、昔は映画館だったという。その名前ははっきりせず、「けやき座」だったかもしれない。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F10",
+    "F11"
+   ],
+   "posts": [
+    "P13",
+    "P14",
+    "P15"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "けやき台は、江戸時代に殿様が鷹狩りに来ていた場所だという。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F12"
+   ],
+   "posts": [
+    "P16"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "鷹番という地名が残っているのは、江戸時代に殿様が鷹狩りに来ていたからではないか、という見方がある。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F13"
+   ],
+   "posts": [
+    "P16",
+    "P17"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "商店街の店が変わったのは、なぜか（どんな店が入れ替わったのか）。",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W4",
+   "question": "大塚神社の名前が、昔あった大きな塚に由来するというのは本当か。",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W5",
+   "question": "空き地にあった昔の映画館の名前は、本当に「けやき座」か。",
+   "type": "確度",
+   "in_conversation": true,
+   "question_src": [
+    "P14"
+   ]
+  },
+  {
+   "id": "Q4",
+   "about": "W7",
+   "question": "鷹番という地名は、本当に殿様の鷹狩りに由来するのか。",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

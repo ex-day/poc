@@ -1,0 +1,223 @@
+{
+ "conversation": "kohoku_31",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "港北IC近辺の緑産業道路は道が直線で、タイミングが良いと富士山がとても綺麗に見える。見えるかどうかは、天候や前にトラックがいないかといった運に左右される",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1",
+    "F2",
+    "F4"
+   ],
+   "posts": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "港北IC近辺の緑産業道路では、夕方の夕富士も良い",
+   "kind": "価値",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F3"
+   ],
+   "posts": [
+    "P1",
+    "P3"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "このあたりにはIKEAやホームセンターのような大型の店が集まっていて、結構混む",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6"
+   ],
+   "posts": [
+    "P5",
+    "P6"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "港北ICが昔の場所にあった頃はIC入口がとても混んだが、今はそれほどでもない",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F7"
+   ],
+   "posts": [
+    "P7"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "富士見台など「富士」のつく地名は多い。富士山への憧れからではないかという見方がある",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [],
+   "posts": [
+    "P8",
+    "P9",
+    "P11",
+    "P15"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "田園都市線沿いのたまプラーザや鷺沼などの地名は、東急が切り開いた新興住宅地で、耳障りのいい名前を付けたのではないかと言われている",
+   "kind": "説",
+   "status": null,
+   "related_places": [
+    "田園都市線沿線"
+   ],
+   "aliases": [],
+   "claims": [
+    "F9"
+   ],
+   "posts": [
+    "P21",
+    "P22",
+    "P23"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "国道246号は、田園都市線沿いを少し走ると富士山が綺麗に見えるが、大和のほうまで行かないと見えないかもしれない",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "国道246号"
+   ],
+   "aliases": [],
+   "claims": [
+    "F10"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "桜が見えるところが減っているのではないかという声がある。例として、座間だったかの海軍道路は、工事で桜がなくなっている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "座間の海軍道路"
+   ],
+   "aliases": [],
+   "claims": [
+    "F12"
+   ],
+   "posts": [
+    "P19"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "港北ニュータウンは桜が綺麗で、アオキ本社の辺りやBOSHの辺りも桜が綺麗",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "港北ニュータウン",
+    "アオキ本社の辺り",
+    "BOSHの辺り"
+   ],
+   "aliases": [],
+   "claims": [
+    "F13",
+    "F15"
+   ],
+   "posts": [
+    "P27",
+    "P29",
+    "P30"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "茅ヶ崎中央の新栄高校からの道路からは桜が見えにくいが、一段下の公園には桜が咲いていた気がする",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "茅ヶ崎中央"
+   ],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P29"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W3",
+   "question": "大型の店のあたりが混むのは、いつの時間帯や曜日か",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W4",
+   "question": "港北ICの入口が混まなくなったのはなぜか",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W5",
+   "question": "富士見台など富士のつく地名は、そこから富士山が見えたからなのか、憧れからなのか",
+   "type": "理由",
+   "in_conversation": true,
+   "question_src": [
+    "P9"
+   ]
+  },
+  {
+   "id": "Q4",
+   "about": "W7",
+   "question": "国道246号で富士山が綺麗に見え始めるのは、どのあたりからか",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q5",
+   "about": "W8",
+   "question": "桜がなくなった海軍道路は、座間のどのあたりか",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q6",
+   "about": "W10",
+   "question": "茅ヶ崎中央の一段下の公園には、本当に桜が咲いているか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

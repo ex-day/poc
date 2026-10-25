@@ -17,6 +17,7 @@
 正解（話題）は ../conversations/*.json と ../posts.json の topics。取り出し・採点のどちらの役にも見せない。
 """
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -25,11 +26,13 @@ HERE = Path(__file__).resolve().parent
 CTX = HERE.parent
 WORK = HERE / "work"
 RESULTS = HERE / "results"
-CONVS = ["tsurumi_38", "kohoku_31", "posts"]  # 人（利明）が書いた3本
+CONVS = [c for c in os.environ.get("EXDAY_CONVS", "tsurumi_38,kohoku_31,posts").split(",") if c]  # 既定は人（利明）が書いた3本
 
 
 def load(conv):
     f = CTX / ("posts.json" if conv == "posts" else f"conversations/{conv}.json")
+    if not f.exists():  # 除外を確かめる会話（safety/）
+        f = HERE / "safety" / f"{conv}.json"
     return json.loads(f.read_text(encoding="utf-8"))
 
 
