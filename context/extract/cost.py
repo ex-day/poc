@@ -23,6 +23,9 @@ TPC = 1.3
 PRICE = {"Sonnet 5.5": (2.0, 10.0), "Haiku 5.5": (0.10, 0.50)}  # 入力, 出力（Haiku は 10万トークン以下の料金）
 CONVS = ["tsurumi_38", "kohoku_31", "chidorihama_15", "keyakidai_17"]
 # 規模の想定（人の想定、#34）：(名前, 1日の投稿, 投稿のある Discovery の数, 解析するときの会話の長さ N)
+JPY = 160  # 1ドルの円（reach/otp/README.md の本番の見積もりとそろえた）
+PER_DISC = 7  # 1日1回の解析で、Discovery 1つあたりの1日の投稿（人の想定：5〜10件）
+POST_RATES = (0.001, 0.005, 0.01, 0.03)  # PV のうち投稿になる割合（仮）
 SCENARIOS = [("当初", 10, 10, 30), ("回り出した", 1000, 150, 100), ("回り出した・会話が長い", 1000, 150, 200), ("伸びた", 10000, 1500, 100)]
 
 
@@ -69,6 +72,15 @@ def main():
         for how, calls in (("投稿ごと", posts), ("1日1回（Discovery ごと）", disc)):
             m = [calls * (i * a + o * b) / 1e6 * 30 for a, b in PRICE.values()]
             out.append(f"| {name}（N={N}） | {posts:,} | {how} | " + " | ".join(f"${x:,.0f}" for x in m) + " | " + " | ".join(f"${x / 2:,.0f}" for x in m) + " |")
+    i, o = (ai + bi * 100) * TPC, (ao + bo * 100) * TPC
+    one = {m: (i * a + o * b) / 1e6 for m, (a, b) in PRICE.items()}
+    meth = [("投稿ごと・Sonnet", one["Sonnet 5.5"]), ("1日1回・Sonnet", one["Sonnet 5.5"] / PER_DISC),
+            ("1日1回・Sonnet・バッチ", one["Sonnet 5.5"] / PER_DISC / 2), ("1日1回・Haiku・バッチ", one["Haiku 5.5"] / PER_DISC / 2)]
+    out += ["", f"## 1投稿あたり・1,000PVあたり（円。1ドル{JPY}円、N=100、1日1回は Discovery 1つあたり1日{PER_DISC}件）", "",
+            "| | " + " | ".join(m for m, _ in meth) + " |", "|---|" + "---|" * len(meth),
+            "| 1投稿あたり | " + " | ".join(f"{v * JPY:,.2f}" for _, v in meth) + " |"]
+    for r in POST_RATES:
+        out.append(f"| 1,000PVあたり（投稿率 {r * 100:g}%） | " + " | ".join(f"{v * JPY * r * 1000:,.2f}" for _, v in meth) + " |")
     md = "\n".join(out) + "\n"
     (HERE / "results" / "cost.md").write_text(md, encoding="utf-8")
     print(md)
