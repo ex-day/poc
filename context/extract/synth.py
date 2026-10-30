@@ -33,14 +33,16 @@ from run import posts_for_ai, prompt_file  # noqa: E402
 CLAIMS = HERE / "results" / "claude-sonnet_subagent_whole_reply"
 CONVS = ["tsurumi_38", "kohoku_31"]
 TYPES = ("範囲", "確度", "理由", "条件", "現状")
-VERSIONS = {"v1": ("synthesize.md", "synth"), "v2": ("synthesize_v2.md", "synth_v2"), "v3": ("synthesize_v3.md", "synth_v3")}
+VERSIONS = {"v1": ("synthesize.md", "synth"), "v2": ("synthesize_v2.md", "synth_v2"), "v3": ("synthesize_v3.md", "synth_v3"),
+            "v3h": ("synthesize_v3.md", "synth_v3_haiku")}  # v3h：v3 の指示で、1段目・2段目とも Haiku（照らし合わせは Sonnet）
+CLAIMS_BY = {"v3h": HERE / "results" / "claude-haiku_subagent_whole_reply"}
 SAFETY = ["chidorihama_15", "keyakidai_17"]  # 除外を確かめる会話（safety/。v3 から）
 # 会話が属する Discovery の場所（v3 から渡す）。鶴見・港北は Maker が置いた（人に確かめ、反対がなかった）
 PLACES = {"tsurumi_38": "鶴見", "kohoku_31": "港北IC付近の緑産業道路"}
 
 
 def convs(v):
-    return CONVS + (SAFETY if v == "v3" else [])
+    return CONVS + (SAFETY if v.startswith("v3") else [])
 
 
 def place(conv):
@@ -70,8 +72,8 @@ def expected(conv):
 def prepare(v):
     rules = (HERE / "prompts" / VERSIONS[v][0]).read_text(encoding="utf-8")
     for conv in convs(v):
-        claims = json.loads((CLAIMS / f"{conv}.json").read_text(encoding="utf-8"))["facts"]
-        payload = {"conversation": conv, **({"place": place(conv)} if v == "v3" else {}), "posts": posts_for_ai(conv),
+        claims = json.loads((CLAIMS_BY.get(v, CLAIMS) / f"{conv}.json").read_text(encoding="utf-8"))["facts"]
+        payload = {"conversation": conv, **({"place": place(conv)} if v.startswith("v3") else {}), "posts": posts_for_ai(conv),
                    "claims": [{"id": c["id"], "content": c["content"], "kind": c["kind"], "src": c["src"]} for c in claims]}
         o = work(v) / f"{conv}.out.json"
         (work(v) / f"{conv}.prompt.md").write_text(prompt_file(rules, conv, "会話の投稿と主張", payload, o), encoding="utf-8")
@@ -82,7 +84,7 @@ def merge(v):
     for conv in convs(v):
         r = json.loads((work(v) / f"{conv}.out.json").read_text(encoding="utf-8"))
         posts = {p["id"] for p in posts_for_ai(conv)}
-        claims = {c["id"] for c in json.loads((CLAIMS / f"{conv}.json").read_text(encoding="utf-8"))["facts"]}
+        claims = {c["id"] for c in json.loads((CLAIMS_BY.get(v, CLAIMS) / f"{conv}.json").read_text(encoding="utf-8"))["facts"]}
         wids = {w["id"] for w in r["findings"]}
         for w in r["findings"]:
             if w["kind"] not in ("事実", "説", "価値") or not set(w["claims"]) <= claims or not set(w["posts"]) <= posts:
@@ -214,7 +216,7 @@ def score():
             detail += ["", f"## {v}・{conv}", ""] + [f"- {w['id']}（{w['kind']}）：{w['content']}" for w in r["findings"]] + \
                       [f"  - {q['id']}（{q['about']}・{q['type']}）：{q['question']}" for q in r["questions"]]
     md = "\n".join(lines + detail) + "\n"
-    (out(max(vs)) / "score.md").write_text(md, encoding="utf-8")
+    (out("v3") / "score.md").write_text(md, encoding="utf-8")
     print("\n".join(lines))
 
 

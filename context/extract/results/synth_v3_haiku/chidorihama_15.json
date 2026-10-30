@@ -1,0 +1,112 @@
+{
+ "conversation": "chidorihama_15",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "ちどり浜の海釣り公園は朝6時から営業しており、夏は夕方まで延長している",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F3"
+   ],
+   "posts": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "ちどり浜の海釣り公園では、アジが釣れた",
+   "kind": "価値",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P1"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "海釣り公園の入口には釣具店の山田釣具があり、公園の売店ではアジフライを売っている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F11",
+    "F16"
+   ],
+   "posts": [
+    "P8",
+    "P12"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "海釣り公園の隣には赤灯台の堤防があり、立入禁止になっている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F5"
+   ],
+   "posts": [
+    "P4"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "ちどり浜は昔、塩田だった",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F18"
+   ],
+   "posts": [
+    "P13",
+    "P14"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "ちどり浜の近くには「塩田橋」という橋がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F19"
+   ],
+   "posts": [
+    "P14"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "夏の夕方までの延長は、何月から何月までか",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W2",
+   "question": "ちどり浜の海釣り公園では、アジはいつ頃よく釣れるか",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}
