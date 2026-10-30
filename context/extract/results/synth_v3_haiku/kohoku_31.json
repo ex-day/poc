@@ -1,0 +1,277 @@
+{
+ "conversation": "kohoku_31",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "緑産業道路は道が直線なので、タイミングが良いと富士山が見える。天候や前を走る車の有無にも左右される。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F4"
+   ],
+   "posts": [
+    "P1",
+    "P2",
+    "P4"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "緑産業道路からは富士山が綺麗に見え、夕方の夕富士も良い。",
+   "kind": "価値",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1",
+    "F3"
+   ],
+   "posts": [
+    "P1",
+    "P3"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "緑産業道路の周辺には、IKEAやホームセンターなどの大型の店が集まっていて、混みやすい。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6"
+   ],
+   "posts": [
+    "P1",
+    "P6"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "港北ICは、昔の場所にあったころは入口が混んだが、今はそれほどでもない。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F7"
+   ],
+   "posts": [
+    "P7"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "富士見台など、富士見の名がついた地名が多い。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F8"
+   ],
+   "posts": [
+    "P8",
+    "P9"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "鶴見など、鶴や桜を連想させる名前が多く使われている。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "鶴見"
+   ],
+   "aliases": [],
+   "claims": [
+    "F11"
+   ],
+   "posts": [
+    "P17",
+    "P18"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "富士見の地名は、富士山への憧れによるのかもしれない。そこから富士山が見えたからという見方もある。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F9"
+   ],
+   "posts": [
+    "P9",
+    "P11",
+    "P15"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "246号線は、大和の方まで行くと富士山が綺麗に見える。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "246号線"
+   ],
+   "aliases": [],
+   "claims": [
+    "F19"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "たまプラーザの辺りは、東急が切り開いて町を作った新興住宅地である。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "たまプラーザ"
+   ],
+   "aliases": [],
+   "claims": [
+    "F21"
+   ],
+   "posts": [
+    "P22",
+    "P23"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "港北ニュータウンは桜が綺麗。",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "港北ニュータウン"
+   ],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P27"
+   ]
+  },
+  {
+   "id": "W11",
+   "content": "座間の海軍道路は、工事で桜がなくなった。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "座間の海軍道路"
+   ],
+   "aliases": [],
+   "claims": [
+    "F12"
+   ],
+   "posts": [
+    "P19"
+   ]
+  },
+  {
+   "id": "W12",
+   "content": "茅ヶ崎中央の辺りでは、道路からは桜が見えにくいが、一段下の公園では桜が咲いていた。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "茅ヶ崎中央"
+   ],
+   "aliases": [],
+   "claims": [
+    "F15",
+    "F16"
+   ],
+   "posts": [
+    "P29"
+   ]
+  },
+  {
+   "id": "W13",
+   "content": "アオキ本社の辺りやBOSHの辺りは、桜が綺麗。",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "アオキ本社の辺り",
+    "BOSHの辺り"
+   ],
+   "aliases": [],
+   "claims": [
+    "F17",
+    "F18"
+   ],
+   "posts": [
+    "P29",
+    "P30"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "富士山が見えるのは、どの季節や時間帯か。",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W3",
+   "question": "IKEAやホームセンターなどの店は、緑産業道路のどの区間の周辺にあるか。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W4",
+   "question": "港北ICの入口が今は混まなくなったのは、なぜか。",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q4",
+   "about": "W7",
+   "question": "富士見台などの富士見の地名は、そこから富士山が見えたからか。",
+   "type": "理由",
+   "in_conversation": true,
+   "question_src": [
+    "P9"
+   ]
+  },
+  {
+   "id": "Q5",
+   "about": "W8",
+   "question": "246号線のどの区間で富士山が見えるか。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q6",
+   "about": "W11",
+   "question": "座間の海軍道路の桜は、工事のあと今はどうなっているか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q7",
+   "about": "W12",
+   "question": "茅ヶ崎中央の辺りで、一段下から桜が見えるのは、どの範囲か。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

@@ -1,0 +1,157 @@
+{
+ "conversation": "keyakidai_17",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "けやき台の商店街は、店がだいぶ変わった。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P1"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "角の「よしこの店」は今もあり、昔から有名なコロッケを売っている。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F3"
+   ],
+   "posts": [
+    "P2",
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "商店街の奥に大塚神社があり、毎年9月にお祭りがある。夜店は商店街の端まで並ぶ。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6",
+    "F7"
+   ],
+   "posts": [
+    "P7",
+    "P8"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "大塚神社の名は、昔このあたりにあった大きな塚に由来するという。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F8"
+   ],
+   "posts": [
+    "P9",
+    "P10"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "商店街の真ん中は今は空き地で、昔は映画館だった。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F11",
+    "F12"
+   ],
+   "posts": [
+    "P13",
+    "P14",
+    "P15"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "けやき台は、江戸時代に殿様が鷹狩りに来ていた場所だという。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F13"
+   ],
+   "posts": [
+    "P16"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "鷹番という地名は、鷹狩りの場所だったことに由来するのではないか。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P17",
+    "P16"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "商店街の店がだいぶ変わったのは、どの店が、なぜ変わったのか",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W4",
+   "question": "大塚神社の名は、本当に昔このあたりにあった大きな塚に由来するのか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W5",
+   "question": "商店街の真ん中の空き地にあった映画館の名前は何か",
+   "type": "確度",
+   "in_conversation": true,
+   "question_src": [
+    "P14"
+   ]
+  },
+  {
+   "id": "Q4",
+   "about": "W6",
+   "question": "江戸時代に殿様が鷹狩りに来ていたというのは本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q5",
+   "about": "W7",
+   "question": "鷹番という地名は、鷹狩りの場所だったことに由来するのか",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

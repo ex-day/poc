@@ -1,0 +1,265 @@
+{
+ "conversation": "tsurumi_38",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "鶴見の京急前にあった祭寿司と金寿司は、どちらも今はなくなっている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P4",
+    "P5"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "魚河岸通りの天金は、今もある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2"
+   ],
+   "posts": [
+    "P6"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "天金の少し鶴見寄りに、寿司屋や小料理屋があった",
+   "kind": "事実",
+   "status": "今もあるかは未確認",
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F3"
+   ],
+   "posts": [
+    "P6",
+    "P7"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "鶴見周辺の飲食店は、割と早く閉まる",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6"
+   ],
+   "posts": [
+    "P10",
+    "P12"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "鶴見周辺の店が閉まったあとは、川崎や野毛に流れる人がいる。野毛は鶴見から少し遠いと感じる人もいて、川崎に行く人もいる",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "川崎",
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F7",
+    "F8"
+   ],
+   "posts": [
+    "P10",
+    "P11",
+    "P15",
+    "P16"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "川崎には駅寄りに飲み屋街がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "川崎"
+   ],
+   "aliases": [],
+   "claims": [
+    "F10"
+   ],
+   "posts": [
+    "P18"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "野毛には昔ながらの店がまだあるが、観光地化している",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F12",
+    "F13"
+   ],
+   "posts": [
+    "P19",
+    "P20"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "立石には、せんべろの店が集まっていて、人が多い",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "立石"
+   ],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P21"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "生麦の通りに昔漁師が多かったのは、すぐ裏手が鶴見川の河口で、そのまま海に出られるからだという",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F15"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "鶴見川の河口あたりには、今は釣り船が多い。春秋にはキスを狙い、八景島の方まで行くらしい",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F16",
+    "F19"
+   ],
+   "posts": [
+    "P25",
+    "P26",
+    "P30",
+    "P31"
+   ]
+  },
+  {
+   "id": "W11",
+   "content": "イカ釣りの船は、産業道路の方から出るものが多い印象がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F21"
+   ],
+   "posts": [
+    "P30",
+    "P33"
+   ]
+  },
+  {
+   "id": "W12",
+   "content": "生麦のあたりで、青柳を干したものを食べられたという話がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F17",
+    "F18"
+   ],
+   "posts": [
+    "P27",
+    "P28"
+   ]
+  },
+  {
+   "id": "W13",
+   "content": "鶴見には、地元の人がやっている店が多い",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F22"
+   ],
+   "posts": [
+    "P35"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "祭寿司と金寿司は、なぜなくなったのか",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W3",
+   "question": "天金の少し鶴見寄りにあった寿司屋や小料理屋は、今もあるのか",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W4",
+   "question": "鶴見周辺の飲食店が早く閉まるのは、どの店も、どの曜日もそうなのか",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q4",
+   "about": "W9",
+   "question": "生麦の通りに昔漁師が多かったというのは、本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q5",
+   "about": "W11",
+   "question": "イカ釣りの船が産業道路の方から出るというのは、本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q6",
+   "about": "W12",
+   "question": "生麦のあたりで青柳を干したものを食べられるのは、どこか",
+   "type": "範囲",
+   "in_conversation": true,
+   "question_src": [
+    "P27"
+   ]
+  }
+ ]
+}

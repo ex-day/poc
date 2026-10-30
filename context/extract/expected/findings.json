@@ -1,0 +1,542 @@
+{
+ "_note": "知見の層の正解（Issue #34。人（利明）が書いた期待を、Maker が形にした）。from_conversation は会話から読めること、local_knowledge は人の土地勘・経験で足したこと（AI には出せないので、採点では求めない）。priority：want（拾いたい）／optional（取りこぼしてもよい）。questions は、次に投稿してほしい問い（まだわかっていないこと）の一覧。type：範囲（どこか）／確度（本当か）／理由（なぜか）／条件（誰でも行けるか）／現状（今はどうか）。priority の exclude は知見にしないもの（出たら余計として数える）。undecided は、拾うかを人が決めていないもの（採点では求めない）。in_conversation が true の問いは、AI が立てるのではなく会話の中で出て答えのない問い。optional が true の問いは、出ても出なくても外れにしない。kind：事実／説（説も、わかってきたことに入れる。答えが付けば確定する）。src は Maker が会話から付けたもので、人の確認待ち。次に投稿してほしい問いは、答えが付けば、その知見が確かになる（または足りない部分が埋まる）問い（人）。added の付いたものは、AI の出力（途中経過2）を人が見て足したもの。related_places は、ほかの場所についての知見（その場所の Discovery の提案・似た候補の材料）。status は、今もそうかの状態。ほかの呼び名は、問いにしない。会話の中で同じ場所が別の言い方で呼ばれたら、別名の候補として持つ（人）",
+ "status": "会話2本、29件。途中経過2のあと、人の確認で足した（Maker が書いた文・src は人の確認待ち）",
+ "findings": [
+  {
+   "id": "K1",
+   "conversation": "kohoku_31",
+   "from_conversation": "国道246号には、富士山が綺麗に見える区間がある（大和のほうまで行かないと見えないかもしれない）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P24",
+    "P25"
+   ],
+   "group": "道路から見える富士山",
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "富士山が綺麗に見えるのは、どの区間か",
+     "type": "範囲"
+    }
+   ]
+  },
+  {
+   "id": "K2",
+   "conversation": "kohoku_31",
+   "from_conversation": "国道246号は飛ばす車が多く、運転に注意が要る",
+   "local_knowledge": null,
+   "priority": "exclude",
+   "src": [
+    "P26"
+   ],
+   "group": "道路から見える富士山",
+   "_memo": "運転の注意は人それぞれなので、知見にしない（人）",
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K3",
+   "conversation": "kohoku_31",
+   "from_conversation": "茅ヶ崎中央のあたりの、新栄高校からの道路の一段下に公園がある",
+   "local_knowledge": "その公園は、新栄高校から茅ヶ崎中央までの道路沿いに続いている",
+   "priority": "want",
+   "src": [
+    "P29"
+   ],
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K4",
+   "conversation": "kohoku_31",
+   "from_conversation": "その公園には、桜が植えられているかもしれない（「咲いてた気がする」）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P29"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "その公園に、桜は植えられているか",
+     "type": "確度"
+    }
+   ]
+  },
+  {
+   "id": "K5",
+   "conversation": "kohoku_31",
+   "from_conversation": "桜が見える場所が減っているという話がある。その例として、座間の海軍道路は工事で桜がなくなった",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P19"
+   ],
+   "group": "地名の由来",
+   "_memo": "同じ流れの中で出た（P19）。人の整理では地名の由来の文脈",
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "桜が見える場所が減っているのはなぜか（工事・開発など）",
+     "type": "理由"
+    },
+    {
+     "question": "桜がなくなった海軍道路は、どの区間か",
+     "type": "範囲",
+     "added": "AI の出力を人が見て足した",
+     "_memo": "ほかの呼び名を問うのはやめた（人）。会話で別の言い方をされたら、別名の候補として持つ"
+    }
+   ]
+  },
+  {
+   "id": "K6",
+   "conversation": "tsurumi_38",
+   "from_conversation": "魚河岸通りのあたりには、天金のほかにも寿司屋や小料理屋があった（天金はまだある。寿司屋・小料理屋は今もあるかわからない）",
+   "local_knowledge": "魚河岸通りは生麦にある",
+   "priority": "want",
+   "src": [
+    "P6",
+    "P7"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "天金の鶴見寄りにあった寿司屋・小料理屋は、今もあるか（なくなっている可能性。店名は何か）",
+     "type": "現状",
+     "added": "AI の出力を人が見て足した"
+    }
+   ],
+   "status": "今もあるかは未確認（なくなっている可能性がある）"
+  },
+  {
+   "id": "K7",
+   "conversation": "tsurumi_38",
+   "from_conversation": "鶴見周辺の飲食店は、遅くまで営業している店が少ない",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P10",
+    "P12"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "鶴見周辺に、遅くまでやっている店はあるか",
+     "type": "範囲",
+     "added": "AI の出力を人が見て足した"
+    }
+   ]
+  },
+  {
+   "id": "K8",
+   "conversation": "tsurumi_38",
+   "from_conversation": "鶴見で飲んだあとは、遅くまでやっている川崎や野毛に流れる",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P10",
+    "P11",
+    "P16"
+   ],
+   "kind": "事実",
+   "questions": [],
+   "related_places": [
+    "川崎",
+    "野毛"
+   ]
+  },
+  {
+   "id": "K9",
+   "conversation": "tsurumi_38",
+   "from_conversation": "立石は、せんべろの流行で安く飲める店が集まり、人が多い。野毛も同じような場所として話されている（P21 の「立石も」）",
+   "local_knowledge": "野毛も立石も、せんべろで有名",
+   "priority": "want",
+   "src": [
+    "P20",
+    "P21"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "野毛や立石で、一人でも入りやすい店はあるか（会話の中で、一人では行きにくいと2人が言っている）",
+     "type": "条件",
+     "optional": true
+    }
+   ]
+  },
+  {
+   "id": "K10",
+   "conversation": "kohoku_31",
+   "group": "道路から見える富士山",
+   "from_conversation": "緑産業道路から富士山が見える",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P1"
+   ],
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K11",
+   "conversation": "kohoku_31",
+   "group": "道路から見える富士山",
+   "from_conversation": "港北IC付近では、富士山が綺麗に見える（道が直線で、タイミングが良いと）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P1",
+    "P2"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "緑産業道路で、ほかに富士山が綺麗に見える区間はないか",
+     "type": "範囲"
+    },
+    {
+     "question": "富士山が見えやすいのは、どの時間帯・季節か",
+     "type": "条件",
+     "added": "AI の出力を人が見て足した"
+    }
+   ]
+  },
+  {
+   "id": "K12",
+   "conversation": "kohoku_31",
+   "group": "道路から見える富士山",
+   "from_conversation": "緑産業道路では、前を走るトラックで富士山が見えないことがある",
+   "local_knowledge": null,
+   "priority": "undecided",
+   "src": [
+    "P4"
+   ],
+   "_memo": "「トラックが多い」は言いすぎ（人）。運の要素なので、知見とするかは別に決める",
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K13",
+   "conversation": "kohoku_31",
+   "group": "道路から見える富士山",
+   "from_conversation": "緑産業道路は飛ばす車が多く、運転に注意が要る",
+   "local_knowledge": null,
+   "priority": "exclude",
+   "src": [
+    "P5"
+   ],
+   "_memo": "運転の注意は人それぞれなので、知見にしない（人）",
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K14",
+   "conversation": "kohoku_31",
+   "group": "地名の由来",
+   "from_conversation": "鷺沼やたまプラーザなど田園都市線沿いは、東急が切り開いて町を作った新興住宅地である",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P21",
+    "P22",
+    "P23"
+   ],
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K15",
+   "conversation": "kohoku_31",
+   "group": "地名の由来",
+   "from_conversation": "鷺沼やたまプラーザなど田園都市線沿いの地名は、新興住宅地として耳障りのいい名前が付けられたのではないか（説）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P21",
+    "P22",
+    "P23"
+   ],
+   "kind": "説",
+   "questions": [
+    {
+     "question": "鶴見に鶴はいたのか、鷺沼に鷺のいる沼はあったのか（地名の由来）",
+     "type": "理由",
+     "in_conversation": true,
+     "src": [
+      "P20",
+      "P21"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "K16",
+   "conversation": "kohoku_31",
+   "group": "地名の由来",
+   "from_conversation": "鶴見、桜台など、鶴や桜を使った地名はほかにもよくある",
+   "local_knowledge": null,
+   "priority": "undecided",
+   "src": [
+    "P17",
+    "P18"
+   ],
+   "_memo": "港北以外の地域についての話なので、どう位置づけるかは要検討（人）",
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K17",
+   "conversation": "kohoku_31",
+   "group": "地名の由来",
+   "from_conversation": "富士見台など「富士」の付く地名が多い（吉田富士のように、富士らしくない所にも付いている）。富士山への憧れから付いたのではないかという説がある",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P12",
+    "P13",
+    "P14",
+    "P15"
+   ],
+   "_memo": "人の指示でグループに入れた。文は Maker が書いたもので、人の確認待ち",
+   "kind": "説",
+   "questions": [
+    {
+     "question": "「富士」の付く地名は、富士山への憧れから付いたのか（富士山が見えたからではないのか）",
+     "type": "理由"
+    }
+   ]
+  },
+  {
+   "id": "K18",
+   "conversation": "tsurumi_38",
+   "group": "釣り船",
+   "from_conversation": "鶴見には釣り船が多い",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P26"
+   ],
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K19",
+   "conversation": "tsurumi_38",
+   "group": "釣り船",
+   "from_conversation": "釣り船は、春と秋はキスをねらう（八景島のほうまで行く）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P30",
+    "P31"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "釣り船が春と秋にキスをねらい、八景島のほうまで行くというのは本当か",
+     "type": "確度",
+     "added": "AI の出力を人が見て足した"
+    }
+   ]
+  },
+  {
+   "id": "K20",
+   "conversation": "tsurumi_38",
+   "group": "釣り船",
+   "from_conversation": "産業道路寄りからは、イカ釣りの船も出ている",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P33"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "産業道路寄りからイカ釣りの船が出るというのは本当か",
+     "type": "確度",
+     "added": "AI の出力を人が見て足した"
+    }
+   ]
+  },
+  {
+   "id": "K21",
+   "conversation": "tsurumi_38",
+   "group": "鶴見の店",
+   "from_conversation": "鶴見は、地元の人がやっている店が多い",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P35"
+   ],
+   "kind": "事実",
+   "questions": []
+  },
+  {
+   "id": "K22",
+   "conversation": "tsurumi_38",
+   "group": "鶴見の店",
+   "from_conversation": "三業地の様子は変わった。京急前の祭寿司や金寿司のように、昔よく行った店がなくなった",
+   "local_knowledge": "三業地でも閉店した店が多く、昔なじみの店が少なくなった。入れ替わりに新しい店が増えている",
+   "priority": "want",
+   "src": [
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "新しくできた店で、おすすめの店はあるか",
+     "type": "現状"
+    }
+   ]
+  },
+  {
+   "id": "K23",
+   "conversation": "tsurumi_38",
+   "group": "生麦",
+   "from_conversation": "生麦のあたりで、青柳を干したものを食べていた",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P24",
+    "P27"
+   ],
+   "kind": "事実",
+   "questions": [
+    {
+     "question": "青柳を干したものは、どこで食べられるか",
+     "type": "範囲",
+     "in_conversation": true,
+     "src": [
+      "P27"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "K24",
+   "conversation": "tsurumi_38",
+   "group": "生麦",
+   "from_conversation": "生麦の通りには昔、漁師が多かった。裏手が鶴見川の河口で、すぐ海に出られたからだという",
+   "local_knowledge": null,
+   "priority": "want",
+   "kind": "説",
+   "src": [
+    "P24",
+    "P25"
+   ],
+   "_memo": "説もわかってきたことに入れる。答えが付けば確定する（人）",
+   "questions": [
+    {
+     "question": "生麦の通りに漁師が多かったのは本当か。鶴見川の河口に近く、すぐ海に出られたからか",
+     "type": "確度"
+    }
+   ]
+  },
+  {
+   "id": "K25",
+   "conversation": "tsurumi_38",
+   "group": "鶴見のあとに流れる先",
+   "kind": "事実",
+   "related_places": [
+    "野毛"
+   ],
+   "added": "AI の出力を人が見て足した",
+   "from_conversation": "野毛には昔から飲み屋街があり、昔ながらの安くておいしい店がまだある",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P19",
+    "P20"
+   ],
+   "questions": []
+  },
+  {
+   "id": "K26",
+   "conversation": "tsurumi_38",
+   "group": "鶴見のあとに流れる先",
+   "kind": "事実",
+   "related_places": [
+    "川崎"
+   ],
+   "added": "AI の出力を人が見て足した",
+   "from_conversation": "川崎の飲み屋街は、駅寄りなら今は平和（駅から離れる方向に飲み屋街がある）",
+   "local_knowledge": "川崎の飲み屋街は仲見世通り",
+   "priority": "want",
+   "src": [
+    "P17",
+    "P18"
+   ],
+   "questions": [
+    {
+     "question": "川崎の「飲み屋街」は、どのあたりを指すか",
+     "type": "範囲",
+     "added": "AI の出力を人が見て足した"
+    }
+   ]
+  },
+  {
+   "id": "K27",
+   "conversation": "tsurumi_38",
+   "group": "鶴見の店",
+   "kind": "事実",
+   "added": "AI の出力を人が見て足した",
+   "from_conversation": "なじみになれば、釣った魚を捌いてくれる店があるかもしれない",
+   "local_knowledge": null,
+   "priority": "exclude",
+   "src": [
+    "P35"
+   ],
+   "questions": [],
+   "_memo": "公開されると店の側が困るかもしれないので、知見にも問いにもしない（人）"
+  },
+  {
+   "id": "K28",
+   "conversation": "kohoku_31",
+   "group": "港北IC付近",
+   "kind": "事実",
+   "added": "AI の出力を人が見て足した",
+   "from_conversation": "港北IC付近（緑産業道路沿い）には、IKEA やホームセンターのような大型の店が集まっていて、結構混む",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P6"
+   ],
+   "questions": [
+    {
+     "question": "混むのはいつか（曜日・時間帯）",
+     "type": "条件",
+     "optional": true,
+     "added": "AI の出力を人が見て足した",
+     "_memo": "到達圏の精度や、子ども連れでも行きやすい時間の提案に使える（人）"
+    }
+   ]
+  },
+  {
+   "id": "K29",
+   "conversation": "kohoku_31",
+   "group": "港北IC付近",
+   "kind": "事実",
+   "added": "AI の出力を人が見て足した",
+   "from_conversation": "港北ICは移転した。昔の場所にあったころは IC の入口がとても混んだが、今はそれほどでもない（今昔）",
+   "local_knowledge": null,
+   "priority": "want",
+   "src": [
+    "P7"
+   ],
+   "questions": [
+    {
+     "question": "昔の港北ICは、どこにあったか",
+     "type": "範囲",
+     "added": "AI の出力を人が見て足した"
+    }
+   ]
+  }
+ ]
+}

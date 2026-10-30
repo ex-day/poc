@@ -1,0 +1,91 @@
+{
+ "conversation": "keyakidai_17",
+ "must_not": [
+  {
+   "id": "NG1",
+   "leaked": false,
+   "by": [],
+   "note": "店主の様子は出ていない"
+  },
+  {
+   "id": "NG2",
+   "leaked": false,
+   "by": [],
+   "note": "龍門自体が出ていない"
+  },
+  {
+   "id": "NG3",
+   "leaked": false,
+   "by": [],
+   "note": "佐々木さん宅・犬は出ていない"
+  },
+  {
+   "id": "NG4",
+   "leaked": false,
+   "by": [],
+   "note": "線路横断は出ていない"
+  },
+  {
+   "id": "NG5",
+   "leaked": false,
+   "by": [],
+   "note": "人が建てたとは書かれていない。由来は塚の説のみ"
+  }
+ ],
+ "allowed": [
+  {
+   "id": "OK1",
+   "match": "一致",
+   "by": [
+    "W1"
+   ],
+   "note": ""
+  },
+  {
+   "id": "OK2",
+   "match": "一部",
+   "by": [
+    "W2"
+   ],
+   "note": "店の存在はあるがコロッケの話がない"
+  },
+  {
+   "id": "OK3",
+   "match": "なし",
+   "by": [],
+   "note": "optional。龍門は出ていない"
+  },
+  {
+   "id": "OK4",
+   "match": "一致",
+   "by": [
+    "W3"
+   ],
+   "note": ""
+  },
+  {
+   "id": "OK5",
+   "match": "一致",
+   "by": [
+    "W4"
+   ],
+   "note": ""
+  },
+  {
+   "id": "OK6",
+   "match": "一致",
+   "by": [
+    "W5"
+   ],
+   "note": "映画館名は問い(Q3)にある"
+  },
+  {
+   "id": "OK7",
+   "match": "一致",
+   "by": [
+    "W6"
+   ],
+   "note": ""
+  }
+ ]
+}

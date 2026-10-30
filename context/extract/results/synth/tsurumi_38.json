@@ -1,0 +1,248 @@
+{
+ "conversation": "tsurumi_38",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "京急前にあった祭寿司と金寿司は、どちらも今は無くなっている。",
+   "kind": "事実",
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P4",
+    "P5"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "魚河岸通りの天金は、今もある。",
+   "kind": "事実",
+   "claims": [
+    "F2"
+   ],
+   "posts": [
+    "P6"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "魚河岸通りの天金のちょっと鶴見寄りには、昔、寿司屋や小料理屋があった。",
+   "kind": "事実",
+   "claims": [
+    "F3"
+   ],
+   "posts": [
+    "P6",
+    "P7"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "鶴見周辺の飲食店は割と早く閉まり、閉まったあとは川崎や野毛に流れる人がいる。",
+   "kind": "事実",
+   "claims": [
+    "F6",
+    "F7"
+   ],
+   "posts": [
+    "P10",
+    "P11",
+    "P12"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "今の川崎の飲み屋街は、駅寄りなら平和だという。",
+   "kind": "事実",
+   "claims": [
+    "F10"
+   ],
+   "posts": [
+    "P18"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "野毛には、昔ながらの安くておいしい店がまだあるが、観光地化している。",
+   "kind": "事実",
+   "claims": [
+    "F12",
+    "F13"
+   ],
+   "posts": [
+    "P19",
+    "P20"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "立石には、せんべろが流行って、安く飲める店が集まっており、今は人が多い。",
+   "kind": "事実",
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P21"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "生麦の通りには昔、漁師が多かった。すぐ裏手が鶴見川の河口で、そのまま海に出られるからだったらしい。",
+   "kind": "説",
+   "claims": [
+    "F15"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "鶴見川の河口あたりには、今は釣り船が多い。",
+   "kind": "事実",
+   "claims": [
+    "F16"
+   ],
+   "posts": [
+    "P25",
+    "P26"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "鶴見の釣り船は、春秋にはキスを狙い、八景島の方まで行くらしい。",
+   "kind": "事実",
+   "claims": [
+    "F19"
+   ],
+   "posts": [
+    "P30",
+    "P31"
+   ]
+  },
+  {
+   "id": "W11",
+   "content": "イカ釣りの船は、産業道路の方から出るものが多い印象がある。",
+   "kind": "事実",
+   "claims": [
+    "F21"
+   ],
+   "posts": [
+    "P30",
+    "P33"
+   ]
+  },
+  {
+   "id": "W12",
+   "content": "生麦のあたりには、青柳を干したものを食べさせてもらえる店があった。",
+   "kind": "事実",
+   "claims": [
+    "F17",
+    "F18"
+   ],
+   "posts": [
+    "P27",
+    "P28"
+   ]
+  },
+  {
+   "id": "W13",
+   "content": "鶴見は、地元の人がやっている店が多い。",
+   "kind": "事実",
+   "claims": [
+    "F22"
+   ],
+   "posts": [
+    "P35"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W3",
+   "question": "天金のちょっと鶴見寄りにあった寿司屋や小料理屋は、何という店か。",
+   "type": "範囲",
+   "in_conversation": true,
+   "question_src": [
+    "P8"
+   ]
+  },
+  {
+   "id": "Q2",
+   "about": "W3",
+   "question": "天金のちょっと鶴見寄りにあった寿司屋や小料理屋は、今もあるのか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W4",
+   "question": "早く閉まるのは鶴見周辺のどの区間・どの店か。遅くまでやっている店はないのか。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q4",
+   "about": "W5",
+   "question": "川崎の飲み屋街で、駅寄りとはどの範囲までか。駅から離れるとどうなのか。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q5",
+   "about": "W6",
+   "question": "野毛で今もある、昔ながらの安くておいしい店はどこか。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q6",
+   "about": "W8",
+   "question": "生麦の通りに漁師が多かったのは、本当に鶴見川の河口にすぐ出られるからか。",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q7",
+   "about": "W10",
+   "question": "鶴見の釣り船が春秋にキスを狙い、八景島の方まで行くというのは本当か。",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q8",
+   "about": "W11",
+   "question": "イカ釣りの船が産業道路の方から出るものが多いというのは本当か。",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q9",
+   "about": "W12",
+   "question": "生麦のあたりで、青柳を干したものを食べられる店はどこか。",
+   "type": "範囲",
+   "in_conversation": true,
+   "question_src": [
+    "P27",
+    "P28"
+   ]
+  },
+  {
+   "id": "Q10",
+   "about": "W13",
+   "question": "なじみになれば、釣った魚を捌いてくれる店はあるのか。どんな店なら頼めるのか。",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

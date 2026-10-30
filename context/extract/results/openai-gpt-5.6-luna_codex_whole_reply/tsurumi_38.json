@@ -1,0 +1,274 @@
+{
+ "conversation": "tsurumi_38",
+ "condition": "openai-gpt-5.6-luna_codex_whole_reply",
+ "facts": [
+  {
+   "id": "F1",
+   "content": "三業地は以前と変わっている。",
+   "kind": "事実",
+   "place": "三業地",
+   "when": null,
+   "src": [
+    "P3"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F2",
+   "content": "祭寿司はなくなっている。",
+   "kind": "事実",
+   "place": "祭寿司",
+   "when": null,
+   "src": [
+    "P4",
+    "P5"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F3",
+   "content": "金寿司はなくなっている。",
+   "kind": "事実",
+   "place": "金寿司",
+   "when": null,
+   "src": [
+    "P4",
+    "P5"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F4",
+   "content": "天金はまだある。",
+   "kind": "事実",
+   "place": "天金",
+   "when": "今",
+   "src": [
+    "P6"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F5",
+   "content": "鶴見寄りには寿司屋と小料理屋があった。",
+   "kind": "事実",
+   "place": "鶴見寄り",
+   "when": null,
+   "src": [
+    "P7"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F6",
+   "content": "鶴見寄りの寿司屋は高かった。",
+   "kind": "評価",
+   "place": "鶴見寄りの寿司屋",
+   "when": null,
+   "src": [
+    "P7",
+    "P8"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F7",
+   "content": "鶴見寄りの寿司屋はおいしかった。",
+   "kind": "評価",
+   "place": "鶴見寄りの寿司屋",
+   "when": null,
+   "src": [
+    "P8",
+    "P9"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F8",
+   "content": "鶴見寄りの寿司屋と同じレベルの店はなかなか見つからない。",
+   "kind": "評価",
+   "place": "鶴見寄りの寿司屋",
+   "when": null,
+   "src": [
+    "P8",
+    "P9"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F9",
+   "content": "鶴見周辺の飲食店は比較的早く閉まる。",
+   "kind": "事実",
+   "place": "鶴見周辺",
+   "when": null,
+   "src": [
+    "P10",
+    "P12"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F10",
+   "content": "鶴見周辺で飲んだ後は川崎や野毛に流れることがある。",
+   "kind": "体験",
+   "place": "川崎、野毛",
+   "when": null,
+   "src": [
+    "P10",
+    "P11"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F11",
+   "content": "川崎の飲み屋街は駅寄りなら平和である。",
+   "kind": "評価",
+   "place": "川崎の飲み屋街",
+   "when": "今",
+   "src": [
+    "P17",
+    "P18"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F12",
+   "content": "川崎の飲み屋街にはあまりうまい店がない。",
+   "kind": "評価",
+   "place": "川崎の飲み屋街",
+   "when": "今",
+   "src": [
+    "P18"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F13",
+   "content": "野毛には昔ながらの安くておいしい店がまだある。",
+   "kind": "事実",
+   "place": "野毛",
+   "when": "今",
+   "src": [
+    "P19",
+    "P20"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F14",
+   "content": "野毛は観光地化していて一人で行きにくくなっている。",
+   "kind": "評価",
+   "place": "野毛",
+   "when": "今",
+   "src": [
+    "P19",
+    "P20"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F15",
+   "content": "安く飲める店が集まっている場所は人が多い。",
+   "kind": "事実",
+   "place": null,
+   "when": "今",
+   "src": [
+    "P21"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F16",
+   "content": "立石は一人で飲みに行きにくい。",
+   "kind": "評価",
+   "place": "立石",
+   "when": "今",
+   "src": [
+    "P21"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F17",
+   "content": "生麦の通りは昔、漁師が多かった。",
+   "kind": "事実",
+   "place": "生麦の通り",
+   "when": "昔",
+   "src": [
+    "P24",
+    "P25"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F18",
+   "content": "生麦の通りのすぐ裏手は鶴見川の河口で、そのまま海に出られる。",
+   "kind": "事実",
+   "place": "生麦の通り",
+   "when": null,
+   "src": [
+    "P24",
+    "P25"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F19",
+   "content": "生麦の通りの周辺には今、釣り船が多い。",
+   "kind": "事実",
+   "place": "生麦の通り",
+   "when": "今",
+   "src": [
+    "P26"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F20",
+   "content": "青柳干しを食べられる場所はどこか。",
+   "kind": "疑問",
+   "place": null,
+   "when": null,
+   "src": [
+    "P27"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F21",
+   "content": "春と秋の釣り船ではキスを狙い、八景島の方まで行く。",
+   "kind": "事実",
+   "place": "生麦の通り周辺の釣り船",
+   "when": "春と秋",
+   "src": [
+    "P26",
+    "P30",
+    "P31"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F22",
+   "content": "イカ釣りは産業道路の方から出る船が多いイメージがある。",
+   "kind": "評価",
+   "place": "産業道路",
+   "when": null,
+   "src": [
+    "P30",
+    "P33"
+   ],
+   "unit": "tsurumi_38"
+  },
+  {
+   "id": "F23",
+   "content": "鶴見には地元の人がやっている店が多い。",
+   "kind": "事実",
+   "place": "鶴見",
+   "when": null,
+   "src": [
+    "P35"
+   ],
+   "unit": "tsurumi_38"
+  }
+ ]
+}

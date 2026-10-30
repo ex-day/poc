@@ -1,0 +1,170 @@
+{
+ "conversation": "keyakidai_17",
+ "condition": "claude-haiku_subagent_whole_reply",
+ "facts": [
+  {
+   "id": "F1",
+   "content": "けやき台の商店街は、店がだいぶ変わった。",
+   "kind": "事実",
+   "place": "けやき台の商店街",
+   "when": null,
+   "src": [
+    "P1"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F2",
+   "content": "角の「よしこの店」はまだある。",
+   "kind": "事実",
+   "place": "よしこの店",
+   "when": null,
+   "src": [
+    "P2",
+    "P3"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F3",
+   "content": "よしこの店のコロッケは、昔から有名だ。",
+   "kind": "事実",
+   "place": "よしこの店",
+   "when": "昔から",
+   "src": [
+    "P4",
+    "P2"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F4",
+   "content": "駅前の中華「龍門」は、味が落ちた。",
+   "kind": "評価",
+   "place": "龍門",
+   "when": null,
+   "src": [
+    "P5"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F5",
+   "content": "龍門の隣の家の犬が吠えていて、怖い。",
+   "kind": "評価",
+   "place": "龍門",
+   "when": null,
+   "src": [
+    "P6",
+    "P5"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F6",
+   "content": "大塚神社では、毎年9月にお祭りがある。",
+   "kind": "事実",
+   "place": "大塚神社",
+   "when": "毎年9月",
+   "src": [
+    "P7",
+    "P8"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F7",
+   "content": "大塚神社のお祭りの夜店は、商店街の端まで並ぶ。",
+   "kind": "事実",
+   "place": "大塚神社",
+   "when": "毎年9月の祭りのとき",
+   "src": [
+    "P8",
+    "P7"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F8",
+   "content": "大塚神社の名は、昔このあたりに大きな塚があったことに由来すると聞いた。",
+   "kind": "事実",
+   "place": "大塚神社",
+   "when": "昔",
+   "src": [
+    "P9",
+    "P10"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F9",
+   "content": "線路の向こうの公園へは、踏切まで回ると遠いので線路を横切る人がいる。",
+   "kind": "事実",
+   "place": "線路の向こうの公園",
+   "when": null,
+   "src": [
+    "P11"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F10",
+   "content": "線路を横切るのは危ない。",
+   "kind": "評価",
+   "place": "線路の向こうの公園",
+   "when": null,
+   "src": [
+    "P12",
+    "P11"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F11",
+   "content": "けやき台の商店街の真ん中の空き地は、昔映画館だった。",
+   "kind": "事実",
+   "place": "けやき台の商店街の真ん中の空き地",
+   "when": "昔",
+   "src": [
+    "P13"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F12",
+   "content": "その映画館の名前は、けやき座だったかもしれないが、はっきりしない。",
+   "kind": "事実",
+   "place": "けやき台の商店街の真ん中の空き地",
+   "when": "昔",
+   "src": [
+    "P13",
+    "P14",
+    "P15"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F13",
+   "content": "けやき台は、江戸時代に殿様が鷹狩りに来ていた場所だと聞いた。",
+   "kind": "事実",
+   "place": "けやき台",
+   "when": "江戸時代",
+   "src": [
+    "P16"
+   ],
+   "unit": "keyakidai_17"
+  },
+  {
+   "id": "F14",
+   "content": "鷹番という地名が残っている。",
+   "kind": "事実",
+   "place": "鷹番",
+   "when": null,
+   "src": [
+    "P17",
+    "P16"
+   ],
+   "unit": "keyakidai_17"
+  }
+ ]
+}

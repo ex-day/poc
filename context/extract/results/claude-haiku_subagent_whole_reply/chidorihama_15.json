@@ -1,0 +1,223 @@
+{
+ "conversation": "chidorihama_15",
+ "condition": "claude-haiku_subagent_whole_reply",
+ "facts": [
+  {
+   "id": "F1",
+   "content": "ちどり浜の海釣り公園でアジがよく釣れた",
+   "kind": "体験",
+   "place": "ちどり浜の海釣り公園",
+   "when": "先週",
+   "src": [
+    "P1"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F2",
+   "content": "ちどり浜の海釣り公園は朝6時からやっている",
+   "kind": "事実",
+   "place": "ちどり浜の海釣り公園",
+   "when": null,
+   "src": [
+    "P2",
+    "P3"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F3",
+   "content": "ちどり浜の海釣り公園は夏の間、夕方まで延長している",
+   "kind": "事実",
+   "place": "ちどり浜の海釣り公園",
+   "when": "夏",
+   "src": [
+    "P2",
+    "P3"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F4",
+   "content": "赤灯台の堤防は海釣り公園より釣れる",
+   "kind": "評価",
+   "place": "赤灯台の堤防",
+   "when": null,
+   "src": [
+    "P1",
+    "P4"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F5",
+   "content": "赤灯台の堤防は立入禁止になっている",
+   "kind": "事実",
+   "place": "赤灯台の堤防",
+   "when": null,
+   "src": [
+    "P4"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F6",
+   "content": "赤灯台の堤防へは、フェンスの横から回れば入れる",
+   "kind": "事実",
+   "place": "赤灯台の堤防",
+   "when": null,
+   "src": [
+    "P4"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F7",
+   "content": "赤灯台の堤防は夜なら誰もいない",
+   "kind": "事実",
+   "place": "赤灯台の堤防",
+   "when": "夜",
+   "src": [
+    "P5",
+    "P6"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F8",
+   "content": "赤灯台の堤防は落ちると自力では上がれない",
+   "kind": "事実",
+   "place": "赤灯台の堤防",
+   "when": null,
+   "src": [
+    "P6"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F9",
+   "content": "赤灯台の堤防で落ちて救助された人がいた",
+   "kind": "体験",
+   "place": "赤灯台の堤防",
+   "when": "去年",
+   "src": [
+    "P7"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F10",
+   "content": "赤灯台の堤防は行かない方がいいという意見がある",
+   "kind": "評価",
+   "place": "赤灯台の堤防",
+   "when": null,
+   "src": [
+    "P6",
+    "P7"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F11",
+   "content": "山田釣具は海釣り公園の入口にある",
+   "kind": "事実",
+   "place": "山田釣具",
+   "when": null,
+   "src": [
+    "P8"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F12",
+   "content": "山田釣具はエサが安いという評価がある",
+   "kind": "評価",
+   "place": "山田釣具",
+   "when": null,
+   "src": [
+    "P8"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F13",
+   "content": "山田釣具は隣町のチェーン店より高いという評価がある",
+   "kind": "評価",
+   "place": "山田釣具",
+   "when": null,
+   "src": [
+    "P8",
+    "P10"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F14",
+   "content": "山田釣具は店主の山田さんが昔漁師だった店である",
+   "kind": "事実",
+   "place": "山田釣具",
+   "when": "昔",
+   "src": [
+    "P9"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F15",
+   "content": "山田釣具は常連になると閉店後でも裏口から開けてもらえる",
+   "kind": "事実",
+   "place": "山田釣具",
+   "when": null,
+   "src": [
+    "P10",
+    "P11"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F16",
+   "content": "ちどり浜の海釣り公園の売店ではアジフライを売っている",
+   "kind": "事実",
+   "place": "ちどり浜の海釣り公園",
+   "when": null,
+   "src": [
+    "P12"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F17",
+   "content": "ちどり浜の海釣り公園の売店のアジフライはおいしい",
+   "kind": "評価",
+   "place": "ちどり浜の海釣り公園",
+   "when": null,
+   "src": [
+    "P12"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F18",
+   "content": "ちどり浜は昔塩田だった",
+   "kind": "事実",
+   "place": "ちどり浜",
+   "when": "昔",
+   "src": [
+    "P13",
+    "P14"
+   ],
+   "unit": "chidorihama_15"
+  },
+  {
+   "id": "F19",
+   "content": "ちどり浜の近くに「塩田橋」という橋がある",
+   "kind": "事実",
+   "place": "ちどり浜",
+   "when": null,
+   "src": [
+    "P14"
+   ],
+   "unit": "chidorihama_15"
+  }
+ ]
+}

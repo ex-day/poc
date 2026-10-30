@@ -1,0 +1,331 @@
+{
+ "conversation": "tsurumi_38",
+ "facts": [
+  {
+   "id": "F1",
+   "verdict": "正しい",
+   "support": [
+    "P1",
+    "P2",
+    "P3"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F2",
+   "verdict": "一部",
+   "support": [
+    "P3"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": "「久しぶり」に来て三業地が変わったと感じたという話で、「以前から変わっていた」は言いすぎ・取り違え。"
+  },
+  {
+   "id": "F3",
+   "verdict": "正しい",
+   "support": [
+    "P4"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F4",
+   "verdict": "正しい",
+   "support": [
+    "P4",
+    "P5"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F5",
+   "verdict": "正しい",
+   "support": [
+    "P4",
+    "P5"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F6",
+   "verdict": "正しい",
+   "support": [
+    "P6"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F7",
+   "verdict": "正しい",
+   "support": [
+    "P6"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F8",
+   "verdict": "一部",
+   "support": [
+    "P7"
+   ],
+   "extra": [],
+   "missing": [
+    "P6"
+   ],
+   "note": "「あったよね」と過去の話で、今もあるとは言えない。「天ぷらの店」が天金だと分かるのはP6。"
+  },
+  {
+   "id": "F9",
+   "verdict": "正しい",
+   "support": [
+    "P7",
+    "P8"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F10",
+   "verdict": "正しい",
+   "support": [
+    "P7",
+    "P8"
+   ],
+   "extra": [
+    "P9"
+   ],
+   "missing": [],
+   "note": "P9は「高い」を繰り返しただけで、この主張に足すものがない。"
+  },
+  {
+   "id": "F11",
+   "verdict": "正しい",
+   "support": [
+    "P7",
+    "P8",
+    "P9"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F12",
+   "verdict": "一部",
+   "support": [
+    "P10",
+    "P11"
+   ],
+   "extra": [
+    "P12"
+   ],
+   "missing": [
+    "P16"
+   ],
+   "note": "川崎や野毛は「かな」という推測で、「流れる人が多い」は言いすぎ。P12は閉店の早さを繰り返しただけ。実際に川崎へ行くと言っているのはP16。"
+  },
+  {
+   "id": "F13",
+   "verdict": "正しい",
+   "support": [
+    "P12",
+    "P13"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F14",
+   "verdict": "正しい",
+   "support": [
+    "P15",
+    "P16"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F15",
+   "verdict": "正しい",
+   "support": [
+    "P17"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F16",
+   "verdict": "正しい",
+   "support": [
+    "P17",
+    "P18"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F17",
+   "verdict": "正しい",
+   "support": [
+    "P18"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F18",
+   "verdict": "正しい",
+   "support": [
+    "P19",
+    "P20"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F19",
+   "verdict": "正しい",
+   "support": [
+    "P19",
+    "P20"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F20",
+   "verdict": "正しい",
+   "support": [
+    "P21"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F21",
+   "verdict": "正しい",
+   "support": [
+    "P21"
+   ],
+   "extra": [
+    "P23"
+   ],
+   "missing": [],
+   "note": "P23は同じ人が「行きにくい」を繰り返しただけ。"
+  },
+  {
+   "id": "F22",
+   "verdict": "正しい",
+   "support": [
+    "P23"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F23",
+   "verdict": "正しい",
+   "support": [
+    "P24",
+    "P25"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F24",
+   "verdict": "正しい",
+   "support": [
+    "P24",
+    "P25",
+    "P26"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F25",
+   "verdict": "正しい",
+   "support": [
+    "P27"
+   ],
+   "extra": [
+    "P26"
+   ],
+   "missing": [
+    "P24"
+   ],
+   "note": "「あの辺」が生麦だと分かるのはP24。P26は釣り船の話で、この主張には関係しない。"
+  },
+  {
+   "id": "F26",
+   "verdict": "正しい",
+   "support": [
+    "P27",
+    "P28"
+   ],
+   "extra": [],
+   "missing": [
+    "P24"
+   ],
+   "note": "「あの辺」が生麦だと分かるのはP24。"
+  },
+  {
+   "id": "F27",
+   "verdict": "正しい",
+   "support": [
+    "P30",
+    "P31"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F28",
+   "verdict": "正しい",
+   "support": [
+    "P33"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  },
+  {
+   "id": "F29",
+   "verdict": "正しい",
+   "support": [
+    "P35"
+   ],
+   "extra": [],
+   "missing": [],
+   "note": ""
+  }
+ ],
+ "uncovered": []
+}

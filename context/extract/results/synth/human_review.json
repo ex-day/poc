@@ -1,0 +1,95 @@
+{
+ "_note": "正解にない AI の出力（results/synth/score.md の「正解にない AI の出力」）を、人（利明）が見た結果。会話2本の分。label：要る／形を変えて（別の形なら要る）／要らない",
+ "items": [
+  {
+   "conversation": "tsurumi_38",
+   "id": "W5",
+   "label": "要る",
+   "comment": "鶴見の飲食店の Discovery だったとして、近隣の飲食店街として、提案の候補・似た候補に挙げられる可能性がある"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q1",
+   "label": "形を変えて",
+   "comment": "実際はもうなくなっているらしい。「あった」から「なくなっている可能性」として扱えるとよい。未確認として、何かしらの情報で残るとよい"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q2",
+   "label": "形を変えて",
+   "comment": "Q1 と同じ"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q3",
+   "label": "要る",
+   "comment": "そのとおり"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q4",
+   "label": "形を変えて",
+   "comment": "そもそも「飲み屋街」がどのあたりを指すかがわからない（知っていれば仲見世通り）。言葉から取れるのは、駅から離れる方向に飲み屋街があることくらい"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q5",
+   "label": "形を変えて",
+   "comment": "具体名はないが、「野毛には昔から飲み屋街がある」のような知見になるかもしれない"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q7",
+   "label": "要る",
+   "comment": "こういう情報があると伝えたい"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q8",
+   "label": "要る",
+   "comment": "Q7 と同じ"
+  },
+  {
+   "conversation": "tsurumi_38",
+   "id": "Q10",
+   "label": "要らない",
+   "comment": "公開されると、店の側が困るかもしれない情報"
+  },
+  {
+   "conversation": "kohoku_31",
+   "id": "W2",
+   "label": "形を変えて",
+   "comment": "港北IC付近にホームセンターや IKEA などが集まっている、という Discovery の候補として取れているとうれしい"
+  },
+  {
+   "conversation": "kohoku_31",
+   "id": "W3",
+   "label": "要る",
+   "comment": "港北ICが移転した、という情報として残ってほしい。IC を施設とするかは微妙だが、施設や風景の今昔として ex-day に残ってほしい"
+  },
+  {
+   "conversation": "kohoku_31",
+   "id": "Q1",
+   "label": "要る",
+   "comment": "そのとおり"
+  },
+  {
+   "conversation": "kohoku_31",
+   "id": "Q2",
+   "label": "条件付き",
+   "comment": "交通や施設の混雑は、到達圏の精度を上げる情報にしかならないかもしれない。ただ、子ども連れでも行きやすい時間として提案する情報にもなりうる"
+  },
+  {
+   "conversation": "kohoku_31",
+   "id": "Q3",
+   "label": "要る",
+   "comment": "そのとおり"
+  },
+  {
+   "conversation": "kohoku_31",
+   "id": "Q8",
+   "label": "要る",
+   "comment": "海軍道路にはほかにも呼び名があったと思うので、それも含めて取れると役に立つ"
+  }
+ ]
+}

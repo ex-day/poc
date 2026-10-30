@@ -1,0 +1,140 @@
+{
+ "conversation": "keyakidai_17",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "けやき台の商店街は、以前と比べて店がだいぶ変わっている。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P1"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "角のよしこの店は今もある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2"
+   ],
+   "posts": [
+    "P3"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "商店街の奥に大塚神社があり、毎年9月に祭りが開かれ、その夜店は商店街の端まで並ぶ。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [
+    "商店街の奥の神社"
+   ],
+   "claims": [
+    "F5",
+    "F6",
+    "F7"
+   ],
+   "posts": [
+    "P7",
+    "P8"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "大塚神社の名前は、昔このあたりに大きな塚があったことに由来するという説がある。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F8"
+   ],
+   "posts": [
+    "P9",
+    "P10"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "商店街の真ん中の空き地は、昔は映画館だった。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F12"
+   ],
+   "posts": [
+    "P13"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "けやき台には、江戸時代に殿様が鷹狩りに来ていたという話があり、鷹番という地名との関係が考えられている。",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F14",
+    "F15"
+   ],
+   "posts": [
+    "P16",
+    "P17"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "けやき台の商店街の店がだいぶ変わったのはなぜか。",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W4",
+   "question": "大塚神社の名前は、昔このあたりに大きな塚があったことに由来するのか。",
+   "type": "確度",
+   "in_conversation": true,
+   "question_src": [
+    "P9",
+    "P10"
+   ]
+  },
+  {
+   "id": "Q3",
+   "about": "W5",
+   "question": "商店街の真ん中の空き地に昔あった映画館の名前は「けやき座」だったのか。",
+   "type": "確度",
+   "in_conversation": true,
+   "question_src": [
+    "P14",
+    "P15"
+   ]
+  },
+  {
+   "id": "Q4",
+   "about": "W6",
+   "question": "鷹番という地名は、けやき台に殿様が鷹狩りに来ていたことに由来するのか。",
+   "type": "確度",
+   "in_conversation": true,
+   "question_src": [
+    "P16",
+    "P17"
+   ]
+  }
+ ]
+}

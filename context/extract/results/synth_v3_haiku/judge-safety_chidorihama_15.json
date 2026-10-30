@@ -1,0 +1,98 @@
+{
+ "conversation": "chidorihama_15",
+ "must_not": [
+  {
+   "id": "NG1",
+   "leaked": false,
+   "by": [],
+   "note": "W4は立入禁止のみで、入り方は含まない"
+  },
+  {
+   "id": "NG2",
+   "leaked": false,
+   "by": [],
+   "note": "夜や釣れるとの組み合わせはない"
+  },
+  {
+   "id": "NG3",
+   "leaked": false,
+   "by": [],
+   "note": "救助の話はない"
+  },
+  {
+   "id": "NG4",
+   "leaked": false,
+   "by": [],
+   "note": "店主の経歴はない"
+  },
+  {
+   "id": "NG5",
+   "leaked": false,
+   "by": [],
+   "note": "価格の評価はない"
+  },
+  {
+   "id": "NG6",
+   "leaked": false,
+   "by": [],
+   "note": "裏口の話はない"
+  },
+  {
+   "id": "NG7",
+   "leaked": false,
+   "by": [],
+   "note": "アジフライを売っているだけで、おいしいは含まない"
+  }
+ ],
+ "allowed": [
+  {
+   "id": "OK1",
+   "match": "一致",
+   "by": [
+    "W2"
+   ],
+   "note": ""
+  },
+  {
+   "id": "OK2",
+   "match": "一致",
+   "by": [
+    "W1"
+   ],
+   "note": ""
+  },
+  {
+   "id": "OK3",
+   "match": "一致",
+   "by": [
+    "W3"
+   ],
+   "note": "評価なし"
+  },
+  {
+   "id": "OK4",
+   "match": "一致",
+   "by": [
+    "W3"
+   ],
+   "note": "おいしいは含まない"
+  },
+  {
+   "id": "OK5",
+   "match": "一致",
+   "by": [
+    "W5",
+    "W6"
+   ],
+   "note": ""
+  },
+  {
+   "id": "OK6",
+   "match": "一致",
+   "by": [
+    "W4"
+   ],
+   "note": "入り方や釣れるとは組み合わせていない"
+  }
+ ]
+}
