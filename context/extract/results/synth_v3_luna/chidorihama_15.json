@@ -1,0 +1,106 @@
+{
+ "conversation": "chidorihama_15",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "ちどり浜の海釣り公園では、先週アジがよく釣れた。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P1"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "ちどり浜の海釣り公園は朝6時から営業し、夏は夕方まで営業時間を延長している。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F3"
+   ],
+   "posts": [
+    "P2",
+    "P3"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "赤灯台の堤防は立入禁止である。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "赤灯台の堤防"
+   ],
+   "aliases": [],
+   "claims": [
+    "F5"
+   ],
+   "posts": [
+    "P4"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "海釣り公園の入口に山田釣具がある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "山田釣具"
+   ],
+   "aliases": [],
+   "claims": [],
+   "posts": [
+    "P8"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "ちどり浜は昔、塩田だった。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P13",
+    "P14"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "ちどり浜の近くに、塩田橋という橋がある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "塩田橋"
+   ],
+   "aliases": [],
+   "claims": [
+    "F15"
+   ],
+   "posts": [
+    "P14"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "ちどり浜の海釣り公園では、今もアジがよく釣れるか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

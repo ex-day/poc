@@ -1,0 +1,194 @@
+{
+ "conversation": "kohoku_31",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "港北IC近辺の緑産業道路は直線の道で、天候がよく前方にトラックがいないなど条件がそろうと、夕方を含めて富士山が綺麗に見えることがある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1",
+    "F2",
+    "F3",
+    "F4"
+   ],
+   "posts": [
+    "P1",
+    "P2",
+    "P3",
+    "P4"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "港北IC近辺にはIKEAやホームセンターのような施設ができ、その周辺の道は混む。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6"
+   ],
+   "posts": [
+    "P6"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "港北ICが昔の場所にあった頃はIC入口がとても混んでいたが、現在の入口は昔ほど混んでいない。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F7",
+    "F8"
+   ],
+   "posts": [
+    "P7"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "田園都市線沿いは、東急が切り開いて町を作った新興住宅地である。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "田園都市線沿い"
+   ],
+   "aliases": [],
+   "claims": [
+    "F9"
+   ],
+   "posts": [
+    "P23"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "田園都市線沿いの新興住宅地には、耳障りのいい地名を付けたという説がある。",
+   "kind": "説",
+   "status": null,
+   "related_places": [
+    "田園都市線沿い"
+   ],
+   "aliases": [],
+   "claims": [],
+   "posts": [
+    "P23"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "座間の海軍道路では、工事によって桜がなくなっている。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "座間の海軍道路"
+   ],
+   "aliases": [],
+   "claims": [
+    "F10"
+   ],
+   "posts": [
+    "P19"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "国道246号には富士山が綺麗に見える場所があるが、大和の方まで行かないと見えない可能性がある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "国道246号"
+   ],
+   "aliases": [],
+   "claims": [
+    "F11",
+    "F12"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "港北ニュータウンには桜が綺麗な場所がある。",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "港北ニュータウン"
+   ],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "posts": [
+    "P27"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "茅ヶ崎中央付近では、新栄高校からの道路より一段下の公園に桜が咲いていたようだ。",
+   "kind": "事実",
+   "status": "今もあるかは未確認",
+   "related_places": [
+    "茅ヶ崎中央付近"
+   ],
+   "aliases": [],
+   "claims": [
+    "F16"
+   ],
+   "posts": [
+    "P29"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "アオキ本社の辺りやBOSHの辺りには、桜が綺麗な場所がある。",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "アオキ本社の辺り",
+    "BOSHの辺り"
+   ],
+   "aliases": [],
+   "claims": [
+    "F17",
+    "F18"
+   ],
+   "posts": [
+    "P30"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W5",
+   "question": "田園都市線沿いの新興住宅地に耳障りのいい地名を付けたという説は本当か。",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W7",
+   "question": "国道246号で富士山が綺麗に見えるのはどの区間か。",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W9",
+   "question": "茅ヶ崎中央付近の一段下の公園には、今も桜があるか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}

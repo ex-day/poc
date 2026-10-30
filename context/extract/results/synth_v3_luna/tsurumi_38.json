@@ -1,0 +1,223 @@
+{
+ "conversation": "tsurumi_38",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "三業地は以前と変わっている。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "posts": [
+    "P3"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "祭寿司と金寿司はなくなっている。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F3"
+   ],
+   "posts": [
+    "P4",
+    "P5"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "天金は今もある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F4"
+   ],
+   "posts": [
+    "P6"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "鶴見寄りには、寿司屋と小料理屋があった。",
+   "kind": "事実",
+   "status": "今もあるかは未確認",
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F5"
+   ],
+   "posts": [
+    "P7"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "鶴見周辺の飲食店は比較的早く閉まる。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F9"
+   ],
+   "posts": [
+    "P10",
+    "P12"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "鶴見周辺で飲んだ後、川崎や野毛に流れることがある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "川崎",
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F10"
+   ],
+   "posts": [
+    "P10",
+    "P11"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "野毛には昔ながらの店がまだある。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F13"
+   ],
+   "posts": [
+    "P19",
+    "P20"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "生麦の通りは昔、漁師が多かった。",
+   "kind": "事実",
+   "status": "今もそうかは未確認",
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F17"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "生麦の通りのすぐ裏手は鶴見川の河口で、そのまま海に出られる。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F18"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "生麦の通りの周辺には今、釣り船が多い。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F19"
+   ],
+   "posts": [
+    "P26"
+   ]
+  },
+  {
+   "id": "W11",
+   "content": "生麦周辺の釣り船は、春と秋にキスを狙って八景島の方まで行く。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "八景島"
+   ],
+   "aliases": [],
+   "claims": [
+    "F21"
+   ],
+   "posts": [
+    "P26",
+    "P30",
+    "P31"
+   ]
+  },
+  {
+   "id": "W12",
+   "content": "鶴見には地元の人がやっている店が多い。",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F23"
+   ],
+   "posts": [
+    "P35"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W1",
+   "question": "三業地は具体的にどのように変わったのか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W4",
+   "question": "鶴見寄りにあった寿司屋と小料理屋は、今もあるのか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q3",
+   "about": "W5",
+   "question": "鶴見周辺の飲食店は、いつでも比較的早く閉まるのか。",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q4",
+   "about": "W8",
+   "question": "生麦の通りには、今も漁師が多いのか。",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}
