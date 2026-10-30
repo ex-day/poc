@@ -34,8 +34,10 @@ CLAIMS = HERE / "results" / "claude-sonnet_subagent_whole_reply"
 CONVS = ["tsurumi_38", "kohoku_31"]
 TYPES = ("範囲", "確度", "理由", "条件", "現状")
 VERSIONS = {"v1": ("synthesize.md", "synth"), "v2": ("synthesize_v2.md", "synth_v2"), "v3": ("synthesize_v3.md", "synth_v3"),
-            "v3h": ("synthesize_v3.md", "synth_v3_haiku")}  # v3h：v3 の指示で、1段目・2段目とも Haiku（照らし合わせは Sonnet）
-CLAIMS_BY = {"v3h": HERE / "results" / "claude-haiku_subagent_whole_reply"}
+            "v3h": ("synthesize_v3.md", "synth_v3_haiku"),  # v3h：v3 の指示で、1段目・2段目とも Haiku（照らし合わせは Sonnet）
+            "v3luna": ("synthesize_v3.md", "synth_v3_luna")}  # v3luna：1段目・2段目とも GPT-5.6 Luna（Codex。run_codex_extract.sh）
+CLAIMS_BY = {"v3h": HERE / "results" / "claude-haiku_subagent_whole_reply",
+             "v3luna": HERE / "results" / "openai-gpt-5.6-luna_codex_whole_reply"}
 SAFETY = ["chidorihama_15", "keyakidai_17"]  # 除外を確かめる会話（safety/。v3 から）
 # 会話が属する Discovery の場所（v3 から渡す）。鶴見・港北は Maker が置いた（人に確かめ、反対がなかった）
 PLACES = {"tsurumi_38": "鶴見", "kohoku_31": "港北IC付近の緑産業道路"}
