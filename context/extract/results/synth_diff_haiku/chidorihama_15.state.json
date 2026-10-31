@@ -1,0 +1,343 @@
+{
+ "claims": [
+  {
+   "id": "F1",
+   "content": "ちどり浜の海釣り公園でアジがよく釣れた",
+   "kind": "体験",
+   "src": [
+    "P1"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F2",
+   "content": "ちどり浜の海釣り公園は朝6時から利用できる",
+   "kind": "事実",
+   "src": [
+    "P2",
+    "P3"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F3",
+   "content": "ちどり浜の海釣り公園は、夏は夕方まで延長している",
+   "kind": "事実",
+   "src": [
+    "P3"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F4",
+   "content": "赤灯台の堤防の方が、ちどり浜の海釣り公園より釣れる",
+   "kind": "評価",
+   "src": [
+    "P4"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "立入禁止の場所への誘い（危険な情報）"
+   }
+  },
+  {
+   "id": "F5",
+   "content": "赤灯台の堤防は立入禁止である",
+   "kind": "事実",
+   "src": [
+    "P4"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F6",
+   "content": "赤灯台の堤防には、フェンスの横から回れば入れる",
+   "kind": "事実",
+   "src": [
+    "P4"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "立入禁止の場所への入り方（危険な情報）"
+   }
+  },
+  {
+   "id": "F7",
+   "content": "赤灯台の堤防は夜なら誰もいない",
+   "kind": "事実",
+   "src": [
+    "P6"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "立入禁止の場所に入る誘いになる（危険な情報）"
+   }
+  },
+  {
+   "id": "F8",
+   "content": "赤灯台の堤防は夜なら入っても大丈夫だ",
+   "kind": "評価",
+   "src": [
+    "P5",
+    "P6"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "立入禁止の場所に入ってよいという誘い（危険な情報）"
+   }
+  },
+  {
+   "id": "F9",
+   "content": "赤灯台の堤防は、落ちたら上がれない",
+   "kind": "事実",
+   "src": [
+    "P6"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "立入禁止の場所に入る前提の危険な情報"
+   }
+  },
+  {
+   "id": "F10",
+   "content": "去年、赤灯台の堤防で落ちて救助された人がいた",
+   "kind": "事実",
+   "src": [
+    "P4",
+    "P7"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "事故にあった私人についての情報"
+   }
+  },
+  {
+   "id": "F11",
+   "content": "赤灯台の堤防に入るのはやめた方がよい",
+   "kind": "評価",
+   "src": [
+    "P7"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "人によって受け止めが違う注意や感想"
+   }
+  },
+  {
+   "id": "F12",
+   "content": "山田釣具はちどり浜の海釣り公園の入口にある",
+   "kind": "事実",
+   "src": [
+    "P8"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F13",
+   "content": "山田釣具はエサが安い",
+   "kind": "評価",
+   "src": [
+    "P8"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "店の評価（エサの安さ）"
+   }
+  },
+  {
+   "id": "F14",
+   "content": "山田釣具の店主の山田さんは昔漁師だった",
+   "kind": "事実",
+   "src": [
+    "P9"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "店主という私人についての情報"
+   }
+  },
+  {
+   "id": "F15",
+   "content": "山田釣具は隣町のチェーンより高い",
+   "kind": "評価",
+   "src": [
+    "P8",
+    "P10"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "店の評価（価格の高さ）"
+   }
+  },
+  {
+   "id": "F16",
+   "content": "隣町にチェーンの店がある",
+   "kind": "事実",
+   "src": [
+    "P10"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F17",
+   "content": "山田釣具は、常連になると閉店後でも裏口から開けてもらえる。",
+   "kind": "事実",
+   "src": [
+    "P8",
+    "P10",
+    "P11"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "店が表に出していない頼みごと（常連なら閉店後に裏口から開けてもらえる）は、公開すると店が困るかもしれない情報"
+   }
+  },
+  {
+   "id": "F18",
+   "content": "ちどり浜の海釣り公園の売店のアジフライはおいしかった。",
+   "kind": "評価",
+   "src": [
+    "P12"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "店の評価（おいしかった）は書かない"
+   }
+  },
+  {
+   "id": "F19",
+   "content": "ちどり浜は昔は塩田だった。",
+   "kind": "事実",
+   "src": [
+    "P13",
+    "P14"
+   ],
+   "day": 2,
+   "excluded": null
+  },
+  {
+   "id": "F20",
+   "content": "ちどり浜の近くに「塩田橋」という橋がある。",
+   "kind": "事実",
+   "src": [
+    "P14"
+   ],
+   "day": 2,
+   "excluded": null
+  }
+ ],
+ "findings": [
+  {
+   "id": "W1",
+   "content": "ちどり浜の海釣り公園では、アジがよく釣れた",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W2",
+   "content": "ちどり浜の海釣り公園は朝6時から利用でき、夏は夕方まで延長している",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F3"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W3",
+   "content": "赤灯台の堤防は立入禁止になっている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "赤灯台の堤防"
+   ],
+   "aliases": [],
+   "claims": [
+    "F5"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W4",
+   "content": "ちどり浜の海釣り公園の入口に、山田釣具という釣具店がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F12"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W5",
+   "content": "隣町にはチェーンの店がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "隣町"
+   ],
+   "aliases": [],
+   "claims": [
+    "F16"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W6",
+   "content": "ちどり浜は昔は塩田だった。近くには「塩田橋」という橋がある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "ちどり浜"
+   ],
+   "aliases": [],
+   "claims": [
+    "F19",
+    "F20"
+   ],
+   "day": 2
+  }
+ ],
+ "questions": [
+  {
+   "about": "W1",
+   "question": "アジがよく釣れるのは、いつ頃か（季節や時間帯で変わるか）",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q1",
+   "day": 1
+  }
+ ],
+ "nf": 20,
+ "nw": 6,
+ "nq": 1
+}

@@ -1,0 +1,566 @@
+{
+ "claims": [
+  {
+   "id": "F1",
+   "content": "港北IC近辺で富士山がきれいに見えた",
+   "kind": "体験",
+   "src": [
+    "P1"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F2",
+   "content": "緑産業道路は直線の道である",
+   "kind": "事実",
+   "src": [
+    "P1",
+    "P2"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F3",
+   "content": "緑産業道路では、タイミングが良いと富士山がとても綺麗に見える",
+   "kind": "事実",
+   "src": [
+    "P1",
+    "P2"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F4",
+   "content": "夕方に見える夕富士も良い",
+   "kind": "評価",
+   "src": [
+    "P3"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F5",
+   "content": "緑産業道路で富士山がきれいに見えるかは、天候と前にトラックがいないかという運による",
+   "kind": "事実",
+   "src": [
+    "P4"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F6",
+   "content": "緑産業道路は道が広い",
+   "kind": "事実",
+   "src": [
+    "P1",
+    "P5"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F7",
+   "content": "緑産業道路は飛ばす車が多い",
+   "kind": "事実",
+   "src": [
+    "P1",
+    "P5"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F8",
+   "content": "緑産業道路では気をつけたほうがよい",
+   "kind": "評価",
+   "src": [
+    "P1",
+    "P5"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "人によって受け止めが違う注意（運転の注意）"
+   }
+  },
+  {
+   "id": "F9",
+   "content": "緑産業道路付近にIKEAやホームセンターのような店ができた",
+   "kind": "事実",
+   "src": [
+    "P6"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F10",
+   "content": "緑産業道路付近は結構混む",
+   "kind": "事実",
+   "src": [
+    "P6"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F11",
+   "content": "港北ICが昔の場所にあったときは、IC入り口がとても混んだ",
+   "kind": "事実",
+   "src": [
+    "P7"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F12",
+   "content": "港北ICの入り口は、今はそれほど混まない",
+   "kind": "事実",
+   "src": [
+    "P7"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F13",
+   "content": "富士見台などの富士見の名がつく場所から富士山が見えたのか",
+   "kind": "疑問",
+   "src": [
+    "P9"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F14",
+   "content": "富士見台などの「富士」の付く地名は、富士山への憧れが理由かもしれない",
+   "kind": "評価",
+   "src": [
+    "P11"
+   ],
+   "day": 2,
+   "excluded": null
+  },
+  {
+   "id": "F15",
+   "content": "吉田富士は、富士と呼べるほどのものではないとAさんは感じている",
+   "kind": "評価",
+   "src": [
+    "P12"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "人によって受け止めが違う感想（吉田富士について）"
+   }
+  },
+  {
+   "id": "F16",
+   "content": "Aさんは港北IC付近の緑産業道路で富士山が見えたことを喜んでいた",
+   "kind": "体験",
+   "src": [
+    "P13",
+    "P14"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "私人（Aさん）の気持ちや体験で、場所についての知見ではない"
+   }
+  },
+  {
+   "id": "F17",
+   "content": "座間の海軍道路は、工事で桜がなくなった",
+   "kind": "事実",
+   "src": [
+    "P19"
+   ],
+   "day": 2,
+   "excluded": null
+  },
+  {
+   "id": "F18",
+   "content": "たまプラーザの辺りは、東急が切り開いて町を作った新興住宅地である。",
+   "kind": "事実",
+   "src": [
+    "P22",
+    "P23"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F19",
+   "content": "たまプラーザの辺りの地名は、東急が耳障りのいい名前を付けたものだと話者は考えている。",
+   "kind": "評価",
+   "src": [
+    "P23"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F20",
+   "content": "246を少し走ると、富士山が綺麗に見える。",
+   "kind": "評価",
+   "src": [
+    "P24"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F21",
+   "content": "富士山は大和の方まで行かないと見えないかもしれない。",
+   "kind": "事実",
+   "src": [
+    "P24",
+    "P25"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F22",
+   "content": "246は車がみんな飛ばすので、小型バイクで走るのは怖い。",
+   "kind": "評価",
+   "src": [
+    "P26"
+   ],
+   "day": 3,
+   "excluded": {
+    "day": 3,
+    "reason": "人によって受け止めが違う感想（怖い）"
+   }
+  },
+  {
+   "id": "F23",
+   "content": "港北ニュータウンは桜が綺麗である。",
+   "kind": "評価",
+   "src": [
+    "P27"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F24",
+   "content": "新栄高校からの道路からは、茅ヶ崎中央あたりの桜が見えにくい。",
+   "kind": "事実",
+   "src": [
+    "P29"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F25",
+   "content": "茅ヶ崎中央あたりでは、一段下の公園で桜が咲いていた気がする。",
+   "kind": "事実",
+   "src": [
+    "P29"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F26",
+   "content": "アオキ本社の辺りは桜が綺麗である。",
+   "kind": "評価",
+   "src": [
+    "P30"
+   ],
+   "day": 3,
+   "excluded": null
+  },
+  {
+   "id": "F27",
+   "content": "BOSHの辺りは桜が綺麗である。",
+   "kind": "評価",
+   "src": [
+    "P30"
+   ],
+   "day": 3,
+   "excluded": null
+  }
+ ],
+ "findings": [
+  {
+   "id": "W1",
+   "content": "港北IC近辺の緑産業道路では、富士山がきれいに見える。夕方の夕富士も良い",
+   "kind": "価値",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1",
+    "F4"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W2",
+   "content": "富士山がタイミングの良いときとても綺麗に見えるのは、道が直線だからだという",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2",
+    "F3"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W3",
+   "content": "富士山がきれいに見えるかは、天候と、前にトラックがいないかによる",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F5"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W4",
+   "content": "道が広いので、飛ばす車が多いという",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6",
+    "F7"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W5",
+   "content": "緑産業道路付近には、IKEAやホームセンターのような大型の店ができて、この辺りは結構混む",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F9",
+    "F10"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W6",
+   "content": "港北ICは、昔の場所にあったときは入り口がとても混んだが、今はそれほど混まない",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F11",
+    "F12"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W7",
+   "content": "富士見台などの「富士」の付く地名は、富士山への憧れが理由かもしれない",
+   "kind": "説",
+   "status": null,
+   "related_places": [
+    "富士見台"
+   ],
+   "aliases": [],
+   "claims": [
+    "F14"
+   ],
+   "day": 2
+  },
+  {
+   "id": "W8",
+   "content": "座間の海軍道路は、工事で桜がなくなった",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "座間の海軍道路"
+   ],
+   "aliases": [],
+   "claims": [
+    "F17"
+   ],
+   "day": 2
+  },
+  {
+   "id": "W9",
+   "content": "246は、大和の方まで少し走ると富士山が綺麗に見える",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "246",
+    "大和"
+   ],
+   "aliases": [],
+   "claims": [
+    "F20",
+    "F21"
+   ],
+   "day": 3
+  },
+  {
+   "id": "W10",
+   "content": "港北ニュータウンや、アオキ本社・BOSHの辺りは桜が綺麗である",
+   "kind": "価値",
+   "status": null,
+   "related_places": [
+    "港北ニュータウン",
+    "アオキ本社",
+    "BOSH"
+   ],
+   "aliases": [],
+   "claims": [
+    "F23",
+    "F26",
+    "F27"
+   ],
+   "day": 3
+  },
+  {
+   "id": "W11",
+   "content": "茅ヶ崎中央あたりは、新栄高校からの道路からは桜が見えにくいが、一段下の公園では桜が咲いていた気がする",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "茅ヶ崎中央"
+   ],
+   "aliases": [],
+   "claims": [
+    "F24",
+    "F25"
+   ],
+   "day": 3
+  },
+  {
+   "id": "W12",
+   "content": "たまプラーザの辺りは、東急が切り開いて町を作った新興住宅地である",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "たまプラーザ"
+   ],
+   "aliases": [],
+   "claims": [
+    "F18"
+   ],
+   "day": 3
+  },
+  {
+   "id": "W13",
+   "content": "たまプラーザ辺りの地名は、東急が耳障りのいい名前を付けたものだという",
+   "kind": "説",
+   "status": null,
+   "related_places": [
+    "たまプラーザ"
+   ],
+   "aliases": [],
+   "claims": [
+    "F19"
+   ],
+   "day": 3
+  }
+ ],
+ "questions": [
+  {
+   "about": "W1",
+   "question": "富士見台などの富士見の名がつく場所から富士山が見えたのか",
+   "type": "範囲",
+   "in_conversation": true,
+   "question_src": [
+    "P9"
+   ],
+   "id": "Q1",
+   "day": 1
+  },
+  {
+   "about": "W2",
+   "question": "道が直線だから富士山が綺麗に見えるという見方は本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q2",
+   "day": 1
+  },
+  {
+   "about": "W4",
+   "question": "道が広いから車が飛ばすという見方は本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q3",
+   "day": 1
+  },
+  {
+   "about": "W5",
+   "question": "混むのは、どの時間帯や曜日か",
+   "type": "条件",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q4",
+   "day": 1
+  },
+  {
+   "about": "W6",
+   "question": "入り口が混まなくなったのは、港北ICが今の場所に移ったためか",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q5",
+   "day": 1
+  },
+  {
+   "about": "W7",
+   "question": "富士見台などの「富士」の付く地名は、本当に富士山への憧れが理由か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q6",
+   "day": 2
+  },
+  {
+   "about": "W9",
+   "question": "246のどの区間を走ると富士山が見えるか",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q7",
+   "day": 3
+  },
+  {
+   "about": "W11",
+   "question": "一段下の公園で桜が咲いていたのは本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q8",
+   "day": 3
+  },
+  {
+   "about": "W13",
+   "question": "たまプラーザの地名は、本当に東急が付けたものか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q9",
+   "day": 3
+  }
+ ],
+ "nf": 27,
+ "nw": 13,
+ "nq": 9
+}

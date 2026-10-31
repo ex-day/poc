@@ -1,0 +1,301 @@
+{
+ "conversation": "tsurumi_38",
+ "findings": [
+  {
+   "id": "W1",
+   "content": "天金は今もある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6"
+   ],
+   "posts": [
+    "P6"
+   ]
+  },
+  {
+   "id": "W2",
+   "content": "京急前にあった祭寿司と金寿司は、今はなくなっていた",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F5"
+   ],
+   "posts": [
+    "P4",
+    "P5"
+   ]
+  },
+  {
+   "id": "W3",
+   "content": "三業地は以前と変わっていた",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F3"
+   ],
+   "posts": [
+    "P3"
+   ]
+  },
+  {
+   "id": "W4",
+   "content": "天金の鶴見寄りに、寿司屋や小料理屋があった",
+   "kind": "事実",
+   "status": "今もあるかは未確認",
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F8"
+   ],
+   "posts": [
+    "P6",
+    "P7"
+   ]
+  },
+  {
+   "id": "W5",
+   "content": "鶴見周辺の飲食店は割と早く閉まり、遅くまで営業している店が少ない",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F13",
+    "F16"
+   ],
+   "posts": [
+    "P10",
+    "P12"
+   ]
+  },
+  {
+   "id": "W6",
+   "content": "鶴見周辺の店が閉まったあとは、川崎や野毛に流れると考えられている",
+   "kind": "説",
+   "status": null,
+   "related_places": [
+    "川崎",
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F15"
+   ],
+   "posts": [
+    "P10",
+    "P11"
+   ]
+  },
+  {
+   "id": "W7",
+   "content": "野毛は以前と変わり、観光地化している",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F23",
+    "F25"
+   ],
+   "posts": [
+    "P19",
+    "P20"
+   ]
+  },
+  {
+   "id": "W8",
+   "content": "野毛には昔ながらの店がまだある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "野毛"
+   ],
+   "aliases": [],
+   "claims": [
+    "F24"
+   ],
+   "posts": [
+    "P19",
+    "P20"
+   ]
+  },
+  {
+   "id": "W9",
+   "content": "生麦の通りは昔、漁師が多かったらしい。裏手がすぐ鶴見川の河口で、そのまま海に出られたからだという",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F28",
+    "F29"
+   ],
+   "posts": [
+    "P24",
+    "P25"
+   ]
+  },
+  {
+   "id": "W10",
+   "content": "生麦の通りでは今、釣り船などが多く、春と秋はキスなどを狙うらしい",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F30",
+    "F31",
+    "F35"
+   ],
+   "posts": [
+    "P25",
+    "P26",
+    "P30",
+    "P31"
+   ]
+  },
+  {
+   "id": "W11",
+   "content": "せんべろが流行っていて、その店が集まる所は今、人が多い",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F26"
+   ],
+   "posts": [
+    "P21"
+   ]
+  },
+  {
+   "id": "W12",
+   "content": "釣り船は八景島の方まで行くらしい",
+   "kind": "事実",
+   "status": null,
+   "related_places": [
+    "八景島"
+   ],
+   "aliases": [],
+   "claims": [
+    "F36"
+   ],
+   "posts": [
+    "P31"
+   ]
+  },
+  {
+   "id": "W13",
+   "content": "鶴見には、地元の人がやっている店が多い",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F40"
+   ],
+   "posts": [
+    "P35"
+   ]
+  },
+  {
+   "id": "W14",
+   "content": "イカの釣り船は、産業道路の方から出るものが多いというイメージがある",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F39"
+   ],
+   "posts": [
+    "P33"
+   ]
+  }
+ ],
+ "questions": [
+  {
+   "id": "Q1",
+   "about": "W3",
+   "question": "三業地はなぜ変わったのか",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q2",
+   "about": "W4",
+   "question": "天金の鶴見寄りにあった寿司屋の店名は何か",
+   "type": "範囲",
+   "in_conversation": true,
+   "question_src": [
+    "P8"
+   ]
+  },
+  {
+   "id": "Q4",
+   "about": "W6",
+   "question": "鶴見の店が閉まったあと、本当に川崎や野毛に流れるのか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q5",
+   "about": "W7",
+   "question": "野毛は今どんな様子か",
+   "type": "現状",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q6",
+   "about": "W9",
+   "question": "生麦の通りは本当に昔、漁師が多かったのか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q8",
+   "about": "W11",
+   "question": "せんべろの店が集まる所は、どの街のことか",
+   "type": "範囲",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q9",
+   "about": "W10",
+   "question": "春と秋に生麦の釣り船がキスを狙うのは本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q10",
+   "about": "W12",
+   "question": "釣り船は本当に八景島の方まで行くのか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  },
+  {
+   "id": "Q11",
+   "about": "W14",
+   "question": "イカの釣り船は本当に産業道路の方から出るものが多いのか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": []
+  }
+ ]
+}
