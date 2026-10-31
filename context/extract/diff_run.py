@@ -73,6 +73,28 @@ def context_of(post, earlier):
     return [p for p in earlier if p["id"] in keep]
 
 
+def given(conv, k):
+    """k 日目の1段目で、実際に渡した対象の Post と、文脈の Post（対象ごと）"""
+    ds = days(conv)
+    earlier_all = [p for d in ds[:k - 1] for p in d]
+    out = {}
+    for i, p in enumerate(ds[k - 1]):
+        out[p["id"]] = {c["id"] for c in context_of(p, earlier_all + ds[k - 1][:i])}
+    return out
+
+
+def src_problem(src, g):
+    """src が、実際に渡した対象・文脈の中にあり、少なくとも1件は対象の Post を含むか（PR #37 のレビュー）"""
+    targets = set(g)
+    allowed = targets | set().union(*g.values())
+    bad = [x for x in src if x not in allowed]
+    if bad:
+        return f"渡していない Post {bad}"
+    if not set(src) & targets:
+        return "対象の Post を含まない"
+    return None
+
+
 def prepare1(k):
     rules = (HERE / "prompts" / "extract_diff.md").read_text(encoding="utf-8")
     WORK.mkdir(parents=True, exist_ok=True)
@@ -99,11 +121,11 @@ def merge1(k):
             continue
         st = load_state(conv)
         r = json.loads((WORK / f"{conv}_d{k}_1.out.json").read_text(encoding="utf-8"))
-        ok_ids = {p["id"] for d in ds[:k] for p in d}
+        g = given(conv, k)
         for f in r["facts"]:
-            bad = [s for s in f["src"] if s not in ok_ids]
-            if bad or f["kind"] not in CLAIM_KINDS:
-                raise SystemExit(f"{conv} d{k}：{f.get('id')} の src／kind が違う {bad} {f['kind']}")
+            prob = src_problem(f["src"], g)
+            if prob or f["kind"] not in CLAIM_KINDS:
+                raise SystemExit(f"{conv} d{k}：{f.get('id')} の src／kind が違う {prob} {f['kind']}")
             st["nf"] += 1
             st["claims"].append({"id": f"F{st['nf']}", "content": f["content"], "kind": f["kind"], "src": f["src"], "day": k,
                                  "excluded": None})
@@ -184,6 +206,18 @@ def merge2(k):
             qf[q["id"]].update({k2: q[k2] for k2 in ("question", "type") if k2 in q})
         for x in qr.get("remove", []):
             qf[x["id"]]["removed"] = {"day": k, "reason": x["reason"]}
+        # 除外を当てたあと、すべての有効なわかってきたことで、除外済みの主張を参照していないかを確かめる（PR #37 のレビュー）
+        live = {c for c, v in cl.items() if not v["excluded"]}
+        for w in st["findings"]:
+            if w.get("expired"):
+                continue
+            gone = [c for c in w["claims"] if c not in live]
+            if gone:
+                print(f"注意：{conv} d{k} {w['id']} が除外済みの主張 {gone} を参照していた → 外す")
+                w["claims"] = [c for c in w["claims"] if c in live]
+            if not w["claims"]:
+                print(f"注意：{conv} d{k} {w['id']} の根拠の主張が0件 → 失効")
+                w["expired"] = {"day": k, "reason": "根拠の主張がすべて除外された"}
         save_state(conv, st)
         print(conv, f"d{k}", "add", len(fr.get("add", [])), "update", len(fr.get("update", [])), "expire", len(fr.get("expire", [])),
               "q+", len(qr.get("add", [])), "excl", len(r.get("exclude_claims", [])))
@@ -209,9 +243,26 @@ def final():
         print(conv, "claims", len(st["claims"]), "excluded", len(ex), "findings", len(fs), "questions", len(qs))
 
 
+def check():
+    """保存した状態を、あとから確かめる：主張の src が実際に渡した範囲にあるか、有効なわかってきたことが除外済みの主張を参照していないか"""
+    for conv in CONVS:
+        st = json.loads((OUT / f"{conv}.state.json").read_text(encoding="utf-8"))
+        probs = []
+        for c in st["claims"]:
+            p = src_problem(c["src"], given(conv, c["day"]))
+            if p:
+                probs.append(f"{c['id']}（{c['day']}日目）：{p}")
+        ex = {c["id"] for c in st["claims"] if c["excluded"]}
+        refs = [f"{w['id']}→{sorted(set(w['claims']) & ex)}" for w in st["findings"] if not w.get("expired") and set(w["claims"]) & ex]
+        empty = [w["id"] for w in st["findings"] if not w.get("expired") and not w["claims"]]
+        print(conv, "src の問題", len(probs), probs[:5], "| 除外済みを参照", refs, "| 根拠0件", empty)
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "final":
         final()
+    elif cmd == "check":
+        check()
     else:
         {"prepare1": prepare1, "merge1": merge1, "prepare2": prepare2, "merge2": merge2}[cmd](int(sys.argv[2]))
