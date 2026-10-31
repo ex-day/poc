@@ -1,0 +1,335 @@
+{
+ "claims": [
+  {
+   "id": "F1",
+   "content": "けやき台の商店街では、店がだいぶ変わった",
+   "kind": "事実",
+   "src": [
+    "P1"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F2",
+   "content": "角の「よしこの店」はまだある",
+   "kind": "事実",
+   "src": [
+    "P2",
+    "P3"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F3",
+   "content": "よしこの店のコロッケは昔から有名だ",
+   "kind": "評価",
+   "src": [
+    "P4",
+    "P2"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "店の評価（コロッケが有名だという評価）"
+   }
+  },
+  {
+   "id": "F4",
+   "content": "駅前の中華の龍門は、味が落ちた",
+   "kind": "評価",
+   "src": [
+    "P5"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "店の評価（味が落ちたという評価）"
+   }
+  },
+  {
+   "id": "F5",
+   "content": "龍門の隣の家の犬がいつも吠えて、怖い",
+   "kind": "評価",
+   "src": [
+    "P6"
+   ],
+   "day": 1,
+   "excluded": {
+    "day": 1,
+    "reason": "私人についての情報（隣の家の住人）と、人によって受け止めが違う感想（怖い）"
+   }
+  },
+  {
+   "id": "F6",
+   "content": "商店街の奥にある神社は、大塚神社だ",
+   "kind": "事実",
+   "src": [
+    "P7",
+    "P8"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F7",
+   "content": "大塚神社では毎年9月にお祭りがある",
+   "kind": "事実",
+   "src": [
+    "P7",
+    "P8"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F8",
+   "content": "大塚神社のお祭りの夜店は、商店街の端まで並ぶ",
+   "kind": "事実",
+   "src": [
+    "P8",
+    "P7"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F9",
+   "content": "大塚神社は、大塚さんという人が建てたのではなく、昔このあたりに大きな塚があったからだと聞いた",
+   "kind": "事実",
+   "src": [
+    "P9",
+    "P10"
+   ],
+   "day": 1,
+   "excluded": null
+  },
+  {
+   "id": "F10",
+   "content": "線路の向こうの公園へは、踏切まで回ると遠い",
+   "kind": "事実",
+   "src": [
+    "P11"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "危険な情報: 踏切を避けて線路を横切る近道の話"
+   }
+  },
+  {
+   "id": "F11",
+   "content": "線路の向こうの公園へ行くのに、線路を横切っている人がいる",
+   "kind": "事実",
+   "src": [
+    "P11"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "危険な情報: 線路を横切って公園へ行く危ない近道の話"
+   }
+  },
+  {
+   "id": "F12",
+   "content": "線路を横切るのは危ない",
+   "kind": "評価",
+   "src": [
+    "P11",
+    "P12"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "人によって受け止めが違う注意（危ないという感想）であり、危険な近道の話と一体"
+   }
+  },
+  {
+   "id": "F13",
+   "content": "線路で電車が止まっていたことがあった",
+   "kind": "事実",
+   "src": [
+    "P12"
+   ],
+   "day": 2,
+   "excluded": {
+    "day": 2,
+    "reason": "危険な情報: 線路を横切ることの危険性を示す出来事で、危ない近道の話と一体"
+   }
+  },
+  {
+   "id": "F14",
+   "content": "商店街の真ん中の空き地は、昔は映画館だったと言われている",
+   "kind": "事実",
+   "src": [
+    "P13"
+   ],
+   "day": 2,
+   "excluded": null
+  },
+  {
+   "id": "F15",
+   "content": "商店街の真ん中の空き地にあった映画館は、けやき座だった気がするが、名前は忘れたとのこと",
+   "kind": "事実",
+   "src": [
+    "P13",
+    "P14",
+    "P15"
+   ],
+   "day": 2,
+   "excluded": null
+  },
+  {
+   "id": "F16",
+   "content": "けやき台は、江戸時代に殿様が鷹狩りに来ていた場所だと言われている",
+   "kind": "事実",
+   "src": [
+    "P16"
+   ],
+   "day": 2,
+   "excluded": null
+  },
+  {
+   "id": "F17",
+   "content": "鷹番という地名が残っているのは、けやき台が殿様の鷹狩りの場所だったことによるのかもしれない",
+   "kind": "事実",
+   "src": [
+    "P16",
+    "P17"
+   ],
+   "day": 2,
+   "excluded": null
+  }
+ ],
+ "findings": [
+  {
+   "id": "W1",
+   "content": "けやき台の商店街では、店がだいぶ変わった",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F1"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W2",
+   "content": "角の「よしこの店」は今もあり、コロッケを売っている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F2"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W3",
+   "content": "商店街の奥には大塚神社があり、毎年9月にお祭りがあって、お祭りの夜店は商店街の端まで並ぶ",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F6",
+    "F7",
+    "F8"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W4",
+   "content": "大塚神社は、昔このあたりに大きな塚があったからだという話がある",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F9"
+   ],
+   "day": 1
+  },
+  {
+   "id": "W5",
+   "content": "けやき台は、江戸時代に殿様が鷹狩りに来ていた場所だと言われている",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F16"
+   ],
+   "day": 2
+  },
+  {
+   "id": "W6",
+   "content": "鷹番という地名が残っているのは、けやき台が殿様の鷹狩りの場所だったことによるのかもしれない",
+   "kind": "説",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F17"
+   ],
+   "day": 2
+  },
+  {
+   "id": "W7",
+   "content": "商店街の真ん中の空き地は、昔は映画館だったと言われている。館名は「けやき座」だった気がするが、はっきりしない",
+   "kind": "事実",
+   "status": null,
+   "related_places": [],
+   "aliases": [],
+   "claims": [
+    "F14",
+    "F15"
+   ],
+   "day": 2
+  }
+ ],
+ "questions": [
+  {
+   "about": "W1",
+   "question": "けやき台の商店街で店がだいぶ変わったのは、何が理由か",
+   "type": "理由",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q1",
+   "day": 1
+  },
+  {
+   "about": "W4",
+   "question": "大塚神社は、昔このあたりに大きな塚があったからだという話は本当か",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q2",
+   "day": 1
+  },
+  {
+   "about": "W6",
+   "question": "鷹番という地名は、けやき台が殿様の鷹狩りの場所だったことによるのか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q3",
+   "day": 2
+  },
+  {
+   "about": "W7",
+   "question": "商店街の真ん中の空き地は、昔本当に映画館だったか",
+   "type": "確度",
+   "in_conversation": false,
+   "question_src": [],
+   "id": "Q4",
+   "day": 2
+  }
+ ],
+ "nf": 17,
+ "nw": 7,
+ "nq": 4
+}
