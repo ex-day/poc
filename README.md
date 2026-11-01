@@ -13,6 +13,7 @@ ex-day は、今いる場所、使える時間、興味をもとに、地域の�
 | [`context/`](context/) | 会話の投稿どうしや、返信で積み重なった文脈との近さを埋め込みで比べ、新しい投稿がどの話題の続きかを判定できるかを見る | [#2](https://github.com/ex-day/poc/issues/2) |
 | [`auth/cognito-spring/`](auth/cognito-spring/) | Cognito に Spring Security の標準の OIDC（OAuth2 Client）でつなげるか。トークンをサーバー側に持つ、パスワードなしの登録、パスキーの登録、ログアウト | [#38](https://github.com/ex-day/poc/issues/38) |
 | [`context/extract/`](context/extract/) | 会話を話題に分けずに、知見（自己完結した1つの主張）を根拠の投稿 id 付きで取り出し、根拠の過剰・漏れと取りこぼしを確かめる | [#34](https://github.com/ex-day/poc/issues/34) |
+| [`reach/map/`](reach/map/) | 到達圏を時間の帯（15〜60分）の面にして、地理院タイルの地図に重ねる。駅のまわりの円を合体させた面と、声のある発見・声のない場所の点 | [#40](https://github.com/ex-day/poc/issues/40) |
 
 今後、地名の辞書と位置の判定（[platform#82](https://github.com/ex-day/platform/issues/82)）の PoC もここに置く予定です。
 
