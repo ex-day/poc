@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>到達圏の地図（PoC #40）</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+<style>
+  :root { --ink:#1B2420; --muted:#5B6863; --panel:rgba(255,255,255,0.95); --b15:#2E8A7C; --b30:#6DB3A5; --b45:#A9D4CA; --b60:#D3E9E3; --accent:#C2562B; }
+  html, body { margin:0; height:100%; background:#EDF0EA; color:var(--ink);
+    font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif; }
+  #map { position:absolute; inset:0; }
+  .panel { position:absolute; left:12px; top:12px; width:min(340px, calc(100% - 24px)); background:var(--panel);
+    border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.12); padding:12px 14px; font-size:13px; z-index:2; }
+  .row { display:flex; gap:8px; align-items:center; }
+  input[type=text] { flex:1; min-width:0; font-size:15px; padding:6px 8px; border:1px solid #C9D2CE; border-radius:8px; }
+  button { font-size:14px; padding:6px 12px; border:0; border-radius:8px; background:var(--b15); color:#fff; cursor:pointer; }
+  .slider { margin-top:10px; }
+  .slider b { font-size:18px; }
+  input[type=range] { width:100%; accent-color:var(--b15); }
+  .ticks { display:flex; justify-content:space-between; color:var(--muted); font-size:11px; }
+  .counts { margin-top:8px; line-height:1.7; }
+  .legend { display:flex; gap:6px; margin-top:6px; flex-wrap:wrap; color:var(--muted); font-size:11px; }
+  .legend span::before { content:''; display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:3px; vertical-align:-2px; background:var(--c); }
+  .err { color:#B3261E; margin-top:6px; }
+  .opts { margin-top:8px; color:var(--muted); font-size:12px; display:flex; gap:12px; flex-wrap:wrap; }
+  .list { margin-top:8px; max-height:28vh; overflow:auto; border-top:1px solid #E1E6E3; padding-top:6px; }
+  .list div { padding:3px 0; cursor:pointer; }
+  .list .v { color:var(--accent); font-weight:700; }
+  .maplibregl-popup-content { font-size:13px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="panel">
+  <div class="row">
+    <input id="from" type="text" list="cands" value="横浜" placeholder="駅の名前" autocomplete="off">
+    <datalist id="cands"></datalist>
+    <button id="go">寄り道</button>
+  </div>
+  <div class="slider">
+    <div><span id="fromLabel">横浜</span>駅から <b id="minLabel">45</b>分</div>
+    <input id="min" type="range" min="15" max="60" step="15" value="45">
+    <div class="ticks"><span>15</span><span>30</span><span>45</span><span>60</span></div>
+  </div>
+  <div class="legend">
+    <span style="--c:var(--b15)">〜15分</span><span style="--c:var(--b30)">〜30分</span>
+    <span style="--c:var(--b45)">〜45分</span><span style="--c:var(--b60)">〜60分</span>
+  </div>
+  <div class="counts" id="counts">読み込み中…</div>
+  <div class="opts">
+    <label><input type="checkbox" id="showStations" checked> 駅</label>
+    <label><input type="checkbox" id="showWiki" checked> 声のない場所（Wikidata）</label>
+    <label><input type="checkbox" id="showList"> 一覧</label>
+  </div>
+  <div class="list" id="list" hidden></div>
+  <div class="err" id="err" hidden></div>
+</div>
+<script>
+(function () {
+  var BAND_COLORS = { 15: '#2E8A7C', 30: '#6DB3A5', 45: '#A9D4CA', 60: '#D3E9E3' };
+  var params = new URLSearchParams(location.search);
+  var state = { from: params.get('from') || '横浜', min: Number(params.get('min') || 45), data: null };
+  var $ = function (id) { return document.getElementById(id); };
+  $('from').value = state.from;
+  $('min').value = String(state.min);
+
+  var map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        gsi: {
+          type: 'raster',
+          tiles: ['https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png'],
+          tileSize: 256, minzoom: 2, maxzoom: 18,
+          attribution: '<a href="https://maps.gsi.go.jp/development/ichiran.html" target="_blank">地理院タイル</a>'
+        }
+      },
+      layers: [{ id: 'gsi', type: 'raster', source: 'gsi' }]
+    },
+    center: [139.622, 35.466], zoom: 10.5, maxZoom: 17
+  });
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+  map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
+
+  var empty = { type: 'FeatureCollection', features: [] };
+
+  map.on('load', function () {
+    map.addSource('bands', { type: 'geojson', data: empty });
+    map.addSource('stations', { type: 'geojson', data: empty });
+    map.addSource('spots', { type: 'geojson', data: empty });
+
+    // 外側の帯から重ねる。重なったところほど濃くなる（中心ほど早く着く）。
+    [60, 45, 30, 15].forEach(function (b) {
+      map.addLayer({ id: 'band-' + b, type: 'fill', source: 'bands',
+        filter: ['==', ['get', 'band_min'], b],
+        paint: { 'fill-color': BAND_COLORS[b], 'fill-opacity': 0.55, 'fill-antialias': true } });
+    });
+    map.addLayer({ id: 'band-edge', type: 'line', source: 'bands',
+      paint: { 'line-color': '#2E8A7C', 'line-width': 0.6, 'line-opacity': 0.35 } });
+
+    map.addLayer({ id: 'stations', type: 'circle', source: 'stations',
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2, 13, 4.5],
+        'circle-color': '#FFFFFF', 'circle-stroke-color': '#1F4A43', 'circle-stroke-width': 1.5 } });
+    map.addLayer({ id: 'station-labels', type: 'symbol', source: 'stations', minzoom: 11.5,
+      layout: { 'text-field': ['concat', ['get', 'name'], ' ', ['to-string', ['get', 't_min']], '分'],
+        'text-size': 11, 'text-offset': [0, 1.1], 'text-anchor': 'top' },
+      paint: { 'text-color': '#1B2420', 'text-halo-color': '#FFFFFF', 'text-halo-width': 1.4 } });
+
+    map.addLayer({ id: 'spots-wiki', type: 'circle', source: 'spots',
+      filter: ['==', ['get', 'source'], 'wikidata'],
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 1.5, 14, 4],
+        'circle-color': '#7A8580', 'circle-opacity': 0.7 } });
+    map.addLayer({ id: 'spots-voiced', type: 'circle', source: 'spots',
+      filter: ['==', ['get', 'source'], 'sample'],
+      paint: { 'circle-radius': 7, 'circle-color': '#C2562B',
+        'circle-stroke-color': '#FFFFFF', 'circle-stroke-width': 2 } });
+
+    ['spots-voiced', 'spots-wiki', 'stations'].forEach(function (id) {
+      map.on('click', id, function (e) {
+        var p = e.features[0].properties;
+        var html = id === 'stations'
+          ? '<b>' + esc(p.name) + '駅</b><br>' + p.t_min + '分<br><small>' + esc(p.lines) + '</small>'
+          : '<b>' + esc(p.name) + '</b><br>' + (p.source === 'sample' ? '声のある発見' : '声はまだない（' + esc(p.kinds || '') + '）')
+            + '<br>' + p.t_min + '分（' + esc(p.via) + '駅から歩いて約' + p.walk_min + '分）';
+        new maplibregl.Popup().setLngLat(e.lngLat).setHTML(html).addTo(map);
+      });
+      map.on('mouseenter', id, function () { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', id, function () { map.getCanvas().style.cursor = ''; });
+    });
+
+    load(true);
+  });
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  // 60分ぶんを1回取り、スライダーは画面の側で絞る（帯の面は帯ごとに作ってあるので、切り替えは表示だけ）。
+  function load(fit) {
+    $('err').hidden = true;
+    $('counts').textContent = '読み込み中…';
+    fetch('/api/reach?from=' + encodeURIComponent(state.from) + '&max=60')
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); })
+      .then(function (j) {
+        state.data = j;
+        map.getSource('bands').setData(j.bands);
+        $('fromLabel').textContent = state.from;
+        render();
+        if (fit) fitTo(j.bands);
+      })
+      .catch(function (e) { $('err').hidden = false; $('err').textContent = String(e.message || e); $('counts').textContent = ''; });
+  }
+
+  function fitTo(fc) {
+    var b = new maplibregl.LngLatBounds();
+    fc.features.forEach(function (f) {
+      if (f.properties.band_min !== state.min) return;
+      f.geometry.coordinates.forEach(function (poly) { poly[0].forEach(function (c) { b.extend(c); }); });
+    });
+    if (!b.isEmpty()) map.fitBounds(b, { padding: { top: 40, bottom: 40, left: Math.min(380, innerWidth * 0.4), right: 40 }, duration: 600 });
+  }
+
+  function render() {
+    var j = state.data; if (!j) return;
+    var m = state.min;
+    $('minLabel').textContent = m;
+    [15, 30, 45, 60].forEach(function (b) { map.setLayoutProperty('band-' + b, 'visibility', b <= m ? 'visible' : 'none'); });
+    map.setFilter('band-edge', ['==', ['get', 'band_min'], m]);
+    var within = function (f) { return Number(f.properties.t_min) <= m; };
+    var st = j.stations.features.filter(within);
+    var sp = j.spots.features.filter(within);
+    map.getSource('stations').setData({ type: 'FeatureCollection', features: st });
+    map.getSource('spots').setData({ type: 'FeatureCollection', features: sp });
+    map.setLayoutProperty('stations', 'visibility', $('showStations').checked ? 'visible' : 'none');
+    map.setLayoutProperty('station-labels', 'visibility', $('showStations').checked ? 'visible' : 'none');
+    map.setLayoutProperty('spots-wiki', 'visibility', $('showWiki').checked ? 'visible' : 'none');
+    var voiced = sp.filter(function (f) { return f.properties.source === 'sample'; });
+    $('counts').innerHTML = '駅 <b>' + st.length + '</b>　声のある発見 <b style="color:var(--accent)">' + voiced.length + '</b>　声のない場所 ' + (sp.length - voiced.length)
+      + '<br><small style="color:var(--muted)">DB ' + j.elapsed_ms + 'ms（60分ぶん）</small>';
+    var list = $('list');
+    list.hidden = !$('showList').checked;
+    if (!list.hidden) {
+      var items = sp.slice().sort(function (a, b) {
+        var va = a.properties.source === 'sample' ? 0 : 1, vb = b.properties.source === 'sample' ? 0 : 1;
+        return va - vb || a.properties.t_min - b.properties.t_min;
+      }).slice(0, 200);
+      list.innerHTML = items.map(function (f, i) {
+        return '<div data-i="' + i + '"' + (f.properties.source === 'sample' ? ' class="v"' : '') + '>' + f.properties.t_min + '分　' + esc(f.properties.name) + '</div>';
+      }).join('');
+      Array.prototype.forEach.call(list.children, function (el) {
+        el.onclick = function () { var f = items[Number(el.dataset.i)]; map.flyTo({ center: f.geometry.coordinates, zoom: 14 }); };
+      });
+    }
+    var q = new URLSearchParams({ from: state.from, min: String(m) });
+    history.replaceState(null, '', '?' + q.toString());
+  }
+
+  $('min').addEventListener('input', function () { state.min = Number(this.value); render(); });
+  ['showStations', 'showWiki', 'showList'].forEach(function (id) { $(id).addEventListener('change', render); });
+  $('go').addEventListener('click', function () { state.from = $('from').value.trim() || '横浜'; load(true); });
+  $('from').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) $('go').click(); });
+  var timer;
+  $('from').addEventListener('input', function () {
+    clearTimeout(timer);
+    var q = this.value.trim();
+    timer = setTimeout(function () {
+      if (!q) return;
+      fetch('/api/stations?q=' + encodeURIComponent(q)).then(function (r) { return r.json(); }).then(function (names) {
+        $('cands').innerHTML = names.map(function (n) { return '<option value="' + esc(n) + '">'; }).join('');
+      }).catch(function () {});
+    }, 200);
+  });
+})();
+</script>
+</body>
+</html>
