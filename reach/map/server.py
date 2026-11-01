@@ -16,6 +16,7 @@
 """
 import argparse
 import json
+import math
 import os
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -24,6 +25,7 @@ from urllib.parse import parse_qs, urlparse
 
 import psycopg
 
+AVAIL_MIN, AVAIL_MAX = 30.0, 480.0   # 使える時間の範囲（分）。画面（route.html）のスライダーと合わせる
 DSN = os.environ.get("EXDAY_DSN", "postgresql://postgres:postgres@127.0.0.1:5432/ex_day_poc")
 HERE = Path(__file__).resolve().parent
 
@@ -59,6 +61,8 @@ class Handler(BaseHTTPRequestHandler):
             max_min = float((qs.get("max") or ["60"])[0])
         except ValueError:
             return self._send(400, json.dumps({"error": "max は数で指定する"}, ensure_ascii=False))
+        if not math.isfinite(max_min):
+            return self._send(400, json.dumps({"error": "max は有限の数で指定する"}, ensure_ascii=False))
         max_min = max(15.0, min(max_min, 90.0))
         t0 = time.perf_counter()
         try:
@@ -79,6 +83,10 @@ class Handler(BaseHTTPRequestHandler):
             extra = float(qs["extra"][0]) if qs.get("extra") else 60.0
         except ValueError:
             return self._send(400, json.dumps({"error": "avail・extra は数で指定する"}, ensure_ascii=False))
+        if (avail is not None and not math.isfinite(avail)) or not math.isfinite(extra):
+            return self._send(400, json.dumps({"error": "avail・extra は有限の数で指定する"}, ensure_ascii=False))
+        if avail is not None:
+            avail = max(AVAIL_MIN, avail)
         t0 = time.perf_counter()
         try:
             with psycopg.connect(DSN) as conn, conn.cursor() as cur:
@@ -90,7 +98,7 @@ class Handler(BaseHTTPRequestHandler):
                 min_total = float(min_total)
                 if avail is None:
                     avail = min_total + max(0.0, extra)
-                avail = min(avail, 720.0)
+                avail = min(avail, AVAIL_MAX)
                 if avail < min_total:
                     return self._send(400, json.dumps(
                         {"error": f"まっすぐ行っても {round(min_total)}分かかる（使える時間 {round(avail)}分）",

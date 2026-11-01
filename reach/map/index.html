@@ -63,7 +63,10 @@
 (function () {
   var BAND_COLORS = { 15: '#2E8A7C', 30: '#6DB3A5', 45: '#A9D4CA', 60: '#D3E9E3' };
   var params = new URLSearchParams(location.search);
-  var state = { from: params.get('from') || '横浜', min: Number(params.get('min') || 45), data: null };
+  // URL の分は 15・30・45・60 のどれかに丸める（スライダーと同じ）
+  var minParam = Number(params.get('min'));
+  var state = { from: params.get('from') || '横浜',
+    min: isFinite(minParam) && minParam > 0 ? Math.min(60, Math.max(15, Math.round(minParam / 15) * 15)) : 45, data: null };
   var $ = function (id) { return document.getElementById(id); };
   $('from').value = state.from;
   $('min').value = String(state.min);
@@ -155,7 +158,13 @@
         render();
         if (fit) fitTo(j.bands);
       })
-      .catch(function (e) { $('err').hidden = false; $('err').textContent = String(e.message || e); $('counts').textContent = ''; });
+      .catch(function (e) {
+        // 入力の条件と、表示している結果が食い違わないよう、前の結果を消す
+        state.data = null;
+        ['bands', 'stations', 'spots'].forEach(function (id) { map.getSource(id).setData({ type: 'FeatureCollection', features: [] }); });
+        $('list').innerHTML = '';
+        $('err').hidden = false; $('err').textContent = String(e.message || e); $('counts').textContent = '';
+      });
   }
 
   // 最初に見せる範囲は、探す範囲（スライダー）と分ける。30分圏までに合わせ、時間を広げても画角は変えない（platform#134）。

@@ -97,13 +97,20 @@
   var COLORS = { 15: '#D3E9E3', 30: '#A9D4CA', 60: '#6DB3A5', 120: '#2E8A7C' };
   var AREA_RADIUS_M = 1500;   // 寄り道先のまとまりの半径（代表の駅から）
   var LIST_MAX = 40;
+  var AVAIL_MIN = 30, AVAIL_MAX = 480, AVAIL_STEP = 15;   // スライダーと同じ範囲。サーバーの上限（server.py）と合わせる
+  // URL の値は、有限の数かを確かめ、スライダーの範囲と刻みに丸める（範囲の外の値で広すぎる検索をしない）
+  function clampAvail(v) {
+    v = Number(v);
+    if (!isFinite(v)) return 300;
+    return Math.min(AVAIL_MAX, Math.max(AVAIL_MIN, Math.round(v / AVAIL_STEP) * AVAIL_STEP));
+  }
   var params = new URLSearchParams(location.search);
   var state = {
     from: params.get('from') || '新大阪',
     to: params.has('to') ? params.get('to') : '横浜',
-    avail: Number(params.get('avail') || 300),
-    sort: params.get('sort') || 'spots',
-    data: null, areas: [], seq: 0, sel: -1
+    avail: clampAvail(params.get('avail') || 300),
+    sort: ['spots', 'stay', 'detour'].indexOf(params.get('sort')) >= 0 ? params.get('sort') : 'spots',
+    data: null, areas: [], visibleSpots: [], seq: 0, sel: -1
   };
   var $ = function (id) { return document.getElementById(id); };
   $('from').value = state.from; $('to').value = state.to; $('avail').value = String(state.avail);
@@ -193,7 +200,18 @@
         render();
         if (fit) fitAll();
       })
-      .catch(function (e) { if (my !== state.seq) return; $('err').hidden = false; $('err').textContent = String(e.message || e); $('sum').textContent = ''; });
+      .catch(function (e) {
+        if (my !== state.seq) return;
+        clearResults();   // 入力の条件と、表示している結果が食い違わないよう、前の結果を消す
+        $('err').hidden = false; $('err').textContent = String(e.message || e); $('sum').textContent = '';
+      });
+  }
+
+  function clearResults() {
+    state.data = null; state.areas = []; state.visibleSpots = []; state.sel = -1;
+    ['bands', 'route', 'stations', 'spots'].forEach(function (id) { map.getSource(id).setData(empty); });
+    labels.forEach(function (m) { m.remove(); }); labels = [];
+    $('list').innerHTML = '';
   }
 
   // 最初の画角は、行けるところ（15分以上いられる駅）の全体。使える時間を変えても画角は変えない（platform#134）。
@@ -254,6 +272,7 @@
     var showWiki = $('showWiki').checked;
     var spots = j.spots.features.filter(function (f) { return showWiki || f.properties.source === 'sample'; });
     map.getSource('spots').setData({ type: 'FeatureCollection', features: spots });
+    state.visibleSpots = spots;
     var areas = state.areas = buildAreas(j, spots);
     var round = j.from === j.to;
     var voiced = spots.filter(function (f) { return f.properties.source === 'sample'; }).length;
@@ -292,7 +311,8 @@
   function focusArea(a) {
     var b = new maplibregl.LngLatBounds();
     a.members.forEach(function (m) { b.extend(m.c); });
-    state.data.spots.features.forEach(function (f) {
+    // 表示している場所だけで範囲を決める（「声のない場所も」を外したときに、隠れた場所まで広げない）
+    state.visibleSpots.forEach(function (f) {
       if (a.members.some(function (m) { return m.p.group === f.properties.via_group; })) b.extend(f.geometry.coordinates);
     });
     map.fitBounds(b, { padding: 80, maxZoom: 15, duration: 600 });
@@ -300,7 +320,7 @@
 
   var timer;
   $('avail').addEventListener('input', function () {
-    state.avail = Number(this.value); $('availLabel').textContent = hm(state.avail);
+    state.avail = clampAvail(this.value); $('availLabel').textContent = hm(state.avail);
     clearTimeout(timer); timer = setTimeout(function () { load(false); }, 250);
   });
   $('showWiki').addEventListener('change', render);
