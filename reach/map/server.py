@@ -7,9 +7,9 @@
 - GET /                         … index.html（片道で行ける範囲の地図。#40）
 - GET /route                    … route.html（帰り道の寄り道の地図。#42）
 - GET /api/reach?from=横浜&max=60 … reach.reach_map_json の結果（帯の面・駅・場所の GeoJSON）と、かかった時間
-- GET /api/detour?from=新大阪&to=横浜&extra=60
-                                … reach.detour_map_json の結果。extra は寄り道に使う時間（分）。
-                                  使える時間 ＝ 最短の所要時間 ＋ extra
+- GET /api/detour?from=新大阪&to=横浜&avail=300
+                                … reach.detour_map_json の結果。avail は使える時間（分）。to を省くと from に戻る（往復）。
+                                  avail の代わりに extra（寄り道に使う時間）でもよい。使える時間 ＝ まっすぐ行く時間 ＋ extra
 - GET /api/stations?q=横         … 駅の名前の候補（入力の補完用）
 
 先に reach/sql/11_isochrone.sql と 12_detour.sql を流しておくこと。標準ライブラリの http.server と psycopg だけで動く（PoC 用。本番の作りではない）。
@@ -73,26 +73,33 @@ class Handler(BaseHTTPRequestHandler):
 
     def _detour(self, qs):
         origin = (qs.get("from") or ["新大阪"])[0].strip()
-        dest = (qs.get("to") or ["横浜"])[0].strip()
+        dest = (qs.get("to") or [""])[0].strip() or origin   # 着く駅を省いたら、起点に戻る（往復）
         try:
-            extra = float((qs.get("extra") or ["60"])[0])
+            avail = float(qs["avail"][0]) if qs.get("avail") else None
+            extra = float(qs["extra"][0]) if qs.get("extra") else 60.0
         except ValueError:
-            return self._send(400, json.dumps({"error": "extra は数で指定する"}, ensure_ascii=False))
-        extra = max(0.0, min(extra, 480.0))
+            return self._send(400, json.dumps({"error": "avail・extra は数で指定する"}, ensure_ascii=False))
         t0 = time.perf_counter()
         try:
             with psycopg.connect(DSN) as conn, conn.cursor() as cur:
-                # 最短の所要時間（経路の最後の駅の t1）を先に出し、使える時間 ＝ 最短 ＋ 寄り道に使う時間 にする
+                # まっすぐ行く時間（経路の最後の駅の t1）。往復なら0
                 cur.execute("SELECT max(t1_min) FROM reach.detour_route(%s, %s)", (origin, dest))
                 min_total = cur.fetchone()[0]
                 if min_total is None:
                     return self._send(400, json.dumps({"error": "経路が見つからない"}, ensure_ascii=False))
-                cur.execute("SELECT reach.detour_map_json(%s, %s, %s)", (origin, dest, float(min_total) + extra))
+                min_total = float(min_total)
+                if avail is None:
+                    avail = min_total + max(0.0, extra)
+                avail = min(avail, 720.0)
+                if avail < min_total:
+                    return self._send(400, json.dumps(
+                        {"error": f"まっすぐ行っても {round(min_total)}分かかる（使える時間 {round(avail)}分）",
+                         "min_total": min_total}, ensure_ascii=False))
+                cur.execute("SELECT reach.detour_map_json(%s, %s, %s)", (origin, dest, avail))
                 result = cur.fetchone()[0]
         except psycopg.Error as e:
             msg = (e.diag.message_primary if getattr(e, "diag", None) else None) or str(e)
             return self._send(400, json.dumps({"error": msg}, ensure_ascii=False))
-        result["extra_min"] = extra
         result["elapsed_ms"] = round((time.perf_counter() - t0) * 1000)
         self._send(200, json.dumps(result, ensure_ascii=False, default=float))
 

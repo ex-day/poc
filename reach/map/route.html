@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>帰り道の寄り道（PoC #42）</title>
+<title>寄り道先（PoC #42）</title>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css">
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 <style>
@@ -12,42 +12,46 @@
   html, body { margin:0; height:100%; background:#EDF0EA; color:var(--ink);
     font-family:'Hiragino Sans','Noto Sans JP',-apple-system,sans-serif; }
   .app { display:flex; height:100%; }
-  .side { width:360px; flex:none; background:var(--panel); display:flex; flex-direction:column; box-shadow:2px 0 10px rgba(0,0,0,0.08); z-index:2; }
+  .side { width:380px; flex:none; background:var(--panel); display:flex; flex-direction:column; box-shadow:2px 0 10px rgba(0,0,0,0.08); z-index:2; }
   .head { padding:14px 16px 10px; border-bottom:1px solid var(--line); font-size:13px; }
   #map { flex:1; position:relative; }
+  .q { font-size:13px; color:var(--muted); margin:0 0 4px; }
   .od { display:grid; grid-template-columns:1fr auto 1fr; gap:6px; align-items:center; }
   .od input { width:100%; box-sizing:border-box; font-size:15px; padding:6px 8px; border:1px solid #C9D2CE; border-radius:8px; }
   .od span { color:var(--muted); }
-  button { font-size:14px; padding:6px 12px; border:0; border-radius:8px; background:var(--s120); color:#fff; cursor:pointer; }
-  .extra { margin-top:12px; }
-  .extra b { font-size:20px; }
+  .avail { margin-top:12px; }
+  .avail b { font-size:20px; }
   input[type=range] { width:100%; accent-color:var(--s120); }
   .ticks { display:flex; justify-content:space-between; color:var(--muted); font-size:11px; }
   .sum { margin-top:6px; color:var(--muted); line-height:1.6; }
+  .sum b { color:var(--ink); }
   .legend { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; color:var(--muted); font-size:11px; }
   .legend span::before { content:''; display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:3px; vertical-align:-2px; background:var(--c); }
-  .opts { margin-top:6px; color:var(--muted); font-size:12px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; margin-top:8px; color:var(--muted); font-size:12px; gap:8px; flex-wrap:wrap; }
+  .sort button { font:inherit; border:1px solid #C9D2CE; background:#fff; color:var(--muted); border-radius:999px; padding:2px 9px; cursor:pointer; }
+  .sort button.on { background:var(--s120); border-color:var(--s120); color:#fff; }
   .err { color:#B3261E; margin-top:6px; }
-  .list { flex:1; overflow:auto; padding:6px 0 16px; }
-  .stop { display:grid; grid-template-columns:44px 14px 1fr; padding:0 16px; cursor:pointer; }
-  .stop:hover { background:#F4F7F5; }
-  .stop .t { font-size:12px; color:var(--muted); padding-top:9px; text-align:right; padding-right:8px; font-variant-numeric:tabular-nums; }
-  .stop .rail { position:relative; }
-  .stop .rail::before { content:''; position:absolute; left:6px; top:0; bottom:0; width:2px; background:#C9D2CE; }
-  .stop .rail i { position:absolute; left:2px; top:12px; width:10px; height:10px; border-radius:50%; background:#fff; border:2px solid var(--c, #9AA6A1); box-sizing:border-box; }
-  .stop .body { padding:7px 0 8px 8px; border-bottom:1px solid var(--line); }
-  .stop .name { font-weight:700; font-size:14px; }
-  .stop .stay { font-size:12px; color:var(--muted); margin-left:6px; }
-  .stop .spots { font-size:12px; margin-top:3px; line-height:1.6; }
-  .stop .spots .v { color:var(--accent); font-weight:700; }
-  .stop .spots .w { color:var(--muted); }
-  .stop.quiet .name { font-weight:500; color:var(--muted); font-size:13px; }
+  .list { flex:1; overflow:auto; padding:4px 0 16px; }
+  .area { padding:10px 16px; border-bottom:1px solid var(--line); cursor:pointer; display:grid; grid-template-columns:8px 1fr; gap:10px; }
+  .area:hover, .area.sel { background:#F4F7F5; }
+  .area .sw { border-radius:4px; background:var(--c); }
+  .area .name { font-weight:700; font-size:15px; }
+  .area .meta { font-size:12px; color:var(--muted); margin-top:1px; }
+  .area .meta b { color:var(--ink); }
+  .area .spots { font-size:12px; margin-top:4px; line-height:1.6; }
+  .area .spots .v { color:var(--accent); font-weight:700; }
+  .area .spots .w { color:var(--muted); }
+  .area.quiet .name { font-weight:500; color:var(--muted); font-size:14px; }
+  .nav { font-size:12px; margin-top:8px; }
+  .alabel { font-size:11px; font-weight:700; background:rgba(255,255,255,0.92); border:1px solid #C9D2CE; border-radius:6px; padding:1px 6px; cursor:pointer; white-space:nowrap; }
+  .alabel.sel { background:#1F4A43; color:#fff; border-color:#1F4A43; }
+  .nav a { color:var(--s120); }
   .maplibregl-popup-content { font-size:13px; }
   .hover .maplibregl-popup-content { padding:4px 8px; }
   @media (max-width: 720px) {
     .app { flex-direction:column-reverse; }
-    .side { width:auto; height:52%; box-shadow:0 -2px 10px rgba(0,0,0,0.08); }
-    #map { height:48%; flex:none; }
+    .side { width:auto; height:56%; box-shadow:0 -2px 10px rgba(0,0,0,0.08); }
+    #map { height:44%; flex:none; }
   }
 </style>
 </head>
@@ -55,16 +59,17 @@
 <div class="app">
   <div class="side">
     <div class="head">
+      <p class="q">あと何時間で、どこに着けばいい？</p>
       <div class="od">
         <input id="from" type="text" list="cands" value="新大阪" placeholder="いる駅" autocomplete="off">
         <span>→</span>
-        <input id="to" type="text" list="cands" value="横浜" placeholder="帰る駅" autocomplete="off">
+        <input id="to" type="text" list="cands" value="横浜" placeholder="ここに戻る" autocomplete="off">
       </div>
       <datalist id="cands"></datalist>
-      <div class="extra">
-        寄り道に <b id="extraLabel">60</b>分
-        <input id="extra" type="range" min="0" max="240" step="15" value="60">
-        <div class="ticks"><span>0</span><span>1時間</span><span>2時間</span><span>3時間</span><span>4時間</span></div>
+      <div class="avail">
+        あと <b id="availLabel">5時間</b>
+        <input id="avail" type="range" min="30" max="480" step="15" value="300">
+        <div class="ticks"><span>30分</span><span>2時間</span><span>4時間</span><span>6時間</span><span>8時間</span></div>
       </div>
       <div class="sum" id="sum">読み込み中…</div>
       <div class="legend">
@@ -72,8 +77,16 @@
         <span style="--c:var(--s15)">15分〜</span><span style="--c:var(--s30)">30分〜</span>
         <span style="--c:var(--s60)">1時間〜</span><span style="--c:var(--s120)">2時間〜</span>
       </div>
-      <div class="opts"><label><input type="checkbox" id="showWiki" checked> 声のない場所（Wikidata）も出す</label></div>
+      <div class="bar">
+        <span class="sort" id="sort">
+          <button data-k="spots" class="on">発見が多い</button>
+          <button data-k="stay">長くいられる</button>
+          <button data-k="detour">遠回りが少ない</button>
+        </span>
+        <label><input type="checkbox" id="showWiki" checked> 声のない場所も</label>
+      </div>
       <div class="err" id="err" hidden></div>
+      <div class="nav"><a id="toOneWay" href="/">片道で行ける範囲（#40）</a></div>
     </div>
     <div class="list" id="list"></div>
   </div>
@@ -82,15 +95,28 @@
 <script>
 (function () {
   var COLORS = { 15: '#D3E9E3', 30: '#A9D4CA', 60: '#6DB3A5', 120: '#2E8A7C' };
+  var AREA_RADIUS_M = 1500;   // 寄り道先のまとまりの半径（代表の駅から）
+  var LIST_MAX = 40;
   var params = new URLSearchParams(location.search);
-  var state = { from: params.get('from') || '新大阪', to: params.get('to') || '横浜', extra: Number(params.get('extra') || 60), data: null, seq: 0 };
+  var state = {
+    from: params.get('from') || '新大阪',
+    to: params.has('to') ? params.get('to') : '横浜',
+    avail: Number(params.get('avail') || 300),
+    sort: params.get('sort') || 'spots',
+    data: null, areas: [], seq: 0, sel: -1
+  };
   var $ = function (id) { return document.getElementById(id); };
-  $('from').value = state.from; $('to').value = state.to; $('extra').value = String(state.extra);
+  $('from').value = state.from; $('to').value = state.to; $('avail').value = String(state.avail);
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function hm(min) { min = Math.round(Number(min)); var h = Math.floor(min / 60), m = min % 60; return h ? h + '時間' + (m ? m + '分' : '') : m + '分'; }
-  function clock(min) { min = Math.round(Number(min)); return Math.floor(min / 60) + ':' + String(min % 60).padStart(2, '0'); }
-  function stayColor(m) { m = Number(m); return m >= 120 ? COLORS[120] : m >= 60 ? COLORS[60] : m >= 30 ? COLORS[30] : m >= 15 ? COLORS[15] : '#9AA6A1'; }
+  function stayColor(m) { m = Number(m); return m >= 120 ? COLORS[120] : m >= 60 ? COLORS[60] : m >= 30 ? COLORS[30] : COLORS[15]; }
+  function dist(a, b) {
+    var R = 6371000, toR = Math.PI / 180;
+    var dLat = (b[1] - a[1]) * toR, dLng = (b[0] - a[0]) * toR;
+    var x = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(a[1] * toR) * Math.cos(b[1] * toR) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    return 2 * R * Math.asin(Math.sqrt(x));
+  }
 
   var map = new maplibregl.Map({
     container: 'map',
@@ -105,16 +131,17 @@
   map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
   map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
   var empty = { type: 'FeatureCollection', features: [] };
+  var labels = [];
 
   map.on('load', function () {
     ['bands', 'route', 'stations', 'spots'].forEach(function (id) { map.addSource(id, { type: 'geojson', data: empty }); });
-    // 過ごせる時間が短い帯（広い）から重ねる。長く過ごせるところほど濃い。
+    // 過ごせる時間が短い帯（広い）から重ねる。長くいられるところほど濃い。
     [15, 30, 60, 120].forEach(function (b) {
       map.addLayer({ id: 'band-' + b, type: 'fill', source: 'bands', filter: ['==', ['get', 'stay_min'], b],
         paint: { 'fill-color': COLORS[b], 'fill-opacity': 0.6 } });
     });
     map.addLayer({ id: 'route', type: 'line', source: 'route',
-      paint: { 'line-color': '#1F4A43', 'line-width': 2, 'line-opacity': 0.6, 'line-dasharray': [2, 1.5] } });
+      paint: { 'line-color': '#1F4A43', 'line-width': 1.5, 'line-opacity': 0.4, 'line-dasharray': [2, 2] } });
     map.addLayer({ id: 'stations', type: 'circle', source: 'stations',
       paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 6, 1, 13, 3.5], 'circle-color': '#1F4A43', 'circle-opacity': 0.4 } });
     map.addLayer({ id: 'spots-wiki', type: 'circle', source: 'spots', filter: ['==', ['get', 'source'], 'wikidata'],
@@ -125,8 +152,10 @@
     var hover = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8, className: 'hover' });
     map.on('mousemove', 'stations', function (e) {
       var p = e.features[0].properties;
+      var j = state.data;
+      var det = Number(p.t1_min) + Number(p.t2_min) - Number(j.min_total);
       hover.setLngLat(e.features[0].geometry.coordinates)
-        .setHTML('<b>' + esc(p.name) + '</b>　ここで最大 ' + hm(p.slack_min) + '<br><small>着くまで ' + hm(p.t1_min) + '・そこから帰るまで ' + hm(p.t2_min) + '</small>')
+        .setHTML('<b>' + esc(p.name) + '</b>　ここで最大 ' + hm(p.slack_min) + '<br><small>遠回り ＋' + hm(det) + '（行く ' + hm(p.t1_min) + '・そこから ' + hm(p.t2_min) + '）</small>')
         .addTo(map);
     });
     map.on('mouseleave', 'stations', function () { hover.remove(); });
@@ -147,32 +176,77 @@
     var my = ++state.seq;
     $('err').hidden = true;
     $('sum').textContent = '読み込み中…';
-    var q = new URLSearchParams({ from: state.from, to: state.to, extra: String(state.extra) });
-    history.replaceState(null, '', '?' + q.toString());
+    var q = new URLSearchParams({ from: state.from, to: state.to, avail: String(state.avail) });
+    var shown = new URLSearchParams({ from: state.from, to: state.to, avail: String(state.avail), sort: state.sort });
+    history.replaceState(null, '', '?' + shown.toString());
+    $('toOneWay').href = '/?from=' + encodeURIComponent(state.from) + '&min=30';
     fetch('/api/detour?' + q.toString())
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return j; }); })
       .then(function (j) {
         if (my !== state.seq) return;  // スライダーを続けて動かしたときは、最後の結果だけ使う
         state.data = j;
-        // 同じ名前の駅が続く（横浜の JR と市営地下鉄など）ときは1つにまとめる
         var route = j.route.filter(function (r, i, a) { return i === 0 || a[i - 1].name !== r.name; });
-        j.routeStops = route;
         map.getSource('bands').setData(j.bands);
         map.getSource('stations').setData(j.stations);
         map.getSource('route').setData({ type: 'Feature', properties: {}, geometry: { type: 'LineString', coordinates: route.map(function (r) { return [r.lng, r.lat]; }) } });
+        state.sel = -1;
         render();
-        if (fit) fitRoute(route);
+        if (fit) fitAll();
       })
       .catch(function (e) { if (my !== state.seq) return; $('err').hidden = false; $('err').textContent = String(e.message || e); $('sum').textContent = ''; });
   }
 
-  // 最初の画角は経路の全体（platform#134：帰り道は帯の全体を見せる）。使える時間を変えても画角は変えない。
-  function fitRoute(route) {
+  // 最初の画角は、行けるところ（15分以上いられる駅）の全体。使える時間を変えても画角は変えない（platform#134）。
+  function fitAll() {
     var b = new maplibregl.LngLatBounds();
-    route.forEach(function (r) { b.extend([r.lng, r.lat]); });
+    state.data.stations.features.forEach(function (f) { if (Number(f.properties.slack_min) >= 15) b.extend(f.geometry.coordinates); });
     if (b.isEmpty()) return;
-    var narrow = innerWidth <= 720;
-    map.fitBounds(b, { padding: narrow ? 30 : 60, duration: 600, maxZoom: 13 });
+    map.fitBounds(b, { padding: innerWidth <= 720 ? 30 : 60, duration: 600, maxZoom: 13 });
+  }
+
+  // 寄り道先のまとまり：15分以上いられる駅を、発見の多い駅から順に「代表」にし、そこから半径1.5km の駅をまとめる。
+  // DBSCAN のように数珠つなぎに広がらない（都心の駅が1つの大きなまとまりにならない）ように、代表からの距離で切る。
+  function buildAreas(j, spots) {
+    var minTotal = Number(j.min_total);
+    var byGroup = {};
+    spots.forEach(function (f) {
+      var g = f.properties.via_group;
+      (byGroup[g] = byGroup[g] || []).push(f.properties);
+    });
+    var cand = j.stations.features.filter(function (f) {
+      return f.properties.role !== 'dest' && Number(f.properties.slack_min) >= 15;
+    }).map(function (f) {
+      var p = f.properties, sp = byGroup[p.group] || [];
+      return { p: p, c: f.geometry.coordinates, spots: sp,
+        voiced: sp.filter(function (s) { return s.source === 'sample'; }).length, used: false };
+    });
+    cand.sort(function (a, b) { return b.voiced - a.voiced || b.spots.length - a.spots.length || b.p.slack_min - a.p.slack_min; });
+    var areas = [];
+    cand.forEach(function (seed) {
+      if (seed.used) return;
+      var members = cand.filter(function (c) { return !c.used && dist(seed.c, c.c) <= AREA_RADIUS_M; });
+      members.forEach(function (c) { c.used = true; });
+      var spotsAll = [].concat.apply([], members.map(function (m) { return m.spots; }));
+      // 同じ場所が別の駅経由で重ならないように、名前と過ごせる時間の長いほうで1つにする
+      var seen = {};
+      spotsAll = spotsAll.sort(function (a, b) { return b.stay_min - a.stay_min; }).filter(function (s) { var k = s.name + '|' + s.source; if (seen[k]) return false; seen[k] = 1; return true; });
+      var names = members.slice().sort(function (a, b) { return b.spots.length - a.spots.length || (b.p.lines || '').length - (a.p.lines || '').length; })
+        .map(function (m) { return m.p.name; }).filter(function (n, i, a) { return a.indexOf(n) === i; });
+      var best = members.reduce(function (a, b) { return Number(b.p.slack_min) > Number(a.p.slack_min) ? b : a; });
+      var minDet = Math.min.apply(null, members.map(function (m) { return Number(m.p.t1_min) + Number(m.p.t2_min) - minTotal; }));
+      areas.push({
+        name: names.slice(0, 2).join('・') + (names.length > 1 ? 'のあたり' : ''),
+        center: seed.c, members: members,
+        stay: Number(best.p.slack_min), detour: Math.max(0, minDet), origin: members.some(function (m) { return m.p.role === 'origin'; }),
+        spots: spotsAll, voiced: spotsAll.filter(function (s) { return s.source === 'sample'; }).length
+      });
+    });
+    var key = {
+      spots: function (a, b) { return b.voiced - a.voiced || b.spots.length - a.spots.length || b.stay - a.stay; },
+      stay: function (a, b) { return b.stay - a.stay || b.spots.length - a.spots.length; },
+      detour: function (a, b) { return a.detour - b.detour || b.spots.length - a.spots.length; }
+    }[state.sort];
+    return areas.sort(key);
   }
 
   function render() {
@@ -180,50 +254,66 @@
     var showWiki = $('showWiki').checked;
     var spots = j.spots.features.filter(function (f) { return showWiki || f.properties.source === 'sample'; });
     map.getSource('spots').setData({ type: 'FeatureCollection', features: spots });
+    var areas = state.areas = buildAreas(j, spots);
+    var round = j.from === j.to;
     var voiced = spots.filter(function (f) { return f.properties.source === 'sample'; }).length;
-    var via = j.stations.features.filter(function (f) { return f.properties.role === 'via' && f.properties.slack_min >= 15; }).length;
-    $('sum').innerHTML = esc(j.from) + ' → ' + esc(j.to) + '：まっすぐ帰ると <b>' + hm(j.min_total) + '</b>。使える時間 ' + hm(j.available_min)
-      + '<br>15分以上寄れる駅 <b>' + via + '</b>　声のある発見 <b style="color:var(--accent)">' + voiced + '</b>　声のない場所 ' + (spots.length - voiced)
-      + '<br><small>DB ' + j.elapsed_ms + 'ms</small>';
-    renderList(j.routeStops, spots);
+    $('availLabel').textContent = hm(state.avail);
+    $('sum').innerHTML = (round
+        ? esc(j.from) + 'に戻る（往復）。'
+        : esc(j.from) + ' → ' + esc(j.to) + '：まっすぐ行くと ' + hm(j.min_total) + '。寄り道に <b>' + hm(j.available_min - j.min_total) + '</b>。')
+      + '<br>寄り道先 <b>' + areas.length + '</b>　声のある発見 <b style="color:var(--accent)">' + voiced + '</b>　声のない場所 ' + (spots.length - voiced)
+      + '　<small>DB ' + j.elapsed_ms + 'ms</small>';
+    var top = areas.slice(0, LIST_MAX);
+    // 寄り道先のまとまりの名前（一覧の上位だけ）。日本語の字形（glyphs）を用意していないので、地図の文字ではなく HTML の札で出す
+    labels.forEach(function (m) { m.remove(); });
+    labels = top.slice(0, 12).map(function (a, i) {
+      var el = document.createElement('div');
+      el.className = 'alabel' + (i === state.sel ? ' sel' : '');
+      el.textContent = a.name.replace('のあたり', '');
+      el.onclick = function () { state.sel = i; focusArea(a); render(); };
+      return new maplibregl.Marker({ element: el, anchor: 'bottom', offset: [0, -4] }).setLngLat(a.center).addTo(map);
+    });
+    $('list').innerHTML = top.map(function (a, i) {
+      var sp = a.spots.slice().sort(function (x, y) { return (x.source === 'sample' ? 0 : 1) - (y.source === 'sample' ? 0 : 1) || y.stay_min - x.stay_min; });
+      var shown = sp.slice(0, 3).map(function (p) {
+        return '<div class="' + (p.source === 'sample' ? 'v' : 'w') + '">' + esc(p.name) + '　' + hm(p.stay_min) + '</div>';
+      }).join('') + (sp.length > 3 ? '<div class="w">ほか ' + (sp.length - 3) + '件</div>' : '');
+      var det = a.origin ? (round ? 'いまいるあたり' : '出発の前に') : (a.detour <= 5 ? '途中で降りるだけ' : '遠回り ＋' + hm(a.detour));
+      return '<div class="area' + (sp.length ? '' : ' quiet') + (i === state.sel ? ' sel' : '') + '" data-i="' + i + '" style="--c:' + stayColor(a.stay) + '">'
+        + '<div class="sw"></div><div><div class="name">' + esc(a.name) + '</div>'
+        + '<div class="meta">ここで最大 <b>' + hm(a.stay) + '</b>・' + det + '</div>'
+        + (shown ? '<div class="spots">' + shown + '</div>' : '') + '</div></div>';
+    }).join('') + (areas.length > LIST_MAX ? '<div class="area quiet"><div></div><div class="meta">ほか ' + (areas.length - LIST_MAX) + 'か所</div></div>' : '');
+    Array.prototype.forEach.call($('list').querySelectorAll('.area[data-i]'), function (el) {
+      el.onclick = function () { state.sel = Number(el.dataset.i); focusArea(state.areas[state.sel]); render(); };
+    });
   }
 
-  // 経路の順の一覧。場所は、その場所へ行く駅の t1 より手前で、いちばん近い経路の駅の下に入れる。
-  function renderList(route, spots) {
-    var groups = route.map(function (r) { return { stop: r, spots: [] }; });
-    spots.forEach(function (f) {
-      var t = Number(f.properties.t1_min), k = 0;
-      for (var i = 0; i < route.length; i++) if (Number(route[i].t1_min) <= t) k = i;
-      groups[k].spots.push(f.properties);
+  function focusArea(a) {
+    var b = new maplibregl.LngLatBounds();
+    a.members.forEach(function (m) { b.extend(m.c); });
+    state.data.spots.features.forEach(function (f) {
+      if (a.members.some(function (m) { return m.p.group === f.properties.via_group; })) b.extend(f.geometry.coordinates);
     });
-    var html = groups.map(function (g, i) {
-      var r = g.stop;
-      var sp = g.spots.sort(function (a, b) { return (a.source === 'sample' ? 0 : 1) - (b.source === 'sample' ? 0 : 1) || b.stay_min - a.stay_min; });
-      var quiet = !sp.length && i !== 0 && i !== groups.length - 1;
-      var stay = r.slack_min == null ? '' : (i === groups.length - 1 ? '着' : (i === 0 ? '出発まで最大 ' : 'ここで最大 ') + hm(r.slack_min));
-      var shown = sp.slice(0, 4).map(function (p) {
-        return '<div class="' + (p.source === 'sample' ? 'v' : 'w') + '">' + esc(p.name) + '　' + hm(p.stay_min)
-          + (p.via !== r.name ? '<small>（' + esc(p.via) + '駅から）</small>' : '') + '</div>';
-      }).join('');
-      var more = sp.length > 4 ? '<div class="w">ほか ' + (sp.length - 4) + '件</div>' : '';
-      return '<div class="stop' + (quiet ? ' quiet' : '') + '" data-i="' + i + '" style="--c:' + stayColor(r.slack_min) + '">'
-        + '<div class="t">' + clock(r.t1_min) + '</div><div class="rail"><i></i></div>'
-        + '<div class="body"><span class="name">' + esc(r.name) + '</span><span class="stay">' + stay + '</span>'
-        + (shown ? '<div class="spots">' + shown + more + '</div>' : '') + '</div></div>';
-    }).join('');
-    $('list').innerHTML = html;
-    Array.prototype.forEach.call($('list').children, function (el) {
-      el.onclick = function () { var r = route[Number(el.dataset.i)]; map.flyTo({ center: [r.lng, r.lat], zoom: 13 }); };
-    });
+    map.fitBounds(b, { padding: 80, maxZoom: 15, duration: 600 });
   }
 
   var timer;
-  $('extra').addEventListener('input', function () {
-    state.extra = Number(this.value); $('extraLabel').textContent = state.extra;
+  $('avail').addEventListener('input', function () {
+    state.avail = Number(this.value); $('availLabel').textContent = hm(state.avail);
     clearTimeout(timer); timer = setTimeout(function () { load(false); }, 250);
   });
   $('showWiki').addEventListener('change', render);
-  function go() { state.from = $('from').value.trim() || '新大阪'; state.to = $('to').value.trim() || '横浜'; load(true); }
+  Array.prototype.forEach.call($('sort').children, function (btn) {
+    btn.classList.toggle('on', btn.dataset.k === state.sort);
+    btn.onclick = function () {
+      state.sort = btn.dataset.k; state.sel = -1;
+      Array.prototype.forEach.call($('sort').children, function (b) { b.classList.toggle('on', b === btn); });
+      var q = new URLSearchParams(location.search); q.set('sort', state.sort); history.replaceState(null, '', '?' + q.toString());
+      render();
+    };
+  });
+  function go() { state.from = $('from').value.trim() || '新大阪'; state.to = $('to').value.trim(); load(true); }
   ['from', 'to'].forEach(function (id) {
     $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) go(); });
     $(id).addEventListener('change', go);
@@ -237,7 +327,7 @@
       }, 200);
     });
   });
-  $('extraLabel').textContent = state.extra;
+  $('availLabel').textContent = hm(state.avail);
 })();
 </script>
 </body>

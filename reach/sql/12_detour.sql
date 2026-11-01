@@ -137,7 +137,7 @@ RETURNS json LANGUAGE sql STABLE AS $$
     GROUP BY b
   ),
   cand AS (
-    SELECT sp.spot_id, sp.source, sp.name, sp.kinds, sp.geom, st.station_name, st.t1_min, st.slack_min,
+    SELECT sp.spot_id, sp.source, sp.name, sp.kinds, sp.geom, st.group_code, st.station_name, st.t1_min, st.slack_min,
            ST_Distance(sp.geom::geography, st.geom::geography) * p_detour / p_walk_m_per_min AS walk
     FROM st
     JOIN reach.spot sp
@@ -146,7 +146,7 @@ RETURNS json LANGUAGE sql STABLE AS $$
   ),
   spots AS (
     SELECT DISTINCT ON (c.spot_id)
-           c.spot_id, c.source, c.name, c.kinds, c.geom, c.station_name AS via, c.t1_min,
+           c.spot_id, c.source, c.name, c.kinds, c.geom, c.group_code AS via_group, c.station_name AS via, c.t1_min,
            round((c.slack_min::double precision - 2 * c.walk)::numeric, 0) AS stay_min,
            round(c.walk::numeric, 0) AS walk_min
     FROM cand c
@@ -168,7 +168,7 @@ RETURNS json LANGUAGE sql STABLE AS $$
     'stations', (
       SELECT json_build_object('type', 'FeatureCollection', 'features', coalesce(json_agg(json_build_object(
         'type', 'Feature',
-        'properties', json_build_object('name', s.station_name, 't1_min', s.t1_min, 't2_min', s.t2_min,
+        'properties', json_build_object('group', s.group_code, 'name', s.station_name, 't1_min', s.t1_min, 't2_min', s.t2_min,
                                         'slack_min', s.slack_min, 'role', s.role, 'lines', s.lines),
         'geometry', ST_AsGeoJSON(s.geom, 6)::json)), '[]'::json))
       FROM st s
@@ -176,7 +176,7 @@ RETURNS json LANGUAGE sql STABLE AS $$
     'spots', (
       SELECT json_build_object('type', 'FeatureCollection', 'features', coalesce(json_agg(json_build_object(
         'type', 'Feature',
-        'properties', json_build_object('name', sp.name, 'source', sp.source, 'kinds', sp.kinds, 'via', sp.via,
+        'properties', json_build_object('name', sp.name, 'source', sp.source, 'kinds', sp.kinds, 'via', sp.via, 'via_group', sp.via_group,
                                         't1_min', sp.t1_min, 'stay_min', sp.stay_min, 'walk_min', sp.walk_min),
         'geometry', ST_AsGeoJSON(sp.geom, 6)::json)), '[]'::json))
       FROM spots sp
