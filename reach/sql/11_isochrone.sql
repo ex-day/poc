@@ -10,14 +10,37 @@
 -- 帯ごとに合体（ST_Union）する。歩きは直線の距離で、道のりの遠回りの分を割り引く（行けない側に寄せる）。
 -- 本物の等時間線ではない（駅のまわりの道のりは測らない。#23 の歩きのグラフは使わない）。
 
--- 起点の駅の点。同じ名前の駅のグループが複数あっても、すべてを起点にする（片道の起点なので、どれから乗ってもよい）。
--- reach.group_nodes（03）は同じ名前のグループが複数あるとエラーにするので、別に作る。
-CREATE OR REPLACE FUNCTION reach.name_nodes(p_station text)
-RETURNS bigint[] LANGUAGE sql STABLE AS $$
-  SELECT array_agg(DISTINCT n)
+-- 起点の駅の点。同じ名前の駅のグループが複数あっても、近くにまとまっていれば、すべてを起点にする
+-- （横浜の JR と市営地下鉄など。片道の起点なので、どれから乗ってもよい）。
+-- 離れた場所に同じ名前がある（住吉、福島など）ときはエラーにする。グループコードで指定する。
+-- reach.group_nodes（03）は同じ名前のグループが複数あると必ずエラーにするので、別に作る。
+-- 引数を足したので、前の形（引数1つ）を消してから作る。残すと呼び出しがどちらとも取れて失敗する
+DROP FUNCTION IF EXISTS reach.name_nodes(text);
+CREATE OR REPLACE FUNCTION reach.name_nodes(p_station text, p_spread_m double precision DEFAULT 1500)
+RETURNS bigint[] LANGUAGE plpgsql STABLE AS $$
+DECLARE
+  groups text[];
+  spread double precision;
+  nodes  bigint[];
+BEGIN
+  WITH g AS (
+    SELECT s.group_code, ST_Centroid(ST_Collect(s.geom))::geography AS c
+    FROM reach.station s
+    WHERE s.station_name = p_station OR s.group_code = p_station
+    GROUP BY s.group_code
+  )
+  SELECT array_agg(DISTINCT a.group_code), max(ST_Distance(a.c, b.c)) INTO groups, spread
+  FROM g a CROSS JOIN g b;
+  IF groups IS NULL THEN
+    RAISE EXCEPTION '駅が見つからない：%', p_station;
+  ELSIF spread > p_spread_m THEN
+    RAISE EXCEPTION '同じ名前の駅が離れた場所に複数ある：%（グループコード %）。グループコードで指定してください', p_station, groups;
+  END IF;
+  SELECT array_agg(DISTINCT n) INTO nodes
   FROM reach.station s, unnest(ARRAY[s.node_a, s.node_b]) n
-  WHERE (s.station_name = p_station OR s.group_code = p_station) AND n IS NOT NULL
-$$;
+  WHERE s.group_code = ANY (groups) AND n IS NOT NULL;
+  RETURN nodes;
+END $$;
 
 -- 片道の到達圏：起点から p_max_min 分以内に行ける駅（駅グループ単位）と分数。
 -- 分数 ＝ 乗り始めの待ち時間 ＋ グラフの所要時間。起点の駅そのものは 0分。
@@ -32,9 +55,6 @@ LANGUAGE plpgsql STABLE AS $$
 DECLARE
   nodes bigint[] := reach.name_nodes(p_from);
 BEGIN
-  IF nodes IS NULL THEN
-    RAISE EXCEPTION '駅が見つからない：%', p_from;
-  END IF;
   RETURN QUERY
   WITH
   origin AS (

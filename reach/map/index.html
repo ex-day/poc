@@ -29,6 +29,7 @@
   .list div { padding:3px 0; cursor:pointer; }
   .list .v { color:var(--accent); font-weight:700; }
   .maplibregl-popup-content { font-size:13px; }
+  .hover .maplibregl-popup-content { padding:4px 8px; }
 </style>
 </head>
 <body>
@@ -101,13 +102,10 @@
     map.addLayer({ id: 'band-edge', type: 'line', source: 'bands',
       paint: { 'line-color': '#2E8A7C', 'line-width': 0.6, 'line-opacity': 0.35 } });
 
+    // 駅は脇役：帯の色になじむ小さな点。名前と分数はマウスを乗せたとき（スマホは押したとき）に出す。
     map.addLayer({ id: 'stations', type: 'circle', source: 'stations',
-      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 2, 13, 4.5],
-        'circle-color': '#FFFFFF', 'circle-stroke-color': '#1F4A43', 'circle-stroke-width': 1.5 } });
-    map.addLayer({ id: 'station-labels', type: 'symbol', source: 'stations', minzoom: 11.5,
-      layout: { 'text-field': ['concat', ['get', 'name'], ' ', ['to-string', ['get', 't_min']], '分'],
-        'text-size': 11, 'text-offset': [0, 1.1], 'text-anchor': 'top' },
-      paint: { 'text-color': '#1B2420', 'text-halo-color': '#FFFFFF', 'text-halo-width': 1.4 } });
+      paint: { 'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 1.6, 13, 3.5],
+        'circle-color': '#1F4A43', 'circle-opacity': 0.45 } });
 
     map.addLayer({ id: 'spots-wiki', type: 'circle', source: 'spots',
       filter: ['==', ['get', 'source'], 'wikidata'],
@@ -131,6 +129,13 @@
       map.on('mouseleave', id, function () { map.getCanvas().style.cursor = ''; });
     });
 
+    var hover = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 8, className: 'hover' });
+    map.on('mousemove', 'stations', function (e) {
+      var p = e.features[0].properties;
+      hover.setLngLat(e.features[0].geometry.coordinates).setHTML('<b>' + esc(p.name) + '</b>　' + p.t_min + '分').addTo(map);
+    });
+    map.on('mouseleave', 'stations', function () { hover.remove(); });
+
     load(true);
   });
 
@@ -152,10 +157,12 @@
       .catch(function (e) { $('err').hidden = false; $('err').textContent = String(e.message || e); $('counts').textContent = ''; });
   }
 
+  // 最初に見せる範囲は、探す範囲（スライダー）と分ける。30分圏までに合わせ、時間を広げても画角は変えない（platform#134）。
   function fitTo(fc) {
     var b = new maplibregl.LngLatBounds();
+    var target = Math.min(state.min, 30);
     fc.features.forEach(function (f) {
-      if (f.properties.band_min !== state.min) return;
+      if (f.properties.band_min !== target) return;
       f.geometry.coordinates.forEach(function (poly) { poly[0].forEach(function (c) { b.extend(c); }); });
     });
     if (!b.isEmpty()) map.fitBounds(b, { padding: { top: 40, bottom: 40, left: Math.min(380, innerWidth * 0.4), right: 40 }, duration: 600 });
@@ -173,7 +180,6 @@
     map.getSource('stations').setData({ type: 'FeatureCollection', features: st });
     map.getSource('spots').setData({ type: 'FeatureCollection', features: sp });
     map.setLayoutProperty('stations', 'visibility', $('showStations').checked ? 'visible' : 'none');
-    map.setLayoutProperty('station-labels', 'visibility', $('showStations').checked ? 'visible' : 'none');
     map.setLayoutProperty('spots-wiki', 'visibility', $('showWiki').checked ? 'visible' : 'none');
     var voiced = sp.filter(function (f) { return f.properties.source === 'sample'; });
     $('counts').innerHTML = '駅 <b>' + st.length + '</b>　声のある発見 <b style="color:var(--accent)">' + voiced.length + '</b>　声のない場所 ' + (sp.length - voiced.length)
