@@ -1,0 +1,37 @@
+server:
+  # App Client に登録したコールバック（http://localhost:3000/...）に合わせる
+  port: 3000
+  servlet:
+    session:
+      cookie:
+        # ブラウザに渡すのはセッションの印（JSESSIONID）だけ。JavaScript から読めない
+        http-only: true
+        same-site: lax
+        # 本番（https）では true にする
+        secure: false
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          cognito:
+            client-id: ${COGNITO_CLIENT_ID}
+            client-secret: ${COGNITO_CLIENT_SECRET}
+            client-authentication-method: client_secret_basic
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope: openid,email
+        provider:
+          cognito:
+            # 標準の OIDC の discovery（/.well-known/openid-configuration）で入口を読む
+            issuer-uri: https://cognito-idp.${COGNITO_REGION}.amazonaws.com/${COGNITO_USER_POOL_ID}
+
+exday:
+  cognito:
+    region: ${COGNITO_REGION}
+    domain: ${COGNITO_DOMAIN}
+    client-id: ${COGNITO_CLIENT_ID}
+    client-secret: ${COGNITO_CLIENT_SECRET}
+    # ログアウト・パスキーの登録のあとに戻る URL（App Client に登録しておく）
+    app-base-url: http://localhost:3000

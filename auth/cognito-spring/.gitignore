@@ -1,0 +1,4 @@
+build/
+.gradle/
+# Cognito の ID・シークレットを入れるファイル。commit しない
+local.env
