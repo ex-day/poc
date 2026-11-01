@@ -4,14 +4,19 @@
   python reach/map/server.py            # http://127.0.0.1:8040/ を開く
   EXDAY_DSN=postgresql://... python reach/map/server.py --port 8040
 
-- GET /                         … index.html（地図の画面）
+- GET /                         … index.html（片道で行ける範囲の地図。#40）
+- GET /route                    … route.html（帰り道の寄り道の地図。#42）
 - GET /api/reach?from=横浜&max=60 … reach.reach_map_json の結果（帯の面・駅・場所の GeoJSON）と、かかった時間
+- GET /api/detour?from=新大阪&to=横浜&avail=300
+                                … reach.detour_map_json の結果。avail は使える時間（分）。to を省くと from に戻る（往復）。
+                                  avail の代わりに extra（寄り道に使う時間）でもよい。使える時間 ＝ まっすぐ行く時間 ＋ extra
 - GET /api/stations?q=横         … 駅の名前の候補（入力の補完用）
 
-先に reach/sql/11_isochrone.sql を流しておくこと。標準ライブラリの http.server と psycopg だけで動く（PoC 用。本番の作りではない）。
+先に reach/sql/11_isochrone.sql と 12_detour.sql を流しておくこと。標準ライブラリの http.server と psycopg だけで動く（PoC 用。本番の作りではない）。
 """
 import argparse
 import json
+import math
 import os
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -20,6 +25,7 @@ from urllib.parse import parse_qs, urlparse
 
 import psycopg
 
+AVAIL_MIN, AVAIL_MAX = 30.0, 480.0   # 使える時間の範囲（分）。画面（route.html）のスライダーと合わせる
 DSN = os.environ.get("EXDAY_DSN", "postgresql://postgres:postgres@127.0.0.1:5432/ex_day_poc")
 HERE = Path(__file__).resolve().parent
 
@@ -39,6 +45,10 @@ class Handler(BaseHTTPRequestHandler):
         qs = parse_qs(url.query)
         if url.path in ("/", "/index.html"):
             return self._send(200, (HERE / "index.html").read_bytes(), "text/html; charset=utf-8")
+        if url.path in ("/route", "/route.html"):
+            return self._send(200, (HERE / "route.html").read_bytes(), "text/html; charset=utf-8")
+        if url.path == "/api/detour":
+            return self._detour(qs)
         if url.path == "/api/reach":
             return self._reach(qs)
         if url.path == "/api/stations":
@@ -51,6 +61,8 @@ class Handler(BaseHTTPRequestHandler):
             max_min = float((qs.get("max") or ["60"])[0])
         except ValueError:
             return self._send(400, json.dumps({"error": "max は数で指定する"}, ensure_ascii=False))
+        if not math.isfinite(max_min):
+            return self._send(400, json.dumps({"error": "max は有限の数で指定する"}, ensure_ascii=False))
         max_min = max(15.0, min(max_min, 90.0))
         t0 = time.perf_counter()
         try:
@@ -62,6 +74,42 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(400, json.dumps({"error": msg}, ensure_ascii=False))
         result["elapsed_ms"] = round((time.perf_counter() - t0) * 1000)
         self._send(200, json.dumps(result, ensure_ascii=False))
+
+    def _detour(self, qs):
+        origin = (qs.get("from") or ["新大阪"])[0].strip()
+        dest = (qs.get("to") or [""])[0].strip() or origin   # 着く駅を省いたら、起点に戻る（往復）
+        try:
+            avail = float(qs["avail"][0]) if qs.get("avail") else None
+            extra = float(qs["extra"][0]) if qs.get("extra") else 60.0
+        except ValueError:
+            return self._send(400, json.dumps({"error": "avail・extra は数で指定する"}, ensure_ascii=False))
+        if (avail is not None and not math.isfinite(avail)) or not math.isfinite(extra):
+            return self._send(400, json.dumps({"error": "avail・extra は有限の数で指定する"}, ensure_ascii=False))
+        if avail is not None:
+            avail = max(AVAIL_MIN, avail)
+        t0 = time.perf_counter()
+        try:
+            with psycopg.connect(DSN) as conn, conn.cursor() as cur:
+                # まっすぐ行く時間（経路の最後の駅の t1）。往復なら0
+                cur.execute("SELECT max(t1_min) FROM reach.detour_route(%s, %s)", (origin, dest))
+                min_total = cur.fetchone()[0]
+                if min_total is None:
+                    return self._send(400, json.dumps({"error": "経路が見つからない"}, ensure_ascii=False))
+                min_total = float(min_total)
+                if avail is None:
+                    avail = min_total + max(0.0, extra)
+                avail = min(avail, AVAIL_MAX)
+                if avail < min_total:
+                    return self._send(400, json.dumps(
+                        {"error": f"まっすぐ行っても {round(min_total)}分かかる（使える時間 {round(avail)}分）",
+                         "min_total": min_total}, ensure_ascii=False))
+                cur.execute("SELECT reach.detour_map_json(%s, %s, %s)", (origin, dest, avail))
+                result = cur.fetchone()[0]
+        except psycopg.Error as e:
+            msg = (e.diag.message_primary if getattr(e, "diag", None) else None) or str(e)
+            return self._send(400, json.dumps({"error": msg}, ensure_ascii=False))
+        result["elapsed_ms"] = round((time.perf_counter() - t0) * 1000)
+        self._send(200, json.dumps(result, ensure_ascii=False, default=float))
 
     def _stations(self, qs):
         q = (qs.get("q") or [""])[0].strip()
