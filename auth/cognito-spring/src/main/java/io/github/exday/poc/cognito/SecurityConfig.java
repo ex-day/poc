@@ -30,12 +30,16 @@ public class SecurityConfig {
             CognitoProperties cognito) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/signup", "/error").permitAll()
+                        // Chrome の開発者ツールが自動で取りに来る /.well-known/... を認証の対象にしない
+                        // （対象にすると「ログイン後に戻る先」として覚えられ、ログイン後に 404 へ飛ぶ）
+                        .requestMatchers("/", "/signup", "/error", "/.well-known/**").permitAll()
                         .anyRequest().authenticated())
                 // 標準の OIDC のログイン（認可コード＋PKCE）。トークンはサーバー側のセッションに置く
                 .oauth2Login(login -> login
                         .authorizationEndpoint(ep -> ep.authorizationRequestResolver(
-                                authorizationRequestResolver(registrations))))
+                                authorizationRequestResolver(registrations)))
+                        // ログインのあとは、いつもトップへ戻す（確かめやすくするため）
+                        .defaultSuccessUrl("/", true))
                 // CSRF は Spring Security の既定（有効）のまま。フォームには隠しの印を入れる
                 .logout(logout -> logout
                         .logoutUrl("/logout")
