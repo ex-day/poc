@@ -85,11 +85,17 @@ def main() -> None:
     for label, conn in (("N13", n13), ("OSM", osm)):
         nodes, edges, km, nmb, emb = size(conn)
         w(f"| {label} | {nodes:,} | {edges:,} | {km:,} | {nmb} | {emb} |")
+    # 駅グループ（道に結び付いたもの）の代表点から 2.5km 以内にかかる辺。索引の効く箱で絞ってから球面の距離で確かめる
     rows = q(osm, """
-        WITH g AS (SELECT ST_Transform(ST_Centroid(ST_Collect(geom)), 6668) AS p FROM reach.station GROUP BY group_code)
-        SELECT count(*), round(sum(e.length_m) / 1000)
-          FROM reach.walk_edge e
-         WHERE EXISTS (SELECT 1 FROM g WHERE ST_DWithin(e.geom::geography, g.p::geography, 2500))""")
+        WITH g AS (
+            SELECT ST_Transform(ST_Centroid(ST_Collect(s.geom)), 6668) AS p
+              FROM reach.station s WHERE s.group_code IN (SELECT group_code FROM reach.station_walk)
+             GROUP BY s.group_code),
+        e AS (
+            SELECT DISTINCT e.id, e.length_m
+              FROM g JOIN reach.walk_edge e ON e.geom && ST_Expand(g.p, 0.032)
+             WHERE ST_DWithin(e.geom::geography, g.p::geography, 2500))
+        SELECT count(*), round(sum(length_m) / 1000) FROM e""")
     w(f"\n- OSM で、駅グループの代表点から 2.5km 以内にかかる辺：{rows[0][0]:,} 本（{rows[0][1]:,} km）")
     by_hw = q(osm, """
         SELECT highway, count(*), round(sum(length_m) / 1000) FROM reach.walk_edge GROUP BY highway ORDER BY 3 DESC LIMIT 12""")
@@ -145,17 +151,34 @@ def main() -> None:
                 w(f"| {spot[s][0]} | {spot[s][1]} | {group_name.get(bo[s][0])}から{bo[s][1]:.0f}分 |")
             w("")
 
+    # 駅の代表点：ホームの重心と OSM の出入口（OSM の歩き、到達点の版）。出入口のある駅グループだけで比べる
+    pe = pairs(osm, "station_spot_walk_exit")
+    pc = pairs(osm, "station_spot_walk_ap")
+    exit_groups = {g for g, in q(osm, "SELECT DISTINCT group_code FROM reach.station_exit_walk")}
+    pc_e = {k: v for k, v in pc.items() if k[0] in exit_groups}
+    both = pe.keys() & pc_e.keys()
+    w("## 5. 駅の代表点を OSM の出入口にしたとき（OSM の歩き、到達点）\n")
+    w(f"- 出入口が道に結び付いた駅グループ：{len(exit_groups):,}。（駅グループ, 場所）の組は 両方 {len(both):,}、"
+      f"重心だけ {len(pc_e.keys() - pe.keys()):,}、出入口だけ {len(pe.keys() - pc_e.keys()):,}")
+    w("- 出入口からの歩きには、ホームから出入口までの駅の中の歩きを足していない\n")
+    w("| 比べたもの | 組 | 中央値（分） | 20% | 80% | 最小 | 最大 | 3分以上短い | 3分以上長い |")
+    w("|---|---|---|---|---|---|---|---|---|")
+    w(stats_row("出入口 − 重心", [pe[k] - pc_e[k] for k in both]))
+    w("")
+
     w(f"## 4. {TOKYO_GALLERY}\n")
-    w("| 駅グループ | N13（到達点） | OSM（到達点） |")
-    w("|---|---|---|")
+    w("| 駅グループ | N13（到達点） | OSM（到達点） | OSM（出入口から） |")
+    w("|---|---|---|---|")
     sid = [k for k, v in spot.items() if v[0] == TOKYO_GALLERY]
     if sid:
         pn, po = pairs(n13, "station_spot_walk_ap"), pairs(osm, "station_spot_walk_ap")
+        px = pairs(osm, "station_spot_walk_exit")
         groups = sorted({g for (g, s) in list(pn) + list(po) if s == sid[0]},
                         key=lambda g: min(pn.get((g, sid[0]), 99), po.get((g, sid[0]), 99)))
         for g in groups[:6]:
-            a, b = pn.get((g, sid[0])), po.get((g, sid[0]))
-            w(f"| {group_name.get(g)}（{g}） | {'—' if a is None else f'{a:.1f}分'} | {'—' if b is None else f'{b:.1f}分'} |")
+            a, b, c = pn.get((g, sid[0])), po.get((g, sid[0])), px.get((g, sid[0]))
+            fmt = lambda v: "—" if v is None else f"{v:.1f}分"
+            w(f"| {group_name.get(g)}（{g}） | {fmt(a)} | {fmt(b)} | {fmt(c)} |")
     w("")
     sys.stdout.write("")
     with open(sys.argv[3], "w", encoding="utf-8") as f:
