@@ -114,6 +114,15 @@ def main() -> None:
     osm_aps = {r[0] for r in gained}
     w(f"\n- N13 で結べず OSM で結べた到達点：{len(osm_aps - n13_aps):,}、その逆：{len(n13_aps - osm_aps):,}")
     w(f"- OSM でも結べない到達点：{ap_total - len(osm_aps):,}\n")
+    # 小さな島（点が100未満）を除く前に、いちばん近い点が島の点だったもの（build_osm.sql が reach.island_snap に残す）
+    isl = q(osm, "SELECT kind, count(*) FROM reach.island_snap GROUP BY kind ORDER BY kind")
+    w("### 小さな島（点が100未満）を除く前に、島に結ばれていたもの\n")
+    w("- " + "、".join(f"{k} {n:,}" for k, n in isl) + "（station_group：駅グループ、spot：場所、access_point：到達点）")
+    ex = q(osm, """
+        SELECT min(s.station_name), i.island_nodes FROM reach.island_snap i
+          JOIN reach.station s ON s.group_code = i.id
+         WHERE i.kind = 'station_group' GROUP BY i.id, i.island_nodes ORDER BY min(s.station_name) LIMIT 30""")
+    w("- 島に結ばれていた駅グループ（島の点の数）：" + "、".join(f"{n}（{k}）" for n, k in ex) + "\n")
 
     for title, table in (("場所の点", "station_spot_walk"), ("到達点", "station_spot_walk_ap")):
         pn, po = pairs(n13, table), pairs(osm, table)

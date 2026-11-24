@@ -24,15 +24,24 @@ platform の [#163](https://github.com/ex-day/platform/issues/163)（寄り道�
 
 ### 歩ける道（OSM）
 
-`highway` のうち、`motorway`・`motorway_link`・建設中・計画・廃止などを除く。`foot=no` と、`foot=yes` 等の無い `access=private/no` も除く（#31 の歩ける道と同じ考え方）。幹線道路（`trunk`・`primary` 等）は歩道がある前提で歩けるとみなす。歩ける道の2本以上が使う点（交差点）と道の端で区切り、区切った区間1つを辺1本にする。
+`highway` のうち、`motorway`・`motorway_link`・建設中・計画・廃止などを除く。`foot=no`・`foot=use_sidepath`（並行する歩道を別に描いてあり、本線は歩かない。この入力で53本）と、`foot=yes` 等の無い `access=private/no` も除く（#31 の歩ける道と同じ考え方。`use_sidepath` は PR #47 のレビューで足した）。幹線道路（`trunk`・`primary` 等）は歩道がある前提で歩けるとみなす。歩ける道の2本以上が使う点（交差点）と道の端で区切り、区切った区間1つを辺1本にする。
 
-**小さな島を除く**：OSM には、ほかの道とつながっていない短い道の集まり（駅の中の通路・ホーム、敷地の中の道など）がある。1回目の比べでは、大宮・川口・八木崎などの駅グループがこの島に結ばれ、10分で2〜17点にしか歩けず、近くの場所に「別の駅から20分」と出た。`pgr_connectedComponents` で、つながっている点が100未満の集まり（6,340・約1.9万点）を消してから結ぶ。
+**小さな島を除く**：OSM には、ほかの道とつながっていない短い道の集まり（駅の中の通路・ホーム、敷地の中の道など）がある。1回目の比べでは、大宮・川口・八木崎などの駅グループがこの島に結ばれ、10分で2〜17点にしか歩けず、近くの場所に「別の駅から20分」と出た。`pgr_connectedComponents` で、つながっている点が100未満の集まり（約6,300・約1.9万点）を消してから結ぶ。
+
+- **島を除く必要があることは確かめた。100 という閾値は、このメッシュでの暫定の値**。全国で一律に使うと、離島・山道・独立した公園などの正しい小さなネットワークも消しうる。製品の実装で、消す島に結び付く駅・場所・到達点の数と例を見て決める（platform #163）
+- `build_osm.sql` は、消す前に「いちばん近い点が島の点だった駅グループ・場所・到達点」を `reach.island_snap` に残し、`compare_osm_walk.py` がその数と駅の例を書く
 
 ## 手順
 
 DB は PostgreSQL＋PostGIS＋pgRouting（`../sql/09` が `vector` を使わないので pgvector は無くてよい）。N13 用（ここでは `poc_n13`）と OSM 用（`poc_osm`）の2つの DB を作り、どちらにも `CREATE SCHEMA reach` と拡張（postgis・pgrouting）を入れておく。
 
-OSM は、関東の pbf から、メッシュ 5339 の箱にかかる `highway` の道（点は全部）と入口の点を切り出して使った（pyosmium の `BackReferenceWriter`。関東の全体で約50秒、63MB）。
+OSM は、関東の pbf から、メッシュ 5339 の箱にかかる `highway` の道（点は全部）と入口の点を、`extract_highway.py` で切り出して使った（pyosmium 4.3.2 の `BackReferenceWriter`。関東の全体で約50秒、63MB）。
+
+```sh
+pip install osmium==4.3.2 psycopg[binary]
+# https://download.geofabrik.de/asia/japan/kanto-latest.osm.pbf を取ってくる（今回は kanto-261119）
+python reach/osmwalk/extract_highway.py ~/Downloads/kanto-261119.osm.pbf ~/Downloads/kanto-261119-5339-highway.osm.pbf
+```
 
 ```sh
 D=docker/otp/data
@@ -51,9 +60,10 @@ psql poc_n13 -f reach/sql/10_build_access_walk.sql
 # OSM（base.sql と CSV は同じ）
 psql poc_osm -f reach/osmwalk/schema_osm.sql
 EXDAY_DSN=postgresql:///poc_osm python reach/osmwalk/load_osm_walk.py ~/Downloads/kanto-261119-5339-highway.osm.pbf
+psql poc_osm -f reach/sql/09_access_point.sql   # 到達点の表。build_osm.sql が島に結ばれる到達点を数えるので先に流す
+psql poc_osm -c "\copy reach.spot_access_point (spot_id, source, kind, lon, lat) FROM '$D/issue31/res/spot_access_point.csv' CSV HEADER"
 psql poc_osm -f reach/osmwalk/build_osm.sql
 psql poc_osm -f reach/osmwalk/walk_precompute.sql
-psql poc_osm -f reach/sql/09_access_point.sql   # と到達点の CSV
 psql poc_osm -f reach/sql/10_build_access_walk.sql
 psql poc_osm -f reach/osmwalk/exit_walk.sql
 psql poc_osm -c "\copy reach.station_exit (group_code, node_id, railway, name, lon, lat, dist_m) FROM '$D/issue31/res/station_exit_point.csv' CSV HEADER"
@@ -81,6 +91,6 @@ OSM の駅からの歩きが N13 の約3倍かかるのは、辺が約1.4倍あ�
 - **N13 の大きな不足が直る**：東京ステーションギャラリーは東京駅（003766）から 16.3分 → 1.9分。細い道・参道の寺社が大きく短くなる（羽黒神社 柏から 23分 → 6分、不動寺 西武球場前から 23分 → 6分、高尾山薬王院 23分 → 12分、川口市立美術館 13分 → 2分 など）。25分以内の駅が OSM だけである場所が 139（うち寺社 134）、N13 だけは 35
 - **長くなるものもある**：禅福寺（新守谷から 12分 → 23分）など 3分以上長くなった組が 211。OSM で道が切れている・歩けない道として除いたものがある見込み（個別には見ていない）
 - **到達点が道に結べるか**：#31 の「到達点 9,818点のうち N13 に結べたのは 5,660点」は、**N13 の道の不足ではなく、到達点が関東の全体にあり、N13 がメッシュ 5339 の分しか無いため**だった。メッシュの中の到達点 5,631点は N13 でもすべて結べている。OSM（メッシュ 5339 の箱で切り出したもの）は 5,685点（N13 で結べず OSM で結べた 30、その逆 5）
-- **小さな島は必ず除く**：除かないと、大きな駅が島に結ばれて歩けなくなる（上の「小さな島を除く」）
+- **小さな島を除く必要がある**：除かないと、大きな駅が島に結ばれて歩けなくなる（上の「小さな島を除く」）。閾値（今回は100点）は暫定で、製品の実装で決める
 - **駅の代表点を出入口にすると**：出入口のある駅グループ 1,141 で、出入口 − 重心の中央値 −0.9分（20%〜80% で −1.9〜−0.2分）、3分以上短くなった組 1,802。ただし**ホームから出入口までの駅の中の歩きを足していない**ので、そのぶん短く出る（行ける側に寄る）
 - **グラフの大きさ**：メッシュ 5339 で OSM は点 191万・辺 265万（辺の表 594MB、N13 は 435MB）。駅グループの代表点から 2.5km 以内に絞っても辺 246万本（93%）で、都市部ではほとんど小さくならない

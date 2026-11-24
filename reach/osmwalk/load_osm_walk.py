@@ -8,7 +8,7 @@
 先に schema_osm.sql を流しておくこと。
 
 - 歩ける道：highway のうち、motorway 系・建設中・計画・廃止などを除く。access=private/no は foot=yes 等が無ければ除き、
-  foot=no も除く（#31 の歩ける道と同じ考え方）。幹線道路（trunk・primary 等）は歩道がある前提で歩けるとみなす
+  foot=no と foot=use_sidepath（並行する歩道を別に描いてあり、本線は歩かない）も除く（#31 の歩ける道と同じ考え方）。幹線道路（trunk・primary 等）は歩道がある前提で歩けるとみなす
 - 区切り方：歩ける道の2本以上が使う点（交差点）と、道の端で区切る。辺1本が区切った区間1つ
 - 点の ID は OSM の node の ID、座標は JGD2011（EPSG:6668）として持つ（N13 の表とそろえる。WGS84 との差は数十cm 以下）
 - cost は分（分速80m）。向きは見ない（#23 と同じ）
@@ -36,7 +36,7 @@ def walkable(tags) -> bool:
     if hw is None or hw in EXCLUDED_HIGHWAY:
         return False
     foot = tags.get("foot")
-    if foot == "no":
+    if foot in ("no", "use_sidepath"):
         return False
     if tags.get("access") in ("private", "no") and foot not in FOOT_OK:
         return False
